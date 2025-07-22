@@ -124,6 +124,30 @@
         // Enhanced parameter detection for RedTrack + Cloaking.House
         const urlParams = new URLSearchParams(window.location.search);
         
+        // Debug mode detection (DEFINE FIRST)
+        const debugMode = urlParams.get('debug') === '1' || 
+                         urlParams.get('test') === '1' ||
+                         window.location.hostname === 'localhost';
+        
+        // Debug function (DEFINE EARLY)
+        function debugLog(message) {
+            console.log('🌉 BRIDGE:', message);
+            if (debugMode) {
+                const debugContent = document.getElementById('debug-content');
+                if (debugContent) {
+                    debugContent.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+                }
+            }
+        }
+        
+        // Show debug panel if in debug mode
+        if (debugMode) {
+            document.getElementById('debug-panel').classList.add('show');
+        }
+        
+        debugLog('Bridge page loaded');
+        debugLog('Full URL: ' + window.location.href);
+        
         // Comprehensive parameter mapping for different tracking systems
         const clickid = urlParams.get('clickid') || 
                         urlParams.get('subid1') || 
@@ -148,16 +172,6 @@
                       urlParams.get('traffic_source') ||
                       'cloaking_redtrack';
         
-        
-        // Check if RedTrack is replacing the variable
-        if (clickid.includes('{clickid}')) {
-            debugLog('ERROR: RedTrack is not replacing {clickid} variable!');
-        } else if (clickid.startsWith('RT_') || clickid.startsWith('BRIDGE_')) {
-            debugLog('WARNING: Using fallback ClickID - RedTrack not passing parameter');
-        } else {
-            debugLog('SUCCESS: Got real ClickID from RedTrack: ' + clickid);
-        }
-        
         // Additional tracking parameters
         const offer = urlParams.get('offer') || urlParams.get('subid4') || 'betsson';
         const creative = urlParams.get('creative') || urlParams.get('subid5') || '';
@@ -165,34 +179,24 @@
         
         const timestamp = Date.now().toString();
         
-        // Debug mode detection
-        const debugMode = urlParams.get('debug') === '1' || 
-                         urlParams.get('test') === '1' ||
-                         window.location.hostname === 'localhost';
-
-        // Enhanced RedTrack debugging
-        debugLog('RedTrack ClickID raw: ' + urlParams.get('clickid'));
-        debugLog('All URL parameters: ' + window.location.search);
-        debugLog('Expected vs Actual ClickID: Expected from RedTrack, Got: ' + clickid);
-        
-        // Show debug panel if in debug mode
-        if (debugMode) {
-            document.getElementById('debug-panel').classList.add('show');
-        }
-        
-        function debugLog(message) {
-            console.log('🌉 BRIDGE:', message);
-            if (debugMode) {
-                const debugContent = document.getElementById('debug-content');
-                debugContent.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
-            }
-        }
-        
-        debugLog('Bridge page loaded');
-        debugLog('Full URL: ' + window.location.href);
         debugLog('Detected parameters: ' + JSON.stringify({
             clickid, campaign, source, offer, creative, geo, timestamp
         }));
+        
+        // Enhanced RedTrack debugging
+        debugLog('RedTrack ClickID raw: ' + urlParams.get('clickid'));
+        debugLog('RedTrack SubID raw: ' + urlParams.get('subid'));
+        debugLog('All URL parameters: ' + window.location.search);
+        debugLog('Final ClickID used: ' + clickid);
+        
+        // Check if RedTrack is replacing the variable
+        if (clickid.includes('{clickid}') || clickid.includes('{subid}')) {
+            debugLog('ERROR: RedTrack is not replacing variables!');
+        } else if (clickid.startsWith('RT_') || clickid.startsWith('BRIDGE_')) {
+            debugLog('WARNING: Using fallback ClickID - RedTrack not passing parameter');
+        } else {
+            debugLog('SUCCESS: Got real ClickID from RedTrack: ' + clickid);
+        }
         
         // Store verification data using multiple methods for reliability
         const verificationData = {
@@ -203,7 +207,7 @@
             offer_name: offer,
             creative_id: creative,
             user_geo: geo,
-            bridge_version: '2.0',
+            bridge_version: '2.1',
             verification_method: 'bridge_auto'
         };
         
