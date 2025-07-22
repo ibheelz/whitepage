@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Redirecting…</title>
+
+  <!-- Meta refresh fallback -->
+  <meta http-equiv="refresh" content="0; url=page.html" />
+
+  <script>
+    // JS redirect (faster and preserves back button a bit better)
+    location.replace("page.html");
+  </script>
+
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <p>Taking you to <a href="page.html">page.html</a>…</p>
+</body>
+</html>
