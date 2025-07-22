@@ -1,0 +1,157 @@
+.banner-section .banner-content h1, 
+.banner-section .banner-content p,
+.banner-section .wp-block-button a,
+.banner-product-sec .wc-block-grid__product-title,
+.banner-section .banner-product-img .price-sec p,
+.banner-section .banner-product-img .reviews-sec p,
+.post-section h2, 
+.post-section p,
+.post-section h3{
+    font-family: 'Outfit', sans-serif;
+}
+/* Banner Section */
+.banner-section{
+    padding-top: 4%;
+}
+.banner-section .banner-heading, .post-section .post-cat, .post-section .post-date{
+    display: inline-flex;
+    padding: 7px 15px 5px;
+    text-align: center;
+}
+.banner-section .banner-content h1, .banner-section .banner-content p, .post-section h2, .post-section p, .post-section .post-content .author-comment, .banner-section .banner-product-img .price-sec .wp-block-columns, .banner-section .banner-product-img .price-sec p, .banner-section .banner-product-img .reviews-sec p, .banner-section .banner-product-img .reviews-sec .wp-block-columns{
+    margin: 5px 0;
+}
+.banner-section .banner-content{
+    margin-left: 12% !important;
+}
+.banner-section .wp-block-button a{
+    padding: 12px 20px;
+}
+.banner-section .banner-heading:hover{
+    background: #F2612B !important;
+}
+.banner-section .wp-block-button a:hover{
+    background: #000 !important;
+}
+/* Banner Product Section */
+.banner-product-sec li.wc-block-grid__product{
+    background: #FAD3B6;
+    margin: 0 15px 10px !important;
+    text-align: center;
+    max-width: 186px !important;
+    padding: 10px 10px 0 !important;
+    text-decoration: none !important;
+}
+.banner-product-sec a.wc-block-grid__product-link img{
+    max-height: 100px;
+    max-width: 100px;
+    margin: auto;
+    text-align: center;
+    object-fit: contain;
+}
+.banner-product-sec .wc-block-grid__product-title{
+    color: #000;
+    font-size: 20px;
+    text-transform: capitalize;
+    font-weight: 700;
+    margin: 0 !important;
+}
+.banner-product-sec a.wc-block-grid__product-link{
+    text-decoration: none !important;
+}
+.banner-section .banner-product-img .product-image{  
+    border-radius: 50%;
+    border: 2px solid #F2612B;
+    display: inline-block;
+    border-radius: 50%;
+    padding: 30px;
+}
+.banner-section .banner-product-img{
+    position: relative;
+}
+.banner-section .banner-product-img .price-sec{
+    position: absolute;
+    bottom: 50px;
+}
+.banner-section .banner-product-img .price-sec .wp-block-column{
+    display: contents;
+}
+.banner-section .banner-product-img .reviews-sec{
+    position: absolute;
+    right: 20%;
+    bottom: 20em;
+}
+.banner-section .banner-product-img .reviews-sec .review-img{
+    top: 8px;
+}
+.banner-section .banner-product-img .reviews-sec .wp-block-column p{
+    margin-left: 20px;
+}
+.banner-section .banner-product-img .product-image img{
+    height: 450px;
+    width: 450px;
+    object-fit: cover;   
+    margin: 0px auto;
+    border-radius: 50%;
+    background: #FAD3B6;
+    padding: 30px;
+}
+.banner-section .banner-product-img .review-img img{
+    height: auto;
+    max-width: 100px;
+}
+/* Post Section */
+.post-section .post-content img{
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+}
+.post-section .post-content{
+    position: relative;
+}
+.post-section .post-content h3{
+    margin-bottom: 0;
+}
+.banner-section .banner-product-img .price-sec .save-text{
+    padding: 8px;
+}
+.banner-section .banner-product-img .price-sec, .banner-section .banner-product-img .reviews-sec {
+    padding: 10px;
+}
+.post-section .post-content .author-comment p{
+    margin: 5px 0; 
+}
+.post-section .post-date{
+    width: 15%;
+    position: absolute;
+    top: 26%;
+    left: 4%;
+}
+.post-section .post-cat{
+    position: absolute;
+    top: 46%;
+    right: 5%;
+}
+.post-section .author:before{
+    content: "\f007";
+    font-size: 14px;
+    font-weight: 900;
+    font-family: 'Font Awesome 5 Free';
+    margin-right: 8px;
+}
+.post-section .comment:before{
+    content: "\f075";
+    font-size: 14px;
+    font-weight: 900;
+    font-family: 'Font Awesome 5 Free';
+    margin-right: 8px;
+}
+.post-section .author, .post-section .comment{
+    display: inline-flex;
+}
+.post-section .post-content:hover .post-date, .post-section .post-content:hover .post-cat{
+    background: #F2612B !important;
+}
+.post-section .post-content:hover h3{
+    color: #F2612B !important;
+}
