@@ -148,10 +148,6 @@
                       urlParams.get('traffic_source') ||
                       'cloaking_redtrack';
         
-        // Enhanced RedTrack debugging
-        debugLog('RedTrack ClickID raw: ' + urlParams.get('clickid'));
-        debugLog('All URL parameters: ' + window.location.search);
-        debugLog('Expected vs Actual ClickID: Expected from RedTrack, Got: ' + clickid);
         
         // Check if RedTrack is replacing the variable
         if (clickid.includes('{clickid}')) {
@@ -173,6 +169,11 @@
         const debugMode = urlParams.get('debug') === '1' || 
                          urlParams.get('test') === '1' ||
                          window.location.hostname === 'localhost';
+
+        // Enhanced RedTrack debugging
+        debugLog('RedTrack ClickID raw: ' + urlParams.get('clickid'));
+        debugLog('All URL parameters: ' + window.location.search);
+        debugLog('Expected vs Actual ClickID: Expected from RedTrack, Got: ' + clickid);
         
         // Show debug panel if in debug mode
         if (debugMode) {
