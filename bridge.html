@@ -83,6 +83,26 @@
         @keyframes progress {
             to { width: 100%; }
         }
+
+        /* Debug panel for testing */
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.9);
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .debug-panel.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -95,101 +115,234 @@
         </div>
     </div>
 
+    <!-- Debug Panel for Testing -->
+    <div id="debug-panel" class="debug-panel">
+        <div id="debug-content"></div>
+    </div>
+
     <script>
-        // Get parameters from URL
+        // Enhanced parameter detection for RedTrack + Cloaking.House
         const urlParams = new URLSearchParams(window.location.search);
-        const clickid = urlParams.get('clickid') || urlParams.get('subid') || urlParams.get('subid1') || 'AUTO_' + Date.now();
-        const campaign = urlParams.get('campaign') || urlParams.get('subid2') || 'graficos_1';
-        const source = urlParams.get('source') || urlParams.get('subid3') || 'redtrack';
+        
+        // Comprehensive parameter mapping for different tracking systems
+        const clickid = urlParams.get('clickid') || 
+                        urlParams.get('subid1') || 
+                        urlParams.get('subid') || 
+                        urlParams.get('sub1') || 
+                        urlParams.get('s1') ||
+                        urlParams.get('click_id') ||
+                        urlParams.get('cid') ||
+                        'BRIDGE_' + Date.now();
+        
+        const campaign = urlParams.get('campaign') || 
+                        urlParams.get('subid2') || 
+                        urlParams.get('sub2') || 
+                        urlParams.get('s2') ||
+                        urlParams.get('camp') ||
+                        'abiola_test'; // Default to your test campaign
+        
+        const source = urlParams.get('source') || 
+                      urlParams.get('subid3') || 
+                      urlParams.get('sub3') || 
+                      urlParams.get('s3') ||
+                      urlParams.get('traffic_source') ||
+                      'cloaking_redtrack';
+        
+        // Additional tracking parameters
+        const offer = urlParams.get('offer') || urlParams.get('subid4') || 'betsson';
+        const creative = urlParams.get('creative') || urlParams.get('subid5') || '';
+        const geo = urlParams.get('geo') || urlParams.get('country') || '';
+        
         const timestamp = Date.now().toString();
         
-        console.log('Bridge capturing data:', { clickid, campaign, source, timestamp });
+        // Debug mode detection
+        const debugMode = urlParams.get('debug') === '1' || 
+                         urlParams.get('test') === '1' ||
+                         window.location.hostname === 'localhost';
+        
+        // Show debug panel if in debug mode
+        if (debugMode) {
+            document.getElementById('debug-panel').classList.add('show');
+        }
+        
+        function debugLog(message) {
+            console.log('🌉 BRIDGE:', message);
+            if (debugMode) {
+                const debugContent = document.getElementById('debug-content');
+                debugContent.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+            }
+        }
+        
+        debugLog('Bridge page loaded');
+        debugLog('Full URL: ' + window.location.href);
+        debugLog('Detected parameters: ' + JSON.stringify({
+            clickid, campaign, source, offer, creative, geo, timestamp
+        }));
         
         // Store verification data using multiple methods for reliability
+        const verificationData = {
+            verified_clickid: clickid,
+            campaign_source: campaign,
+            user_timestamp: timestamp,
+            traffic_source: source,
+            offer_name: offer,
+            creative_id: creative,
+            user_geo: geo,
+            bridge_version: '2.0',
+            verification_method: 'bridge_auto'
+        };
+        
+        debugLog('Storing verification data...');
         
         // Method 1: LocalStorage (primary)
         try {
-            localStorage.setItem('verified_clickid', clickid);
-            localStorage.setItem('campaign_source', campaign);
-            localStorage.setItem('user_timestamp', timestamp);
-            localStorage.setItem('traffic_source', source);
-            console.log('✅ LocalStorage data stored');
+            Object.keys(verificationData).forEach(key => {
+                localStorage.setItem(key, verificationData[key]);
+            });
+            debugLog('✅ LocalStorage data stored');
         } catch (e) {
-            console.log('❌ LocalStorage failed:', e);
+            debugLog('❌ LocalStorage failed: ' + e.message);
         }
         
         // Method 2: SessionStorage (backup)
         try {
-            sessionStorage.setItem('verified_clickid', clickid);
-            sessionStorage.setItem('campaign_source', campaign);
-            sessionStorage.setItem('user_timestamp', timestamp);
-            sessionStorage.setItem('traffic_source', source);
-            console.log('✅ SessionStorage data stored');
+            Object.keys(verificationData).forEach(key => {
+                sessionStorage.setItem(key, verificationData[key]);
+            });
+            debugLog('✅ SessionStorage data stored');
         } catch (e) {
-            console.log('❌ SessionStorage failed:', e);
+            debugLog('❌ SessionStorage failed: ' + e.message);
         }
         
         // Method 3: Cookies (backup for older browsers)
         try {
             const cookieExpiry = new Date(Date.now() + 30*24*60*60*1000).toUTCString();
             const domain = window.location.hostname.includes('todoalrojo') ? '; domain=.todoalrojo.club' : '';
+            const cookieOptions = `; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax; Secure`;
             
-            document.cookie = `vc_id=${clickid}; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax`;
-            document.cookie = `vc_camp=${campaign}; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax`;
-            document.cookie = `vc_time=${timestamp}; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax`;
-            document.cookie = `vc_source=${source}; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax`;
-            console.log('✅ Cookies data stored');
+            document.cookie = `vc_id=${clickid}${cookieOptions}`;
+            document.cookie = `vc_camp=${campaign}${cookieOptions}`;
+            document.cookie = `vc_time=${timestamp}${cookieOptions}`;
+            document.cookie = `vc_source=${source}${cookieOptions}`;
+            document.cookie = `vc_offer=${offer}${cookieOptions}`;
+            
+            debugLog('✅ Cookies data stored');
         } catch (e) {
-            console.log('❌ Cookies failed:', e);
+            debugLog('❌ Cookies failed: ' + e.message);
         }
         
         // Campaign-specific Betsson destination URLs
         const betssonDestinations = {
+            // Test campaigns
+            'abiola_test': 'https://record.betsson.com/_5BnvWPFDzu3nA91_tVQmF2Nd7ZgqdRLk/28/?payload=' + clickid,
+            
+            // Graficos campaigns
             'graficos_1': 'https://record.betsson.com/v_5BnvWPFDzu2yHuAT8Ki3JWNd7ZgqdRLk/21/?payload=' + clickid,
-            'graficos_2': 'https://record.betsson.com/v_DIFFERENT_LINK_HERE/?payload=' + clickid,
-            'graficos_3': 'https://record.betsson.com/v_THIRD_LINK_HERE/?payload=' + clickid,
-            'baile_1': 'https://record.betsson.com/v_BAILE1_LINK/?payload=' + clickid,
-            'baile_2': 'https://record.betsson.com/v_BAILE2_LINK/?payload=' + clickid,
-            'baile_3': 'https://record.betsson.com/v_BAILE3_LINK/?payload=' + clickid,
-            'meta_1': 'https://record.betsson.com/v_META1_LINK/?payload=' + clickid,
-            'meta_2': 'https://record.betsson.com/v_META2_LINK/?payload=' + clickid,
-            'meta_3': 'https://record.betsson.com/v_META3_LINK/?payload=' + clickid,
-            'abiola_test': 'https://record.betsson.com/_5BnvWPFDzu3nA91_tVQmF2Nd7ZgqdRLk/28/?payload=' +clickid,
-            // Add more campaigns as you create them
-            'default': 'https://record.betsson.com/v_5BnvWPFDzu2yHuAT8Ki3JWNd7ZgqdRLk/21/?payload=' + clickid
+            'graficos_2': 'https://record.betsson.com/v_GRAFICOS2_LINK_HERE/?payload=' + clickid,
+            'graficos_3': 'https://record.betsson.com/v_GRAFICOS3_LINK_HERE/?payload=' + clickid,
+            
+            // Baile campaigns  
+            'baile_1': 'https://record.betsson.com/v_BAILE1_LINK_HERE/?payload=' + clickid,
+            'baile_2': 'https://record.betsson.com/v_BAILE2_LINK_HERE/?payload=' + clickid,
+            'baile_3': 'https://record.betsson.com/v_BAILE3_LINK_HERE/?payload=' + clickid,
+            
+            // Meta campaigns
+            'meta_1': 'https://record.betsson.com/v_META1_LINK_HERE/?payload=' + clickid,
+            'meta_2': 'https://record.betsson.com/v_META2_LINK_HERE/?payload=' + clickid,
+            'meta_3': 'https://record.betsson.com/v_META3_LINK_HERE/?payload=' + clickid,
+            
+            // Add more campaigns as needed
+            'campaign_4': 'https://record.betsson.com/v_CAMPAIGN4_LINK/?payload=' + clickid,
+            'campaign_5': 'https://record.betsson.com/v_CAMPAIGN5_LINK/?payload=' + clickid,
+            
+            // Default fallback
+            'default': 'https://record.betsson.com/_5BnvWPFDzu3nA91_tVQmF2Nd7ZgqdRLk/28/?payload=' + clickid
         };
         
         // Get the appropriate Betsson URL for this campaign
         const destinationUrl = betssonDestinations[campaign] || betssonDestinations['default'];
         
-        console.log('Redirecting to:', destinationUrl);
-        console.log('Campaign:', campaign);
+        debugLog('Campaign detected: ' + campaign);
+        debugLog('Destination URL: ' + destinationUrl);
         
-        // Redirect after 2 seconds (gives time for data storage)
-        setTimeout(() => {
+        // Enhanced redirect with multiple fallback methods
+        function performRedirect() {
+            debugLog('Initiating redirect...');
+            
             try {
+                // Primary redirect method
                 window.location.href = destinationUrl;
             } catch (e) {
-                console.log('Redirect failed, trying alternative method');
-                window.location.replace(destinationUrl);
+                debugLog('Primary redirect failed, trying fallback...');
+                try {
+                    // Fallback method 1
+                    window.location.replace(destinationUrl);
+                } catch (e2) {
+                    debugLog('Fallback redirect failed, trying window.open...');
+                    try {
+                        // Fallback method 2
+                        window.open(destinationUrl, '_self');
+                    } catch (e3) {
+                        debugLog('All redirect methods failed, showing manual link');
+                        document.body.innerHTML = `
+                            <div class="container">
+                                <h2>Click to Continue</h2>
+                                <p>If you're not redirected automatically, click below:</p>
+                                <a href="${destinationUrl}" style="color: #007aff; text-decoration: none; font-weight: bold; font-size: 1.2rem;">
+                                    Continue to Your Exclusive Offer →
+                                </a>
+                            </div>
+                        `;
+                    }
+                }
             }
+        }
+        
+        // Main redirect after delay (gives time for data storage and visual feedback)
+        setTimeout(() => {
+            performRedirect();
         }, 2000);
         
-        // Fallback redirect in case setTimeout fails
+        // Backup redirect in case primary fails
         setTimeout(() => {
             if (document.visibilityState === 'visible') {
-                window.location.href = destinationUrl;
+                debugLog('Backup redirect triggered');
+                performRedirect();
             }
-        }, 3000);
+        }, 4000);
         
-        // Handle page visibility changes (user switches tabs)
+        // Handle page visibility changes (user switches tabs and returns)
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
                 setTimeout(() => {
-                    window.location.href = destinationUrl;
+                    debugLog('Visibility change redirect');
+                    performRedirect();
                 }, 500);
             }
         });
+        
+        // Handle page focus (additional safety)
+        window.addEventListener('focus', function() {
+            setTimeout(() => {
+                debugLog('Focus redirect');
+                performRedirect();
+            }, 1000);
+        });
+        
+        // Analytics event (optional - for tracking bridge performance)
+        try {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'bridge_redirect', {
+                    'campaign': campaign,
+                    'clickid': clickid,
+                    'source': source
+                });
+            }
+        } catch (e) {
+            // Ignore analytics errors
+        }
+        
+        debugLog('Bridge setup complete - awaiting redirect');
         
     </script>
 </body>
