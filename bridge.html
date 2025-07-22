@@ -148,6 +148,20 @@
                       urlParams.get('traffic_source') ||
                       'cloaking_redtrack';
         
+        // Enhanced RedTrack debugging
+        debugLog('RedTrack ClickID raw: ' + urlParams.get('clickid'));
+        debugLog('All URL parameters: ' + window.location.search);
+        debugLog('Expected vs Actual ClickID: Expected from RedTrack, Got: ' + clickid);
+        
+        // Check if RedTrack is replacing the variable
+        if (clickid.includes('{clickid}')) {
+            debugLog('ERROR: RedTrack is not replacing {clickid} variable!');
+        } else if (clickid.startsWith('RT_') || clickid.startsWith('BRIDGE_')) {
+            debugLog('WARNING: Using fallback ClickID - RedTrack not passing parameter');
+        } else {
+            debugLog('SUCCESS: Got real ClickID from RedTrack: ' + clickid);
+        }
+        
         // Additional tracking parameters
         const offer = urlParams.get('offer') || urlParams.get('subid4') || 'betsson';
         const creative = urlParams.get('creative') || urlParams.get('subid5') || '';
