@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎉 VIP Giveaway — Exclusive Access</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            color: #f5f5f7;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+            padding: 80px 20px 60px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd23f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 400;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(52, 199, 89, 0.15);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #34c759;
+            backdrop-filter: blur(10px);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: -40px auto 40px;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+        }
+        
+        .status-card {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .status-verified {
+            background: linear-gradient(45deg, #34c759, #30d158);
+        }
+        
+        .status-manual {
+            background: linear-gradient(45deg, #ff9500, #ffb340);
+        }
+        
+        .status-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        
+        .status-description {
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        
+        .verification-info {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .form-section {
+            margin-top: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 8px;
+            letter-spacing: 0.01em;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #f5f5f7;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #007aff;
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+        
+        input::placeholder, select::placeholder, textarea::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .file-input {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.08);
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input:hover {
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .file-input input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+        
+        .file-input-text {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .file-input-subtext {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .primary-button {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(45deg, #007aff, #0051d5);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            letter-spacing: 0.01em;
+        }
+        
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+        }
+        
+        .primary-button:active {
+            transform: translateY(0);
+        }
+        
+        .primary-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+        
+        .secondary-button {
+            background: linear-gradient(45deg, #ff9500, #ff8c00);
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+        }
+        
+        .secondary-button:hover {
+            box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4);
+        }
+        
+        .result-card {
+            margin-top: 32px;
+            text-align: center;
+        }
+        
+        .result-success {
+            border-color: rgba(52, 199, 89, 0.3);
+            background: rgba(52, 199, 89, 0.1);
+        }
+        
+        .result-warning {
+            border-color: rgba(255, 149, 0, 0.3);
+            background: rgba(255, 149, 0, 0.1);
+        }
+        
+        .result-error {
+            border-color: rgba(255, 59, 48, 0.3);
+            background: rgba(255, 59, 48, 0.1);
+        }
+        
+        .rules-section {
+            margin-top: 60px;
+            padding: 32px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .rules-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .rules-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .rules-list li {
+            padding: 8px 0;
+            padding-left: 32px;
+            position: relative;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+        }
+        
+        .rules-list li::before {
+            content: "●";
+            position: absolute;
+            left: 0;
+            color: #007aff;
+            font-weight: bold;
+        }
+        
+        .debug {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            color: #34c759;
+            padding: 16px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 12px;
+            border-radius: 12px;
+            max-width: 320px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+        }
+        
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .floating-element {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 15s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 20px 40px;
+            }
+            
+            .card {
+                padding: 32px 24px;
+                margin: 0 16px 24px;
+            }
+            
+            .container {
+                margin: -20px auto 40px;
+                padding: 0 16px;
+            }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background elements -->
+    <div class="floating-elements">
+        <div class="floating-element" style="left: 10%; animation-delay: -5s;"></div>
+        <div class="floating-element" style="left: 20%; animation-delay: -1s;"></div>
+        <div class="floating-element" style="left: 30%; animation-delay: -3s;"></div>
+        <div class="floating-element" style="left: 40%; animation-delay: -6s;"></div>
+        <div class="floating-element" style="left: 50%; animation-delay: -2s;"></div>
+        <div class="floating-element" style="left: 60%; animation-delay: -4s;"></div>
+        <div class="floating-element" style="left: 70%; animation-delay: -7s;"></div>
+        <div class="floating-element" style="left: 80%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="left: 90%; animation-delay: -8s;"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 id="giveaway-title" class="hero-title">VIP Exclusive</h1>
+        <p id="giveaway-subtitle" class="hero-subtitle">Join our premium giveaway experience</p>
+        <div id="verification-badge" class="verification-badge" style="display: none;">
+            <span>✓</span>
+            <span>Verified Member</span>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Verification Status Card -->
+        <div id="status-card" class="card status-card slide-in" style="display: none;">
+            <div id="status-icon" class="status-icon"></div>
+            <h2 id="status-title" class="status-title"></h2>
+            <p id="status-description" class="status-description"></p>
+            <div id="verification-info" class="verification-info" style="display: none;"></div>
+        </div>
+
+        <!-- Auto-Verified Form -->
+        <div id="verified-form" class="card slide-in" style="display: none;">
+            <div class="form-section">
+                <form id="auto-form">
+                    <div class="form-group">
+                        <label class="form-label" for="v-email">Email Address</label>
+                        <input type="email" id="v-email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-phone">Phone Number</label>
+                        <input type="tel" id="v-phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-telegram">Telegram Username</label>
+                        <input type="text" id="v-telegram" placeholder="@username (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-username">Casino Username</label>
+                        <input type="text" id="v-username" placeholder="Your casino username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Deposit Screenshot</label>
+                        <div class="file-input" id="v-file-input">
+                            <input type="file" id="v-screenshot" accept="image/*" required>
+                            <div class="file-input-icon">📸</div>
+                            <div class="file-input-text">Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="v-submit" class="primary-button">
+                        Enter Giveaway
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Manual Verification Form -->
+        <div id="manual-form" class="card slide-in" style="display: none;">
+            <div class="form-section">
+                <form id="manual-form-element">
+                    <div class="form-group">
+                        <label class="form-label" for="m-email">Email Address</label>
+                        <input type="email" id="m-email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-phone">Phone Number</label>
+                        <input type="tel" id="m-phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-telegram">Telegram Username</label>
+                        <input type="text" id="m-telegram" placeholder="@username (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-username">Casino Username</label>
+                        <input type="text" id="m-username" placeholder="Your casino username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-influencer">Traffic Source</label>
+                        <select id="m-influencer" required>
+                            <option value="">How did you find us?</option>
+                            <option value="influencer1">Influencer A</option>
+                            <option value="influencer2">Influencer B</option>
+                            <option value="influencer3">Influencer C</option>
+                            <option value="facebook_ad">Facebook Advertisement</option>
+                            <option value="instagram_ad">Instagram Advertisement</option>
+                            <option value="tiktok_ad">TikTok Advertisement</option>
+                            <option value="google_ad">Google Advertisement</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="telegram">Telegram Channel</option>
+                            <option value="friend">Friend Referral</option>
+                            <option value="other">Other Source</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-other-source">Other Source Details</label>
+                        <input type="text" id="m-other-source" placeholder="Please specify if you selected 'Other'">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-reg-date">Registration Date</label>
+                        <input type="date" id="m-reg-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-details">Additional Information</label>
+                        <textarea id="m-details" rows="3" placeholder="Any additional details that might help verify your registration..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Deposit Screenshot</label>
+                        <div class="file-input" id="m-file-input">
+                            <input type="file" id="m-screenshot" accept="image/*" required>
+                            <div class="file-input-icon">📸</div>
+                            <div class="file-input-text">Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="m-submit" class="primary-button secondary-button">
+                        Submit for Review
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Result Card -->
+        <div id="result-card" class="card result-card" style="display: none;"></div>
+
+        <!-- Rules Section -->
+        <div class="rules-section">
+            <h3 class="rules-title">Giveaway Guidelines</h3>
+            <ul class="rules-list">
+                <li>Must be registered through our official promotional channels</li>
+                <li>Valid deposit screenshot required for verification</li>
+                <li>One entry per person — duplicate entries will be disqualified</li>
+                <li>Must be 18+ and legally eligible to participate</li>
+                <li>Winners announced weekly via email and Telegram</li>
+                <li>Valid contact information required for prize delivery</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Debug Console -->
+    <div id="debug" class="debug"></div>
+
+    <script>
+        // Configuration
+        const AIRTABLE_TOKEN = 'patDS5YMB7hzvJTCS.7559c701e84181c5558a048c8ae8a611b1ba15284846cf66833866788dbc7d77';
+        const BASE_ID = 'appcH8x1W3uCmFJlpTbDAhTJx9dyZ7NvIviwp2xMycb30funqv';
+        
+        // ImgBB configuration (working image upload)
+        const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
+        
+        // Debug mode (set to false for production)
+        const debugMode = false; // Change to true for testing: ?debug=1
+        
+        if (debugMode || new URLSearchParams(window.location.search).get('debug') === '1') {
+            document.getElementById('debug').style.display = 'block';
+        }
+        
+        function debugLog(message) {
+            console.log(message);
+            if (debugMode) {
+                const debugDiv = document.getElementById('debug');
+                debugDiv.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+                debugDiv.scrollTop = debugDiv.scrollHeight;
+            }
+        }
+        
+        // Campaign configurations - ADD YOUR CAMPAIGNS HERE
+        const campaignConfig = {
+            'graficos_1': {
+                title: 'Win $1,000 Betsson Bonus - Graficos',
+                subtitle: 'Exclusive giveaway for Graficos campaign players',
+                color: '#ff6b35'
+            },
+            'graficos_2': {
+                title: 'Win $1,500 Betsson Bonus - Graficos 2',
+                subtitle: 'Premium Graficos 2 campaign exclusive',
+                color: '#34c759'
+            },
+            'graficos_3': {
+                title: 'Win $2,000 Betsson Bonus - Graficos 3',
+                subtitle: 'High-value Graficos 3 campaign',
+                color: '#f7931e'
+            },
+            'baile_1': {
+                title: 'Win $800 Betsson Bonus - Baile',
+                subtitle: 'Baile campaign exclusive offer',
+                color: '#e74c3c'
+            },
+            'baile_2': {
+                title: 'Win $1,200 Betsson Bonus - Baile 2',
+                subtitle: 'Enhanced Baile campaign rewards',
+                color: '#9b59b6'
+            },
+            'baile_3': {
+                title: 'Win $1,800 Betsson Bonus - Baile 3',
+                subtitle: 'Premium Baile campaign giveaway',
+                color: '#1abc9c'
+            },
+            'meta_1': {
+                title: 'Win $600 Betsson Bonus - Meta',
+                subtitle: 'Meta campaign starter bonus',
+                color: '#3498db'
+            },
+            'meta_2': {
+                title: 'Win $1,000 Betsson Bonus - Meta 2',
+                subtitle: 'Enhanced Meta campaign offer',
+                color: '#e67e22'
+            },
+            'meta_3': {
+                title: 'Win $1,500 Betsson Bonus - Meta 3',
+                subtitle: 'Premium Meta campaign exclusive',
+                color: '#95a5a6'
+            },
+            // Default fallback
+            'default': {
+                title: 'VIP Exclusive Giveaway',
+                subtitle: 'Premium member rewards program',
+                color: '#007aff'
+            }
+        };
+        
+        // Initialize page
+        window.onload = function() {
+            debugLog('Premium giveaway page loaded');
+            checkVerificationStatus();
+            
+            // Set up events after a short delay
+            setTimeout(function() {
+                setupEventListeners();
+            }, 2000);
+        }
+        
+        function checkVerificationStatus() {
+            debugLog('Checking verification status...');
+            
+            // Check multiple storage methods
+            let clickid = localStorage.getItem('verified_clickid') || 
+                         sessionStorage.getItem('verified_clickid') || 
+                         getCookie('vc_id');
+            
+            let campaign = localStorage.getItem('campaign_source') || 
+                          sessionStorage.getItem('campaign_source') || 
+                          getCookie('vc_camp') || 'default';
+            
+            let timestamp = localStorage.getItem('user_timestamp') || getCookie('vc_time');
+            
+            debugLog(`Verification data: clickid=${clickid}, campaign=${campaign}`);
+            
+            // Update page theme
+            updatePageTheme(campaign);
+            
+            if (!clickid) {
+                showManualVerification();
+                return;
+            }
+            
+            // Check if verification is still valid (30 days)
+            const daysSinceVerification = timestamp ? 
+                (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24) : 0;
+            
+            if (timestamp && daysSinceVerification > 30) {
+                showExpiredVerification();
+                return;
+            }
+            
+            showAutoVerification(clickid, campaign, timestamp);
+        }
+        
+        function updatePageTheme(campaign) {
+            const config = campaignConfig[campaign] || campaignConfig['default'];
+            
+            document.getElementById('giveaway-title').textContent = config.title;
+            document.getElementById('giveaway-subtitle').textContent = config.subtitle;
+        }
+        
+        function showAutoVerification(clickid, campaign, timestamp) {
+            const statusCard = document.getElementById('status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusDescription = document.getElementById('status-description');
+            const verificationInfo = document.getElementById('verification-info');
+            const verificationBadge = document.getElementById('verification-badge');
+            
+            // Show verification badge
+            verificationBadge.style.display = 'inline-flex';
+            
+            // Configure status card
+            statusIcon.innerHTML = '✓';
+            statusIcon.classList.add('status-verified');
+            statusTitle.textContent = 'Automatically Verified';
+            statusDescription.textContent = 'Your registration has been verified and you\'re eligible for fast-track entry.';
+            
+            // Show verification details
+            verificationInfo.style.display = 'block';
+            verificationInfo.innerHTML = `
+                <strong>Campaign:</strong> ${campaign.toUpperCase()}<br>
+                <strong>Registration ID:</strong> ${clickid.substring(0, 8)}...<br>
+                <strong>Status:</strong> Active<br>
+                <strong>Verified:</strong> ${timestamp ? new Date(parseInt(timestamp)).toLocaleDateString() : 'Recently'}
+            `;
+            
+            statusCard.style.display = 'block';
+            document.getElementById('verified-form').style.display = 'block';
+            
+            debugLog('Showing auto-verification form');
+        }
+        
+        function showManualVerification() {
+            const statusCard = document.getElementById('status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusDescription = document.getElementById('status-description');
+            
+            statusIcon.innerHTML = '?';
+            statusIcon.classList.add('status-manual');
+            statusTitle.textContent = 'Manual Verification Required';
+            statusDescription.textContent = 'We couldn\'t automatically verify your registration. Please provide additional information for manual review.';
+            
+            statusCard.style.display = 'block';
+            document.getElementById('manual-form').style.display = 'block';
+            
+            debugLog('Showing manual verification form');
+        }
+        
+        function showExpiredVerification() {
+            const statusCard = document.getElementById('status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusDescription = document.getElementById('status-description');
+            
+            statusIcon.innerHTML = '⏰';
+            statusIcon.classList.add('status-manual');
+            statusTitle.textContent = 'Verification Expired';
+            statusDescription.textContent = 'Your verification link has expired. Please provide your information for manual review.';
+            
+            statusCard.style.display = 'block';
+            document.getElementById('manual-form').style.display = 'block';
+            
+            debugLog('Showing expired verification form');
+        }
+        
+        function setupEventListeners() {
+            debugLog('Setting up event listeners...');
+            
+            setTimeout(function() {
+                const autoForm = document.getElementById('auto-form');
+                const submitButton = document.getElementById('v-submit');
+                
+                debugLog('Auto form found: ' + (autoForm ? 'YES' : 'NO'));
+                debugLog('Submit button found: ' + (submitButton ? 'YES' : 'NO'));
+                
+                if (autoForm) {
+                    autoForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        debugLog('AUTO FORM SUBMITTED!');
+                        handleFormSubmission('automatic');
+                    });
+                    
+                    autoForm.onsubmit = function(e) {
+                        e.preventDefault();
+                        debugLog('AUTO FORM ONSUBMIT!');
+                        handleFormSubmission('automatic');
+                        return false;
+                    };
+                }
+                
+                if (submitButton) {
+                    submitButton.onclick = function(e) {
+                        e.preventDefault();
+                        debugLog('SUBMIT BUTTON CLICKED!');
+                        handleFormSubmission('automatic');
+                        return false;
+                    };
+                }
+                
+                // Manual form
+                const manualForm = document.getElementById('manual-form-element');
+                const manualButton = document.getElementById('m-submit');
+                
+                if (manualForm) {
+                    manualForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        debugLog('MANUAL FORM SUBMITTED!');
+                        handleFormSubmission('manual');
+                    });
+                }
+                
+                if (manualButton) {
+                    manualButton.onclick = function(e) {
+                        e.preventDefault();
+                        debugLog('MANUAL BUTTON CLICKED!');
+                        handleFormSubmission('manual');
+                        return false;
+                    };
+                }
+                
+                setupFileInputs();
+                setupPhoneFormatting();
+                
+                debugLog('All event listeners set up complete!');
+            }, 500);
+        }
+        
+        function setupFileInputs() {
+            const vFileInput = document.getElementById('v-file-input');
+            const vScreenshot = document.getElementById('v-screenshot');
+            const mFileInput = document.getElementById('m-file-input');
+            const mScreenshot = document.getElementById('m-screenshot');
+            
+            if (vFileInput && vScreenshot) {
+                vFileInput.onclick = function() {
+                    vScreenshot.click();
+                };
+                
+                vScreenshot.onchange = function(e) {
+                    handleFileChange(e, 'v');
+                };
+            }
+            
+            if (mFileInput && mScreenshot) {
+                mFileInput.onclick = function() {
+                    mScreenshot.click();
+                };
+                
+                mScreenshot.onchange = function(e) {
+                    handleFileChange(e, 'm');
+                };
+            }
+        }
+        
+        function handleFileChange(event, prefix) {
+            const file = event.target.files[0];
+            const fileInputDiv = document.getElementById(prefix + '-file-input');
+            
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File is too large. Please select an image under 10MB.');
+                    event.target.value = '';
+                    return;
+                }
+                
+                const fileName = file.name;
+                const fileSize = Math.round(file.size / 1024);
+                
+                // Store the file reference
+                window['selectedFile_' + prefix] = file;
+                
+                fileInputDiv.innerHTML = `
+                    <div class="file-input-icon">✅</div>
+                    <div class="file-input-text">${fileName}</div>
+                    <div class="file-input-subtext">${fileSize}KB • Click to change</div>
+                `;
+                
+                fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
+                fileInputDiv.style.background = 'rgba(52, 199, 89, 0.1)';
+                
+                // Re-add file input (hidden)
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'file';
+                hiddenInput.id = prefix + '-screenshot';
+                hiddenInput.accept = 'image/*';
+                hiddenInput.required = true;
+                hiddenInput.style.display = 'none';
+                hiddenInput.files = event.target.files;
+                
+                fileInputDiv.appendChild(hiddenInput);
+                
+                fileInputDiv.onclick = function() {
+                    hiddenInput.click();
+                };
+                
+                hiddenInput.onchange = function(e) {
+                    handleFileChange(e, prefix);
+                };
+            }
+        }
+        
+        function setupPhoneFormatting() {
+            const phoneInputs = document.querySelectorAll('input[type="tel"]');
+            
+            phoneInputs.forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.length >= 10) {
+                        if (value.length === 10) {
+                            value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                        } else if (value.length === 11 && value[0] === '1') {
+                            value = value.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
+                        }
+                    }
+                    
+                    e.target.value = value;
+                });
+            });
+        }
+        
+        async function uploadToImgBB(file) {
+            debugLog('Starting ImgBB upload...');
+            
+            const url = 'https://api.imgbb.com/1/upload';
+            
+            const formData = new FormData();
+            formData.append('key', IMGBB_API_KEY);
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Upload failed: ' + response.status);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    debugLog('Image uploaded successfully: ' + data.data.url);
+                    return data.data.url;
+                } else {
+                    throw new Error('Upload failed: ' + data.error.message);
+                }
+            } catch (error) {
+                debugLog('ImgBB upload error: ' + error.message);
+                throw error;
+            }
+        }
+        
+        async function handleFormSubmission(type) {
+            debugLog(`${type} form submission started`);
+            
+            const submitButton = document.getElementById(type === 'automatic' ? 'v-submit' : 'm-submit');
+            const originalText = submitButton.textContent;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            
+            try {
+                const formData = collectFormData(type);
+                debugLog('Form data collected: ' + JSON.stringify({...formData, screenshot: formData.screenshot ? 'FILE_PRESENT' : 'NO_FILE'}));
+                
+                // Upload screenshot to ImgBB if present
+                let imageUrl = null;
+                if (formData.screenshot) {
+                    try {
+                        imageUrl = await uploadToImgBB(formData.screenshot);
+                        debugLog('Screenshot uploaded: ' + imageUrl);
+                    } catch (e) {
+                        debugLog('Image upload failed: ' + e.message);
+                        showErrorResult('Image upload failed: ' + e.message);
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalText;
+                        return;
+                    }
+                }
+                
+                // Submit to Airtable
+                await submitToAirtable(formData, type, submitButton, originalText, imageUrl);
+                
+            } catch (error) {
+                debugLog('Form submission error: ' + error.message);
+                showErrorResult(error.message);
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+        
+        function collectFormData(type) {
+            const prefix = type === 'automatic' ? 'v-' : 'm-';
+            
+            const formData = {
+                verification_type: type,
+                email: getValue(prefix + 'email'),
+                phone: getValue(prefix + 'phone'),
+                telegram: getValue(prefix + 'telegram'),
+                username: getValue(prefix + 'username'),
+                screenshot: getFile(prefix + 'screenshot')
+            };
+            
+            if (type === 'automatic') {
+                formData.clickid = localStorage.getItem('verified_clickid') || getCookie('vc_id') || '';
+                formData.campaign = localStorage.getItem('campaign_source') || getCookie('vc_camp') || '';
+            } else {
+                formData.influencer = getValue('m-influencer');
+                formData.other_source = getValue('m-other-source');
+                formData.registration_date = getValue('m-reg-date');
+                formData.details = getValue('m-details');
+            }
+            
+            return formData;
+        }
+        
+        function getValue(id) {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        }
+        
+        function getFile(id) {
+            const prefix = id.replace('-screenshot', '');
+            
+            // Try to get from stored reference first
+            if (window['selectedFile_' + prefix]) {
+                return window['selectedFile_' + prefix];
+            }
+            
+            // Fallback to DOM element
+            const element = document.getElementById(id);
+            return (element && element.files && element.files[0]) ? element.files[0] : null;
+        }
+        
+        async function submitToAirtable(formData, type, submitButton, originalText, imageUrl) {
+            // Prepare Airtable record
+            const recordData = {
+                'Email': formData.email,
+                'Phone': formData.phone,
+                'Telegram': formData.telegram,
+                'Username': formData.username,
+                'Verification': formData.verification_type,
+                'Status': 'pending',
+                'Submitted': new Date().toISOString()
+            };
+            
+            // Add type-specific fields
+            if (type === 'automatic') {
+                recordData['ClickID'] = formData.clickid || '';
+                recordData['Campaign'] = formData.campaign || '';
+                recordData['Notes'] = `Auto-verified entry - Campaign: ${formData.campaign}`;
+            } else {
+                recordData['Notes'] = `Manual verification - Source: ${formData.influencer}`;
+                if (formData.details) recordData['Notes'] += ` - Details: ${formData.details}`;
+                if (formData.registration_date) recordData['Notes'] += ` - Reg Date: ${formData.registration_date}`;
+                if (formData.other_source) recordData['Notes'] += ` - Other: ${formData.other_source}`;
+            }
+            
+            // Add screenshot if uploaded
+            if (imageUrl) {
+                recordData['Screenshot'] = [{ url: imageUrl }];
+                recordData['Notes'] += ` - Screenshot uploaded: ${formData.screenshot.name}`;
+            }
+            
+            // Submit to Airtable
+            const airtableData = {
+                records: [{ fields: recordData }]
+            };
+            
+            debugLog('Sending to Airtable: ' + JSON.stringify(recordData));
+            
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/Table%201`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(airtableData)
+                });
+                
+                debugLog(`Airtable response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Airtable error payload:', errorData);
+                    throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                debugLog('✅ Successfully submitted to Airtable');
+                showSuccessResult(formData, type);
+                
+            } catch (error) {
+                debugLog('❌ Airtable submission failed: ' + error.message);
+                showErrorResult(error.message);
+                
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+        
+        function showSuccessResult(formData, type) {
+            const resultCard = document.getElementById('result-card');
+            
+            if (type === 'automatic') {
+                resultCard.innerHTML = `
+                    <div class="status-icon status-verified">🎉</div>
+                    <h2 class="status-title">Entry Successful!</h2>
+                    <div class="status-description">
+                        <p><strong>Congratulations!</strong> You've been automatically verified and entered into our exclusive giveaway.</p>
+                        
+                        <div class="verification-info" style="margin: 24px 0;">
+                            <strong>Entry Details:</strong><br>
+                            📧 Email: ${formData.email}<br>
+                            🎮 Username: ${formData.username}<br>
+                            🆔 Entry ID: ${(formData.clickid || 'AUTO').substring(0, 8)}...<br>
+                            ✅ Status: Active Entry
+                        </div>
+                        
+                        <p><strong>What's Next?</strong></p>
+                        <p>• Winners are announced weekly via email and Telegram</p>
+                        <p>• Keep an eye on your inbox for updates</p>
+                        <p>• Good luck! 🍀</p>
+                    </div>
+                `;
+                resultCard.classList.add('result-success');
+            } else {
+                resultCard.innerHTML = `
+                    <div class="status-icon status-manual">📝</div>
+                    <h2 class="status-title">Submitted for Review</h2>
+                    <div class="status-description">
+                        <p><strong>Thank you!</strong> Your entry has been submitted for manual verification.</p>
+                        
+                        <div class="verification-info" style="margin: 24px 0;">
+                            <strong>Submission Details:</strong><br>
+                            📧 Email: ${formData.email}<br>
+                            🎮 Username: ${formData.username}<br>
+                            🔍 Status: Under Review<br>
+                            ⏱️ Timeline: 24-48 hours
+                        </div>
+                        
+                        <p><strong>Review Process:</strong></p>
+                        <p>• Our team will verify your registration details</p>
+                        <p>• You'll be contacted via email if approved</p>
+                        <p>• Once verified, you'll be entered automatically</p>
+                        
+                        <p>Thank you for your patience! 🙏</p>
+                    </div>
+                `;
+                resultCard.classList.add('result-warning');
+            }
+            
+            // Hide forms and show result
+            document.getElementById('verified-form').style.display = 'none';
+            document.getElementById('manual-form').style.display = 'none';
+            resultCard.style.display = 'block';
+            
+            // Smooth scroll to result
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function showErrorResult(error) {
+            const resultCard = document.getElementById('result-card');
+            
+            resultCard.innerHTML = `
+                <div class="status-icon" style="background: linear-gradient(45deg, #ff3b30, #ff6b60);">❌</div>
+                <h2 class="status-title">Submission Failed</h2>
+                <div class="status-description">
+                    <p>We encountered a technical issue while processing your entry.</p>
+                    
+                    <div class="verification-info" style="margin: 24px 0;">
+                        <strong>Error Details:</strong><br>
+                        ${error}
+                    </div>
+                    
+                    <p><strong>What to do:</strong></p>
+                    <p>• Please try again in a few minutes</p>
+                    <p>• Check your internet connection</p>
+                    <p>• Contact support if the issue persists</p>
+                </div>
+            `;
+            
+            resultCard.classList.add('result-error');
+            resultCard.style.display = 'block';
+            
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        
+        // Add premium animations and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.card').forEach(card => {
+                observer.observe(card);
+            });
+            
+            document.querySelectorAll('.floating-element').forEach((el, index) => {
+                el.style.animationDelay = `${-index * 2}s`;
+                el.style.left = `${10 + index * 10}%`;
+            });
+        });
+        
+        // Add premium touch interactions for mobile
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.primary-button, .card').forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                element.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
