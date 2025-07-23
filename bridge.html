@@ -1,368 +1,167 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Redirecting to Exclusive Offer...</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge Debug Page</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #f5f5f7;
-            text-align: center; 
-            padding: 50px 20px;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5; 
         }
-        
-        .container {
-            max-width: 400px;
-            padding: 40px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .debug-container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
         }
-        
-        .spinner { 
-            border: 4px solid rgba(255,255,255,0.1); 
-            border-top: 4px solid #007aff; 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            animation: spin 1s linear infinite; 
-            margin: 0 auto 30px; 
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        pre { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 4px; 
+            overflow-x: auto; 
         }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        
-        h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            background: linear-gradient(45deg, #ff6b35, #f7931e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        p {
-            color: rgba(255,255,255,0.7);
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 24px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #007aff, #0051d5);
-            width: 0%;
-            animation: progress 2s ease-out forwards;
-        }
-        
-        @keyframes progress {
-            to { width: 100%; }
-        }
-
-        /* Debug panel for testing */
-        .debug-panel {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.9);
-            color: #00ff00;
+        .redirect-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
             padding: 15px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            max-width: 300px;
-            display: none;
-            z-index: 1000;
-        }
-        
-        .debug-panel.show {
-            display: block;
+            border-radius: 4px;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="spinner"></div>
-        <h2>Loading Your Exclusive Offer</h2>
-        <p>Verifying your registration and preparing your personalized bonus...</p>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
+    <div class="debug-container">
+        <h1>Bridge Debug Information</h1>
+        
+        <div id="status"></div>
+        <div id="params"></div>
+        <div id="redirect-info" class="redirect-info" style="display:none;">
+            <h3>🎉 Click ID Found!</h3>
+            <p>Redirecting to offer in <span id="countdown">5</span> seconds...</p>
+            <button onclick="redirectNow()">Redirect Now</button>
         </div>
     </div>
 
-    <!-- Debug Panel for Testing -->
-    <div id="debug-panel" class="debug-panel">
-        <div id="debug-content"></div>
-    </div>
-
     <script>
-        // Enhanced parameter detection for RedTrack + Cloaking.House
+        // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
+        const statusDiv = document.getElementById('status');
+        const paramsDiv = document.getElementById('params');
+        const redirectDiv = document.getElementById('redirect-info');
         
-        // Debug mode detection (DEFINE FIRST)
-        const debugMode = urlParams.get('debug') === '1' || 
-                         urlParams.get('test') === '1' ||
-                         window.location.hostname === 'localhost';
+        // Get all parameters
+        const allParams = {};
+        for (const [key, value] of urlParams) {
+            allParams[key] = value;
+        }
         
-        // Debug function (DEFINE EARLY)
-        function debugLog(message) {
-            console.log('🌉 BRIDGE:', message);
-            if (debugMode) {
-                const debugContent = document.getElementById('debug-content');
-                if (debugContent) {
-                    debugContent.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+        // Try to get clickid from various sources
+        const clickId = urlParams.get('clickid') || 
+                       urlParams.get('subid') ||        // RedTrack sends as subid
+                       urlParams.get('click_id') || 
+                       urlParams.get('cid') ||
+                       urlParams.get('external_id');
+        
+        // Display current URL
+        paramsDiv.innerHTML = `
+            <h3>Current URL:</h3>
+            <pre>${window.location.href}</pre>
+            
+            <h3>All Parameters Received:</h3>
+            <pre>${JSON.stringify(allParams, null, 2)}</pre>
+            
+            <h3>Referrer:</h3>
+            <pre>${document.referrer || 'None'}</pre>
+        `;
+        
+        if (clickId) {
+            statusDiv.innerHTML = `
+                <h2 class="success">✅ SUCCESS: Click ID Found!</h2>
+                <p><strong>Click ID:</strong> ${clickId}</p>
+                <p><strong>Source Parameter:</strong> ${urlParams.get('clickid') ? 'clickid' : 'subid'}</p>
+            `;
+            
+            // Show redirect info
+            redirectDiv.style.display = 'block';
+            
+            // Store the clickid
+            sessionStorage.setItem('bridge_clickid', clickId);
+            
+            // Countdown and redirect
+            let countdown = 5;
+            const countdownSpan = document.getElementById('countdown');
+            
+            const timer = setInterval(() => {
+                countdown--;
+                countdownSpan.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    redirectToOffer();
                 }
-            }
-        }
-        
-        // Show debug panel if in debug mode
-        if (debugMode) {
-            document.getElementById('debug-panel').classList.add('show');
-        }
-        
-        debugLog('Bridge page loaded');
-        debugLog('Full URL: ' + window.location.href);
-        
-        // Comprehensive parameter mapping for different tracking systems
-        const clickid = urlParams.get('clickid') || 
-                        urlParams.get('subid1') || 
-                        urlParams.get('subid') || 
-                        urlParams.get('sub1') || 
-                        urlParams.get('s1') ||
-                        urlParams.get('click_id') ||
-                        urlParams.get('cid') ||
-                        'BRIDGE_' + Date.now();
-        
-        const campaign = urlParams.get('campaign') || 
-                        urlParams.get('subid2') || 
-                        urlParams.get('sub2') || 
-                        urlParams.get('s2') ||
-                        urlParams.get('camp') ||
-                        'abiola_test'; // Default to your test campaign
-        
-        const source = urlParams.get('source') || 
-                      urlParams.get('subid3') || 
-                      urlParams.get('sub3') || 
-                      urlParams.get('s3') ||
-                      urlParams.get('traffic_source') ||
-                      'cloaking_redtrack';
-        
-        // Additional tracking parameters
-        const offer = urlParams.get('offer') || urlParams.get('subid4') || 'betsson';
-        const creative = urlParams.get('creative') || urlParams.get('subid5') || '';
-        const geo = urlParams.get('geo') || urlParams.get('country') || '';
-        
-        const timestamp = Date.now().toString();
-        
-        debugLog('Detected parameters: ' + JSON.stringify({
-            clickid, campaign, source, offer, creative, geo, timestamp
-        }));
-        
-        // Enhanced RedTrack debugging
-        debugLog('RedTrack ClickID raw: ' + urlParams.get('clickid'));
-        debugLog('RedTrack SubID raw: ' + urlParams.get('subid'));
-        debugLog('All URL parameters: ' + window.location.search);
-        debugLog('Final ClickID used: ' + clickid);
-        
-        // Check if RedTrack is replacing the variable
-        if (clickid.includes('{clickid}') || clickid.includes('{subid}')) {
-            debugLog('ERROR: RedTrack is not replacing variables!');
-        } else if (clickid.startsWith('RT_') || clickid.startsWith('BRIDGE_')) {
-            debugLog('WARNING: Using fallback ClickID - RedTrack not passing parameter');
-        } else {
-            debugLog('SUCCESS: Got real ClickID from RedTrack: ' + clickid);
-        }
-        
-        // Store verification data using multiple methods for reliability
-        const verificationData = {
-            verified_clickid: clickid,
-            campaign_source: campaign,
-            user_timestamp: timestamp,
-            traffic_source: source,
-            offer_name: offer,
-            creative_id: creative,
-            user_geo: geo,
-            bridge_version: '2.1',
-            verification_method: 'bridge_auto'
-        };
-        
-        debugLog('Storing verification data...');
-        
-        // Method 1: LocalStorage (primary)
-        try {
-            Object.keys(verificationData).forEach(key => {
-                localStorage.setItem(key, verificationData[key]);
-            });
-            debugLog('✅ LocalStorage data stored');
-        } catch (e) {
-            debugLog('❌ LocalStorage failed: ' + e.message);
-        }
-        
-        // Method 2: SessionStorage (backup)
-        try {
-            Object.keys(verificationData).forEach(key => {
-                sessionStorage.setItem(key, verificationData[key]);
-            });
-            debugLog('✅ SessionStorage data stored');
-        } catch (e) {
-            debugLog('❌ SessionStorage failed: ' + e.message);
-        }
-        
-        // Method 3: Cookies (backup for older browsers)
-        try {
-            const cookieExpiry = new Date(Date.now() + 30*24*60*60*1000).toUTCString();
-            const domain = window.location.hostname.includes('todoalrojo') ? '; domain=.todoalrojo.club' : '';
-            const cookieOptions = `; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax; Secure`;
-            
-            document.cookie = `vc_id=${clickid}${cookieOptions}`;
-            document.cookie = `vc_camp=${campaign}${cookieOptions}`;
-            document.cookie = `vc_time=${timestamp}${cookieOptions}`;
-            document.cookie = `vc_source=${source}${cookieOptions}`;
-            document.cookie = `vc_offer=${offer}${cookieOptions}`;
-            
-            debugLog('✅ Cookies data stored');
-        } catch (e) {
-            debugLog('❌ Cookies failed: ' + e.message);
-        }
-        
-        // Campaign-specific Betsson destination URLs
-        const betssonDestinations = {
-            // Test campaigns
-            'abiola_test': 'https://record.betsson.com/_5BnvWPFDzu3nA91_tVQmF2Nd7ZgqdRLk/28/?payload=' + clickid,
-            
-            // Graficos campaigns
-            'graficos_1': 'https://record.betsson.com/v_GRAFICOS1_LINK_HERE/?payload=' + clickid,
-            'graficos_2': 'https://record.betsson.com/v_GRAFICOS2_LINK_HERE/?payload=' + clickid,
-            'graficos_3': 'https://record.betsson.com/v_GRAFICOS3_LINK_HERE/?payload=' + clickid,
-            
-            // Baile campaigns  
-            'baile_1': 'https://record.betsson.com/v_BAILE1_LINK_HERE/?payload=' + clickid,
-            'baile_2': 'https://record.betsson.com/v_BAILE2_LINK_HERE/?payload=' + clickid,
-            'baile_3': 'https://record.betsson.com/v_BAILE3_LINK_HERE/?payload=' + clickid,
-            
-            // Meta campaigns
-            'meta_1': 'https://record.betsson.com/v_META1_LINK_HERE/?payload=' + clickid,
-            'meta_2': 'https://record.betsson.com/v_META2_LINK_HERE/?payload=' + clickid,
-            'meta_3': 'https://record.betsson.com/v_META3_LINK_HERE/?payload=' + clickid,
-            
-            // Add more campaigns as needed
-            'campaign_4': 'https://record.betsson.com/v_CAMPAIGN4_LINK/?payload=' + clickid,
-            'campaign_5': 'https://record.betsson.com/v_CAMPAIGN5_LINK/?payload=' + clickid,
-            
-            // Default fallback
-            'default': 'https://record.betsson.com/_5BnvWPFDzu3nA91_tVQmF2Nd7ZgqdRLk/28/?payload=' + clickid
-        };
-        
-        // Get the appropriate Betsson URL for this campaign
-        const destinationUrl = 'https://track.todoalrojo.club/click';
-        
-        debugLog('Campaign detected: ' + campaign);
-        debugLog('Destination URL: ' + destinationUrl);
-        
-        // Enhanced redirect with multiple fallback methods
-        function performRedirect() {
-            debugLog('Initiating redirect...');
-            
-            try {
-                // Primary redirect method
-                window.location.href = destinationUrl;
-            } catch (e) {
-                debugLog('Primary redirect failed, trying fallback...');
-                try {
-                    // Fallback method 1
-                    window.location.replace(destinationUrl);
-                } catch (e2) {
-                    debugLog('Fallback redirect failed, trying window.open...');
-                    try {
-                        // Fallback method 2
-                        window.open(destinationUrl, '_self');
-                    } catch (e3) {
-                        debugLog('All redirect methods failed, showing manual link');
-                        document.body.innerHTML = `
-                            <div class="container">
-                                <h2>Click to Continue</h2>
-                                <p>If you're not redirected automatically, click below:</p>
-                                <a href="${destinationUrl}" style="color: #007aff; text-decoration: none; font-weight: bold; font-size: 1.2rem;">
-                                    Continue to Your Exclusive Offer →
-                                </a>
-                            </div>
-                        `;
-                    }
-                }
-            }
-        }
-        
-        // Main redirect after delay (gives time for data storage and visual feedback)
-        setTimeout(() => {
-            performRedirect();
-        }, 2000);
-        
-        // Backup redirect in case primary fails
-        setTimeout(() => {
-            if (document.visibilityState === 'visible') {
-                debugLog('Backup redirect triggered');
-                performRedirect();
-            }
-        }, 4000);
-        
-        // Handle page visibility changes (user switches tabs and returns)
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'visible') {
-                setTimeout(() => {
-                    debugLog('Visibility change redirect');
-                    performRedirect();
-                }, 500);
-            }
-        });
-        
-        // Handle page focus (additional safety)
-        window.addEventListener('focus', function() {
-            setTimeout(() => {
-                debugLog('Focus redirect');
-                performRedirect();
             }, 1000);
-        });
-        
-        // Analytics event (optional - for tracking bridge performance)
-        try {
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'bridge_redirect', {
-                    'campaign': campaign,
-                    'clickid': clickid,
-                    'source': source
-                });
-            }
-        } catch (e) {
-            // Ignore analytics errors
+            
+        } else {
+            statusDiv.innerHTML = `
+                <h2 class="error">❌ ERROR: No Click ID Found</h2>
+                <p>Expected parameters: clickid, subid, click_id, cid, or external_id</p>
+                <p><strong>Check your RedTrack prelander URL configuration!</strong></p>
+            `;
+            
+            // Generate fallback ID
+            const fallbackId = 'fallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            statusDiv.innerHTML += `
+                <div class="info">
+                    <p><strong>Generated Fallback ID:</strong> ${fallbackId}</p>
+                </div>
+            `;
+            sessionStorage.setItem('bridge_clickid', fallbackId);
         }
         
-        debugLog('Bridge setup complete - awaiting redirect');
+        // Function to redirect to offer
+        function redirectToOffer() {
+            const finalClickId = sessionStorage.getItem('bridge_clickid');
+            // Replace with your actual offer URL
+            const offerUrl = 'https://your-final-offer-url.com';
+            const separator = offerUrl.includes('?') ? '&' : '?';
+            const finalUrl = `${offerUrl}${separator}clickid=${finalClickId}&ref=bridge&ts=${Date.now()}`;
+            
+            // For testing, just show the URL instead of redirecting
+            alert(`Would redirect to: ${finalUrl}`);
+            // Uncomment below line when ready:
+            // window.location.href = finalUrl;
+        }
         
+        // Function for manual redirect
+        function redirectNow() {
+            redirectToOffer();
+        }
+        
+        // Send tracking pixel to RedTrack (if needed)
+        function sendTrackingPixel() {
+            const trackingClickId = sessionStorage.getItem('bridge_clickid');
+            if (trackingClickId) {
+                const pixelUrl = `https://track.todoalrojo.club/pixel?clickid=${trackingClickId}&event=bridge_load&ts=${Date.now()}`;
+                const img = new Image();
+                img.src = pixelUrl;
+            }
+        }
+        
+        // Send tracking pixel
+        sendTrackingPixel();
+        
+        // Log for debugging
+        console.log('Bridge Debug:', {
+            allParams,
+            clickId,
+            referrer: document.referrer,
+            url: window.location.href
+        });
     </script>
 </body>
 </html>
