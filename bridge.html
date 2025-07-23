@@ -62,7 +62,8 @@
         
         // Try to get clickid from various sources
         const clickId = urlParams.get('clickid') || 
-                       urlParams.get('subid') ||        // RedTrack sends as subid
+                       urlParams.get('subid') ||  // RedTrack sends as subid
+                       urlParams.get('payload') ||  
                        urlParams.get('click_id') || 
                        urlParams.get('cid') ||
                        urlParams.get('external_id');
