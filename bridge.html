@@ -4,16 +4,6 @@
     <title>Redirecting to Exclusive Offer...</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-Expand
-message.txt
-15 KB
-﻿
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Redirecting to Exclusive Offer...</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             box-sizing: border-box;
@@ -290,7 +280,10 @@ message.txt
         };
         
         // Get the appropriate Betsson URL for this campaign
-        const destinationUrl = 'https://track.todoalrojo.club/click';
+        const destinationUrl = betssonDestinations[campaign] || betssonDestinations['default'];
+        
+        debugLog('Campaign detected: ' + campaign);
+        debugLog('Destination URL: ' + destinationUrl);
         
         debugLog('Campaign detected: ' + campaign);
         debugLog('Destination URL: ' + destinationUrl);
