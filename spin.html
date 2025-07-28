@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎰 Spin & Win — Exclusive Roulette Giveaway</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            color: #f5f5f7;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .floating-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.05));
+            animation: float 20s linear infinite;
+        }
+        
+        .orb:nth-child(1) { width: 200px; height: 200px; left: 10%; animation-delay: -5s; }
+        .orb:nth-child(2) { width: 150px; height: 150px; right: 15%; animation-delay: -10s; background: radial-gradient(circle at 30% 30%, rgba(0, 122, 255, 0.15), rgba(0, 122, 255, 0.05)); }
+        .orb:nth-child(3) { width: 100px; height: 100px; left: 50%; animation-delay: -15s; background: radial-gradient(circle at 30% 30%, rgba(52, 199, 89, 0.15), rgba(52, 199, 89, 0.05)); }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10%, 90% { opacity: 1; }
+            50% { transform: translateY(-10vh) rotate(180deg); }
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(26, 26, 26, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            padding: 60px 20px 40px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd23f, #007aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 400;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(52, 199, 89, 0.15);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #34c759;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(52, 199, 89, 0.2);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: -20px auto 40px;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(40px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .status-card {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .status-verified {
+            background: linear-gradient(45deg, #34c759, #30d158);
+        }
+        
+        .status-manual {
+            background: linear-gradient(45deg, #ff9500, #ffb340);
+        }
+        
+        .status-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        
+        .status-description {
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        
+        .verification-info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-section {
+            margin-top: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 8px;
+            letter-spacing: 0.01em;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 18px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            color: #f5f5f7;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #007aff;
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2), 0 8px 32px rgba(0, 122, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        input::placeholder, select::placeholder, textarea::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .file-input {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .file-input:hover {
+            border-color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-2px);
+        }
+        
+        .file-input input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+        
+        .file-input-text {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .file-input-subtext {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .roulette-container {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+            margin: 40px 0;
+        }
+        
+        .roulette-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b35, #007aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+        
+        .roulette-wheel-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0 40px;
+        }
+        
+        .roulette-wheel {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            position: relative;
+            border: 8px solid rgba(255,255,255,0.1);
+            box-shadow: 
+                0 0 0 2px rgba(255,255,255,0.05),
+                0 20px 60px rgba(0,0,0,0.5),
+                inset 0 0 0 20px rgba(0,0,0,0.1);
+            transition: transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: conic-gradient(from 0deg, 
+                #ff6b35 0deg 36deg,
+                #1a1a1a 36deg 72deg,
+                #007aff 72deg 108deg,
+                #1a1a1a 108deg 144deg,
+                #34c759 144deg 180deg,
+                #1a1a1a 180deg 216deg,
+                #ff9500 216deg 252deg,
+                #1a1a1a 252deg 288deg,
+                #ff3b30 288deg 324deg,
+                #1a1a1a 324deg 360deg
+            );
+        }
+        
+        .roulette-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 20px 10px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .roulette-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #007aff;
+            border: 4px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        
+        .roulette-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #007aff;
+            z-index: 5;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        
+        .spin-button {
+            width: 200px;
+            padding: 20px 32px;
+            background: linear-gradient(45deg, #007aff, #0051d5);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.4);
+            letter-spacing: 0.02em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spin-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 122, 255, 0.5);
+        }
+        
+        .spin-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .spin-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.2);
+        }
+        
+        .spin-button.spinning {
+            background: linear-gradient(45deg, #ff9500, #ff8c00);
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .result-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .result-content {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 32px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 500px;
+            margin: 20px;
+            backdrop-filter: blur(40px);
+            box-shadow: 0 32px 64px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            animation: scaleIn 0.3s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            to { transform: scale(1); }
+        }
+        
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(45deg, #ff6b35, #007aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .result-description {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .close-modal-btn {
+            padding: 16px 32px;
+            background: linear-gradient(45deg, #34c759, #30d158);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(52, 199, 89, 0.3);
+        }
+        
+        .close-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(52, 199, 89, 0.4);
+        }
+        
+        .final-result-card {
+            margin-top: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .rules-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+        }
+        
+        .rules-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+        
+        .rules-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 16px;
+        }
+        
+        .rules-list li {
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            position: relative;
+            padding-left: 50px;
+        }
+        
+        .rules-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 20px;
+            color: #007aff;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 20px 30px;
+            }
+            
+            .card {
+                padding: 32px 24px;
+                margin: 0 16px 24px;
+            }
+            
+            .container {
+                margin: -10px auto 40px;
+                padding: 0 16px;
+            }
+            
+            .roulette-wheel {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .roulette-segment {
+                font-size: 0.7rem;
+                padding: 15px 8px;
+            }
+            
+            .spin-button {
+                width: 180px;
+                padding: 18px 28px;
+                font-size: 1.1rem;
+            }
+            
+            .result-content {
+                padding: 40px 30px;
+                margin: 40px 20px;
+            }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .form-progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #007aff, #34c759);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating orbs -->
+    <div class="floating-orbs">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 id="giveaway-title" class="hero-title">Spin & Win VIP</h1>
+        <p id="giveaway-subtitle" class="hero-subtitle">Fill the form, spin the wheel, claim your prize!</p>
+        <div id="verification-badge" class="verification-badge" style="display: none;">
+            <span>✓</span>
+            <span>Verified Member</span>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Verification Status Card -->
+        <div id="status-card" class="card status-card slide-in" style="display: none;">
+            <div id="status-icon" class="status-icon"></div>
+            <h2 id="status-title" class="status-title"></h2>
+            <p id="status-description" class="status-description"></p>
+            <div id="verification-info" class="verification-info" style="display: none;"></div>
+        </div>
+
+        <!-- Auto-Verified Form -->
+        <div id="verified-form" class="card slide-in" style="display: none;">
+            <div class="form-progress">
+                <div class="form-progress-bar" id="v-progress"></div>
+            </div>
+            
+            <div class="form-section">
+                <form id="auto-form">
+                    <div class="form-group">
+                        <label class="form-label" for="v-email">Email Address</label>
+                        <input type="email" id="v-email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-phone">Phone Number</label>
+                        <input type="tel" id="v-phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-telegram">Telegram Username</label>
+                        <input type="text" id="v-telegram" placeholder="@username (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-username">Casino Username</label>
+                        <input type="text" id="v-username" placeholder="Your casino username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Deposit Screenshot</label>
+                        <div class="file-input" id="v-file-input">
+                            <input type="file" id="v-screenshot" accept="image/*" required>
+                            <div class="file-input-icon">📸</div>
+                            <div class="file-input-text">Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Roulette Section -->
+                <div class="roulette-container" id="v-roulette">
+                    <h3 class="roulette-title">🎰 Spin Your Prize!</h3>
+                    <div class="roulette-wheel-container">
+                        <div class="roulette-pointer"></div>
+                        <div class="roulette-wheel" id="v-wheel">
+                            <div class="roulette-center">SPIN</div>
+                        </div>
+                    </div>
+                    <button type="button" id="v-spin-btn" class="spin-button" disabled>
+                        Complete Form to Spin
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Verification Form -->
+        <div id="manual-form" class="card slide-in" style="display: none;">
+            <div class="form-progress">
+                <div class="form-progress-bar" id="m-progress"></div>
+            </div>
+            
+            <div class="form-section">
+                <form id="manual-form-element">
+                    <div class="form-group">
+                        <label class="form-label" for="m-email">Email Address</label>
+                        <input type="email" id="m-email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-phone">Phone Number</label>
+                        <input type="tel" id="m-phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-telegram">Telegram Username</label>
+                        <input type="text" id="m-telegram" placeholder="@username (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-username">Casino Username</label>
+                        <input type="text" id="m-username" placeholder="Your casino username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-influencer">Traffic Source</label>
+                        <select id="m-influencer" required>
+                            <option value="">How did you find us?</option>
+                            <option value="facebook_ad">Facebook Advertisement</option>
+                            <option value="instagram_ad">Instagram Advertisement</option>
+                            <option value="tiktok_ad">TikTok Advertisement</option>
+                            <option value="google_ad">Google Advertisement</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="telegram">Telegram Channel</option>
+                            <option value="friend">Friend Referral</option>
+                            <option value="other">Other Source</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-other-source">Other Source Details</label>
+                        <input type="text" id="m-other-source" placeholder="Please specify if you selected 'Other'">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-reg-date">Registration Date</label>
+                        <input type="date" id="m-reg-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-details">Additional Information</label>
+                        <textarea id="m-details" rows="3" placeholder="Any additional details that might help verify your registration..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Deposit Screenshot</label>
+                        <div class="file-input" id="m-file-input">
+                            <input type="file" id="m-screenshot" accept="image/*" required>
+                            <div class="file-input-icon">📸</div>
+                            <div class="file-input-text">Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Roulette Section -->
+                <div class="roulette-container" id="m-roulette">
+                    <h3 class="roulette-title">🎰 Spin Your Prize!</h3>
+                    <div class="roulette-wheel-container">
+                        <div class="roulette-pointer"></div>
+                        <div class="roulette-wheel" id="m-wheel">
+                            <div class="roulette-center">SPIN</div>
+                        </div>
+                    </div>
+                    <button type="button" id="m-spin-btn" class="spin-button" disabled>
+                        Complete Form to Spin
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Result Card -->
+        <div id="final-result-card" class="card final-result-card">
+            <div id="final-result-content"></div>
+        </div>
+
+        <!-- Rules Section -->
+        <div class="rules-section">
+            <h3 class="rules-title">🎰 Roulette Giveaway Rules</h3>
+            <ul class="rules-list">
+                <li>Complete all form fields to unlock the spin wheel</li>
+                <li>Each verified user gets one spin per giveaway period</li>
+                <li>All prizes are automatically recorded and verified</li>
+                <li>Winners will be contacted within 24-48 hours</li>
+                <li>Must be 18+ and legally eligible to participate</li>
+                <li>Prize delivery requires valid contact information</li>
+                <li>Cash prizes are credited as deposit bonuses</li>
+                <li>Physical prizes shipped to verified addresses only</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="result-modal" id="result-modal">
+        <div class="result-content">
+            <div class="result-icon" id="result-icon">🎉</div>
+            <h2 class="result-title" id="result-title">Congratulations!</h2>
+            <p class="result-description" id="result-description">You won an amazing prize!</p>
+            <button class="close-modal-btn" id="close-modal">Claim Prize</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const AIRTABLE_TOKEN = 'patDS5YMB7hzvJTCS.7559c701e84181c5558a048c8ae8a611b1ba15284846cf66833866788dbc7d77';
+        const BASE_ID = 'appcH8x1W3uCmFJip';
+        const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
+        
+        // Roulette Configuration - EASILY CUSTOMIZABLE
+        const ROULETTE_PRIZES = [
+            { name: "Gorra Cola-Cola", weight: 15, icon: "🧢", color: "#ff6b35", description: "Exclusive Cola-Cola cap!" },
+            { name: "Mala Suerte :/", weight: 25, icon: "😔", color: "#666666", description: "Better luck next time!" },
+            { name: "Polera Cola-Cola", weight: 12, icon: "👕", color: "#007aff", description: "Premium Cola-Cola t-shirt!" },
+            { name: "Mala Suerte :/", weight: 20, icon: "😔", color: "#666666", description: "Keep trying, you got this!" },
+            { name: "Entradas Cola-Cola", weight: 8, icon: "🎫", color: "#34c759", description: "VIP event tickets!" },
+            { name: "$5,000 Re-Depósito", weight: 5, icon: "💰", color: "#ff9500", description: "Cash bonus reward!" },
+            { name: "Polera D.Lunche", weight: 10, icon: "👔", color: "#ff3b30", description: "Designer lunch shirt!" },
+            { name: "$7,000 Re-Depósito", weight: 3, icon: "💎", color: "#ff6b35", description: "Premium cash bonus!" },
+            { name: "$5,000 Re-Depósito", weight: 2, icon: "💰", color: "#ff9500", description: "Major cash reward!" }
+        ];
+        
+        // Debug mode
+        const debugMode = new URLSearchParams(window.location.search).get('debug') === '1';
+        
+        function debugLog(message) {
+            if (debugMode) {
+                console.log(`[DEBUG] ${message}`);
+            }
+        }
+        
+        // Campaign configurations
+        const campaignConfig = {
+            'graficos_1': {
+                title: 'Spin & Win $1,000 Bonus - Graficos',
+                subtitle: 'Exclusive roulette giveaway for Graficos campaign players',
+                color: '#ff6b35'
+            },
+            'graficos_2': {
+                title: 'Spin & Win $1,500 Bonus - Graficos 2',
+                subtitle: 'Premium Graficos 2 campaign roulette exclusive',
+                color: '#34c759'
+            },
+            'graficos_3': {
+                title: 'Spin & Win $2,000 Bonus - Graficos 3',
+                subtitle: 'High-value Graficos 3 campaign wheel',
+                color: '#f7931e'
+            },
+            'baile_1': {
+                title: 'Spin & Win $800 Bonus - Baile',
+                subtitle: 'Baile campaign exclusive roulette',
+                color: '#e74c3c'
+            },
+            'baile_2': {
+                title: 'Spin & Win $1,200 Bonus - Baile 2',
+                subtitle: 'Enhanced Baile campaign prize wheel',
+                color: '#9b59b6'
+            },
+            'baile_3': {
+                title: 'Spin & Win $1,800 Bonus - Baile 3',
+                subtitle: 'Premium Baile campaign roulette',
+                color: '#1abc9c'
+            },
+            'meta_1': {
+                title: 'Spin & Win $600 Bonus - Meta',
+                subtitle: 'Meta campaign starter roulette',
+                color: '#3498db'
+            },
+            'meta_2': {
+                title: 'Spin & Win $1,000 Bonus - Meta 2',
+                subtitle: 'Enhanced Meta campaign wheel',
+                color: '#e67e22'
+            },
+            'meta_3': {
+                title: 'Spin & Win $1,500 Bonus - Meta 3',
+                subtitle: 'Premium Meta campaign exclusive roulette',
+                color: '#95a5a6'
+            },
+            'default': {
+                title: 'Spin & Win VIP Exclusive',
+                subtitle: 'Premium member roulette rewards program',
+                color: '#007aff'
+            }
+        };
+        
+        let currentFormType = null;
+        let hasSpun = false;
+        let spinResult = null;
+        
+        // Initialize page
+        window.onload = function() {
+            debugLog('Roulette giveaway page loaded');
+            checkVerificationStatus();
+            setupEventListeners();
+            createRouletteSegments();
+        }
+        
+        function checkVerificationStatus() {
+            debugLog('Checking verification status...');
+            
+            let clickid = localStorage.getItem('verified_clickid') || 
+                         sessionStorage.getItem('verified_clickid') || 
+                         getCookie('vc_id');
+            
+            let campaign = localStorage.getItem('campaign_source') || 
+                          sessionStorage.getItem('campaign_source') || 
+                          getCookie('vc_camp') || 'default';
+            
+            let timestamp = localStorage.getItem('user_timestamp') || getCookie('vc_time');
+            
+            debugLog(`Verification data: clickid=${clickid}, campaign=${campaign}`);
+            
+            updatePageTheme(campaign);
+            
+            if (!clickid) {
+                showManualVerification();
+                return;
+            }
+            
+            const daysSinceVerification = timestamp ? 
+                (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24) : 0;
+            
+            if (timestamp && daysSinceVerification > 30) {
+                showExpiredVerification();
+                return;
+            }
+            
+            showAutoVerification(clickid, campaign, timestamp);
+        }
+        
+        function updatePageTheme(campaign) {
+            const config = campaignConfig[campaign] || campaignConfig['default'];
+            
+            document.getElementById('giveaway-title').textContent = config.title;
+            document.getElementById('giveaway-subtitle').textContent = config.subtitle;
+        }
+        
+        function showAutoVerification(clickid, campaign, timestamp) {
+            currentFormType = 'automatic';
+            const statusCard = document.getElementById('status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusDescription = document.getElementById('status-description');
+            const verificationInfo = document.getElementById('verification-info');
+            const verificationBadge = document.getElementById('verification-badge');
+            
+            verificationBadge.style.display = 'inline-flex';
+            
+            statusIcon.innerHTML = '✓';
+            statusIcon.classList.add('status-verified');
+            statusTitle.textContent = 'Automatically Verified';
+            statusDescription.textContent = 'Fill the form below and spin the wheel to win amazing prizes!';
+            
+            verificationInfo.style.display = 'block';
+            verificationInfo.innerHTML = `
+                <strong>Campaign:</strong> ${campaign.toUpperCase()}<br>
+                <strong>Registration ID:</strong> ${clickid.substring(0, 8)}...<br>
+                <strong>Status:</strong> Active<br>
+                <strong>Verified:</strong> ${timestamp ? new Date(parseInt(timestamp)).toLocaleDateString() : 'Recently'}
+            `;
+            
+            statusCard.style.display = 'block';
+            document.getElementById('verified-form').style.display = 'block';
+            document.getElementById('v-roulette').style.display = 'block';
+            
+            debugLog('Showing auto-verification form with roulette');
+        }
+        
+        function showManualVerification() {
+            currentFormType = 'manual';
+            const statusCard = document.getElementById('status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusDescription = document.getElementById('status-description');
+            
+            statusIcon.innerHTML = '?';
+            statusIcon.classList.add('status-manual');
+            statusTitle.textContent = 'Manual Verification Required';
+            statusDescription.textContent = 'Complete the form below and spin the wheel for your chance to win!';
+            
+            statusCard.style.display = 'block';
+            document.getElementById('manual-form').style.display = 'block';
+            document.getElementById('m-roulette').style.display = 'block';
+            
+            debugLog('Showing manual verification form with roulette');
+        }
+        
+        function showExpiredVerification() {
+            currentFormType = 'manual';
+            const statusCard = document.getElementById('status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusTitle = document.getElementById('status-title');
+            const statusDescription = document.getElementById('status-description');
+            
+            statusIcon.innerHTML = '⏰';
+            statusIcon.classList.add('status-manual');
+            statusTitle.textContent = 'Verification Expired';
+            statusDescription.textContent = 'Your link expired, but you can still win! Fill the form and spin the wheel.';
+            
+            statusCard.style.display = 'block';
+            document.getElementById('manual-form').style.display = 'block';
+            document.getElementById('m-roulette').style.display = 'block';
+            
+            debugLog('Showing expired verification form with roulette');
+        }
+        
+        function createRouletteSegments() {
+            const wheels = ['v-wheel', 'm-wheel'];
+            const totalWeight = ROULETTE_PRIZES.reduce((sum, prize) => sum + prize.weight, 0);
+            
+            wheels.forEach(wheelId => {
+                const wheel = document.getElementById(wheelId);
+                if (!wheel) return;
+                
+                let currentAngle = 0;
+                
+                ROULETTE_PRIZES.forEach((prize, index) => {
+                    const segmentAngle = (prize.weight / totalWeight) * 360;
+                    const segment = document.createElement('div');
+                    segment.className = 'roulette-segment';
+                    segment.style.transform = `rotate(${currentAngle}deg) skew(${90 - segmentAngle}deg)`;
+                    segment.style.background = prize.color;
+                    segment.innerHTML = `<span style="transform: skew(${segmentAngle - 90}deg) rotate(${segmentAngle/2}deg);">${prize.icon}<br>${prize.name}</span>`;
+                    
+                    wheel.appendChild(segment);
+                    currentAngle += segmentAngle;
+                });
+            });
+            
+            debugLog('Roulette segments created');
+        }
+        
+        function setupEventListeners() {
+            debugLog('Setting up event listeners...');
+            
+            // Form validation and progress tracking
+            setupFormValidation('v');
+            setupFormValidation('m');
+            
+            // File inputs
+            setupFileInputs();
+            
+            // Phone formatting
+            setupPhoneFormatting();
+            
+            // Spin buttons
+            document.getElementById('v-spin-btn').addEventListener('click', () => handleSpin('v'));
+            document.getElementById('m-spin-btn').addEventListener('click', () => handleSpin('m'));
+            
+            // Modal close
+            document.getElementById('close-modal').addEventListener('click', closeModal);
+            
+            debugLog('All event listeners set up');
+        }
+        
+        function setupFormValidation(prefix) {
+            const form = document.getElementById(prefix === 'v' ? 'auto-form' : 'manual-form-element');
+            const spinBtn = document.getElementById(prefix + '-spin-btn');
+            const progressBar = document.getElementById(prefix + '-progress');
+            
+            if (!form || !spinBtn || !progressBar) return;
+            
+            const requiredFields = form.querySelectorAll('input[required], select[required]');
+            const fileInput = document.getElementById(prefix + '-screenshot');
+            
+            function updateFormProgress() {
+                let filledFields = 0;
+                let totalFields = requiredFields.length + 1; // +1 for file
+                
+                requiredFields.forEach(field => {
+                    if (field.value.trim() !== '') filledFields++;
+                });
+                
+                // Check file
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    filledFields++;
+                }
+                
+                const progress = (filledFields / totalFields) * 100;
+                progressBar.style.width = progress + '%';
+                
+                if (progress === 100) {
+                    spinBtn.disabled = false;
+                    spinBtn.textContent = '🎰 SPIN TO WIN!';
+                    spinBtn.style.background = 'linear-gradient(45deg, #34c759, #30d158)';
+                } else {
+                    spinBtn.disabled = true;
+                    spinBtn.textContent = `Complete Form (${Math.round(progress)}%)`;
+                    spinBtn.style.background = 'linear-gradient(45deg, #666666, #555555)';
+                }
+            }
+            
+            // Add listeners to all form fields
+            requiredFields.forEach(field => {
+                field.addEventListener('input', updateFormProgress);
+                field.addEventListener('change', updateFormProgress);
+            });
+            
+            if (fileInput) {
+                fileInput.addEventListener('change', updateFormProgress);
+            }
+            
+            // Initial check
+            updateFormProgress();
+        }
+        
+        function setupFileInputs() {
+            const fileInputs = [
+                { container: 'v-file-input', input: 'v-screenshot' },
+                { container: 'm-file-input', input: 'm-screenshot' }
+            ];
+            
+            fileInputs.forEach(({ container, input }) => {
+                const containerEl = document.getElementById(container);
+                const inputEl = document.getElementById(input);
+                
+                if (!containerEl || !inputEl) return;
+                
+                containerEl.onclick = () => inputEl.click();
+                inputEl.onchange = (e) => handleFileChange(e, input.split('-')[0]);
+            });
+        }
+        
+        function handleFileChange(event, prefix) {
+            const file = event.target.files[0];
+            const fileInputDiv = document.getElementById(prefix + '-file-input');
+            
+            if (!file) return;
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File is too large. Please select an image under 10MB.');
+                event.target.value = '';
+                return;
+            }
+            
+            const fileName = file.name;
+            const fileSize = Math.round(file.size / 1024);
+            
+            window['selectedFile_' + prefix] = file;
+            
+            fileInputDiv.innerHTML = `
+                <div class="file-input-icon">✅</div>
+                <div class="file-input-text">${fileName}</div>
+                <div class="file-input-subtext">${fileSize}KB • Click to change</div>
+            `;
+            
+            fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
+            fileInputDiv.style.background = 'rgba(52, 199, 89, 0.1)';
+            
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'file';
+            hiddenInput.id = prefix + '-screenshot';
+            hiddenInput.accept = 'image/*';
+            hiddenInput.required = true;
+            hiddenInput.style.display = 'none';
+            hiddenInput.files = event.target.files;
+            
+            fileInputDiv.appendChild(hiddenInput);
+            fileInputDiv.onclick = () => hiddenInput.click();
+            hiddenInput.onchange = (e) => handleFileChange(e, prefix);
+        }
+        
+        function setupPhoneFormatting() {
+            const phoneInputs = document.querySelectorAll('input[type="tel"]');
+            
+            phoneInputs.forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.length >= 10) {
+                        if (value.length === 10) {
+                            value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                        } else if (value.length === 11 && value[0] === '1') {
+                            value = value.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
+                        }
+                    }
+                    
+                    e.target.value = value;
+                });
+            });
+        }
+        
+        function handleSpin(prefix) {
+            if (hasSpun) {
+                alert('You have already spun the wheel!');
+                return;
+            }
+            
+            const spinBtn = document.getElementById(prefix + '-spin-btn');
+            const wheel = document.getElementById(prefix + '-wheel');
+            
+            spinBtn.disabled = true;
+            spinBtn.textContent = 'SPINNING...';
+            spinBtn.classList.add('spinning');
+            
+            // Calculate winning prize
+            const totalWeight = ROULETTE_PRIZES.reduce((sum, prize) => sum + prize.weight, 0);
+            const random = Math.random() * totalWeight;
+            let currentWeight = 0;
+            let winningPrize = null;
+            
+            for (let prize of ROULETTE_PRIZES) {
+                currentWeight += prize.weight;
+                if (random <= currentWeight) {
+                    winningPrize = prize;
+                    break;
+                }
+            }
+            
+            // Calculate spin rotation
+            const spins = 5 + Math.random() * 3; // 5-8 full rotations
+            const finalAngle = Math.random() * 360;
+            const totalRotation = spins * 360 + finalAngle;
+            
+            // Animate wheel
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            // Store result
+            spinResult = winningPrize;
+            hasSpun = true;
+            
+            debugLog(`Spin result: ${winningPrize.name}`);
+            
+            // Show result after animation
+            setTimeout(() => {
+                showSpinResult(winningPrize);
+                spinBtn.classList.remove('spinning');
+            }, 4000);
+        }
+        
+        function showSpinResult(prize) {
+            const modal = document.getElementById('result-modal');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const description = document.getElementById('result-description');
+            
+            icon.textContent = prize.icon;
+            
+            if (prize.name === "Mala Suerte :/") {
+                title.textContent = "Better Luck Next Time!";
+                description.textContent = prize.description + " But don't worry, you're still entered in our weekly drawings!";
+                icon.textContent = "🍀";
+            } else {
+                title.textContent = "🎉 CONGRATULATIONS! 🎉";
+                description.textContent = `You won: ${prize.name}! ${prize.description}`;
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('result-modal');
+            modal.style.display = 'none';
+            
+            // Submit form data with spin result
+            submitFormWithSpinResult();
+        }
+        
+        async function submitFormWithSpinResult() {
+            const formData = collectFormData(currentFormType);
+            formData.spin_result = spinResult.name;
+            formData.spin_description = spinResult.description;
+            
+            debugLog('Submitting form with spin result');
+            
+            try {
+                // Upload screenshot
+                let imageUrl = null;
+                if (formData.screenshot) {
+                    imageUrl = await uploadToImgBB(formData.screenshot);
+                }
+                
+                // Submit to Airtable
+                await submitToAirtable(formData, currentFormType, imageUrl);
+                showFinalResult(formData, spinResult);
+                
+            } catch (error) {
+                debugLog('Submission error: ' + error.message);
+                alert('Error submitting your entry: ' + error.message);
+            }
+        }
+        
+        function collectFormData(type) {
+            const prefix = type === 'automatic' ? 'v-' : 'm-';
+            
+            const formData = {
+                verification_type: type,
+                email: getValue(prefix + 'email'),
+                phone: getValue(prefix + 'phone'),
+                telegram: getValue(prefix + 'telegram'),
+                username: getValue(prefix + 'username'),
+                screenshot: getFile(prefix + 'screenshot')
+            };
+            
+            if (type === 'automatic') {
+                formData.clickid = localStorage.getItem('verified_clickid') || getCookie('vc_id') || '';
+                formData.campaign = localStorage.getItem('campaign_source') || getCookie('vc_camp') || '';
+            } else {
+                formData.influencer = getValue('m-influencer');
+                formData.other_source = getValue('m-other-source');
+                formData.registration_date = getValue('m-reg-date');
+                formData.details = getValue('m-details');
+            }
+            
+            return formData;
+        }
+        
+        function getValue(id) {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        }
+        
+        function getFile(id) {
+            const prefix = id.replace('-screenshot', '');
+            
+            if (window['selectedFile_' + prefix]) {
+                return window['selectedFile_' + prefix];
+            }
+            
+            const element = document.getElementById(id);
+            return (element && element.files && element.files[0]) ? element.files[0] : null;
+        }
+        
+        async function uploadToImgBB(file) {
+            debugLog('Starting ImgBB upload...');
+            
+            const formData = new FormData();
+            formData.append('key', IMGBB_API_KEY);
+            formData.append('image', file);
+            
+            const response = await fetch('https://api.imgbb.com/1/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error('Upload failed: ' + response.status);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                debugLog('Image uploaded successfully: ' + data.data.url);
+                return data.data.url;
+            } else {
+                throw new Error('Upload failed: ' + data.error.message);
+            }
+        }
+        
+        async function submitToAirtable(formData, type, imageUrl) {
+            const recordData = {
+                'Email': formData.email,
+                'Phone': formData.phone,
+                'Telegram': formData.telegram,
+                'Username': formData.username,
+                'Verification': formData.verification_type,
+                'Status': 'pending',
+                'Submitted': new Date().toISOString(),
+                'Spin Result': formData.spin_result,
+                'Prize Description': formData.spin_description
+            };
+            
+            if (type === 'automatic') {
+                recordData['ClickID'] = formData.clickid || '';
+                recordData['Campaign'] = formData.campaign || '';
+                recordData['Notes'] = `Roulette entry - Campaign: ${formData.campaign} - Prize: ${formData.spin_result}`;
+            } else {
+                recordData['Notes'] = `Roulette entry - Source: ${formData.influencer} - Prize: ${formData.spin_result}`;
+                if (formData.details) recordData['Notes'] += ` - Details: ${formData.details}`;
+                if (formData.registration_date) recordData['Notes'] += ` - Reg Date: ${formData.registration_date}`;
+                if (formData.other_source) recordData['Notes'] += ` - Other: ${formData.other_source}`;
+            }
+            
+            if (imageUrl) {
+                recordData['Screenshot'] = [{ url: imageUrl }];
+                recordData['Notes'] += ` - Screenshot: ${formData.screenshot.name}`;
+            }
+            
+            const airtableData = {
+                records: [{ fields: recordData }]
+            };
+            
+            debugLog('Sending to Airtable: ' + JSON.stringify(recordData));
+            
+            const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/Table%201`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(airtableData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+            }
+            
+            debugLog('✅ Successfully submitted to Airtable');
+        }
+        
+        function showFinalResult(formData, prize) {
+            const resultCard = document.getElementById('final-result-card');
+            const resultContent = document.getElementById('final-result-content');
+            
+            // Hide forms
+            document.getElementById('verified-form').style.display = 'none';
+            document.getElementById('manual-form').style.display = 'none';
+            
+            let resultHTML = `
+                <div class="status-icon" style="background: linear-gradient(45deg, ${prize.color}, ${prize.color}aa); width: 80px; height: 80px; font-size: 2.5rem;">
+                    ${prize.icon}
+                </div>
+                <h2 class="status-title">Entry Complete!</h2>
+                <div class="status-description">
+                    <p><strong>🎰 Your Spin Result:</strong></p>
+                    <div class="verification-info" style="margin: 24px 0; background: ${prize.color}22; border-color: ${prize.color}55;">
+                        <strong style="color: ${prize.color};">${prize.name}</strong><br>
+                        ${prize.description}<br><br>
+                        <strong>Entry Details:</strong><br>
+                        📧 Email: ${formData.email}<br>
+                        🎮 Username: ${formData.username}<br>
+                        🎰 Prize: ${prize.name}<br>
+                        ✅ Status: Submitted Successfully
+                    </div>
+            `;
+            
+            if (prize.name !== "Mala Suerte :/") {
+                resultHTML += `
+                    <p><strong style="color: ${prize.color};">🏆 Congratulations! You Won!</strong></p>
+                    <p>• Our team will contact you within 24-48 hours</p>
+                    <p>• Keep your phone and email active</p>
+                    <p>• Prize delivery details will be sent to you</p>
+                `;
+            } else {
+                resultHTML += `
+                    <p><strong>🍀 Better luck next time!</strong></p>
+                    <p>• You're still entered in our weekly drawings</p>
+                    <p>• Watch for future spin opportunities</p>
+                    <p>• Thank you for participating!</p>
+                `;
+            }
+            
+            resultHTML += `
+                    <p style="margin-top: 20px;">Thank you for playing! 🎉</p>
+                </div>
+            `;
+            
+            resultContent.innerHTML = resultHTML;
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        
+        // Add premium animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
