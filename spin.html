@@ -319,10 +319,13 @@
         }
         
         .file-input input[type="file"] {
-            position: absolute;
-            left: -9999px;
-            opacity: 0;
-            pointer-events: none;
+            position: absolute !important;
+            left: -9999px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 0.1px !important;
+            height: 0.1px !important;
+            overflow: hidden !important;
         }
         
         .file-input-icon {
@@ -674,12 +677,35 @@
                     
                     <div class="form-group">
                         <label class="form-label">Deposit Screenshot *</label>
-                        <div class="file-input" id="v-file-input" onclick="document.getElementById('v-screenshot').click(); console.log('V-File input clicked!');">
-                            <input type="file" id="v-screenshot" accept="image/*" required onchange="console.log('V-File changed!'); handleFileChange(event, 'v');">
+                        <div class="file-input" id="v-file-input">
+                            <input type="file" id="v-screenshot" accept="image/*" required style="position: absolute; left: -9999px; opacity: 0;">
                             <div class="file-input-icon">📸</div>
                             <div class="file-input-text">Click to Upload Deposit Screenshot</div>
                             <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
                         </div>
+                        <script>
+                            (function() {
+                                const fileInput = document.getElementById('v-file-input');
+                                const hiddenInput = document.getElementById('v-screenshot');
+                                
+                                if (fileInput && hiddenInput) {
+                                    fileInput.style.cursor = 'pointer';
+                                    fileInput.addEventListener('click', function(e) {
+                                        console.log('V-File clicked - triggering hidden input');
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        hiddenInput.click();
+                                    });
+                                    
+                                    hiddenInput.addEventListener('change', function(e) {
+                                        console.log('V-File changed');
+                                        if (window.handleFileChange) {
+                                            handleFileChange(e, 'v');
+                                        }
+                                    });
+                                }
+                            })();
+                        </script>
                     </div>
                 </form>
             </div>
@@ -741,12 +767,35 @@
                     
                     <div class="form-group">
                         <label class="form-label">Deposit Screenshot *</label>
-                        <div class="file-input" id="m-file-input" onclick="document.getElementById('m-screenshot').click(); console.log('M-File input clicked!');">
-                            <input type="file" id="m-screenshot" accept="image/*" required onchange="console.log('M-File changed!'); handleFileChange(event, 'm');">
+                        <div class="file-input" id="m-file-input">
+                            <input type="file" id="m-screenshot" accept="image/*" required style="position: absolute; left: -9999px; opacity: 0;">
                             <div class="file-input-icon">📸</div>
                             <div class="file-input-text">Click to Upload Deposit Screenshot</div>
                             <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
                         </div>
+                        <script>
+                            (function() {
+                                const fileInput = document.getElementById('m-file-input');
+                                const hiddenInput = document.getElementById('m-screenshot');
+                                
+                                if (fileInput && hiddenInput) {
+                                    fileInput.style.cursor = 'pointer';
+                                    fileInput.addEventListener('click', function(e) {
+                                        console.log('M-File clicked - triggering hidden input');
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        hiddenInput.click();
+                                    });
+                                    
+                                    hiddenInput.addEventListener('change', function(e) {
+                                        console.log('M-File changed');
+                                        if (window.handleFileChange) {
+                                            handleFileChange(e, 'm');
+                                        }
+                                    });
+                                }
+                            })();
+                        </script>
                     </div>
                 </form>
             </div>
