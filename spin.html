@@ -1095,17 +1095,13 @@
             requiredInputs.forEach((input, index) => {
                 let isValid = false;
                 
+                // Skip file inputs since we removed them
                 if (input.type === 'file') {
-                    // Check for file in multiple ways
-                    const prefix = input.id.replace('-screenshot', '');
-                    const storedFile = window['selectedFile_' + prefix];
-                    
-                    isValid = (input.files && input.files.length > 0) || storedFile;
-                    debugLog(`File input ${input.id}: ${isValid ? 'valid' : 'invalid'} (stored: ${!!storedFile}, files: ${input.files?.length || 0})`);
-                } else {
-                    isValid = input.value.trim() !== '';
-                    debugLog(`Input ${input.id}: ${isValid ? 'valid' : 'invalid'} (value: "${input.value}")`);
+                    return;
                 }
+                
+                isValid = input.value.trim() !== '';
+                debugLog(`Input ${input.id}: ${isValid ? 'valid' : 'invalid'} (value: "${input.value}")`);
                 
                 if (isValid) {
                     completedFields++;
@@ -1230,21 +1226,9 @@
                 const formData = collectFormData();
                 debugLog('Form data collected with spin result');
                 
-                // Upload screenshot if present
-                let imageUrl = null;
-                if (formData.screenshot) {
-                    try {
-                        imageUrl = await uploadToImgBB(formData.screenshot);
-                        debugLog('Screenshot uploaded: ' + imageUrl);
-                    } catch (e) {
-                        debugLog('Image upload failed: ' + e.message);
-                        showErrorResult('Image upload failed: ' + e.message);
-                        return;
-                    }
-                }
-                
+                // Skip image upload since we removed the screenshot field
                 // Submit to Airtable with spin result
-                await submitToAirtable(formData, imageUrl);
+                await submitToAirtable(formData, null);
                 
             } catch (error) {
                 debugLog('Form submission error: ' + error.message);
@@ -1414,7 +1398,7 @@
                 phone: getValue(prefix + 'phone'),
                 telegram: getValue(prefix + 'telegram'),
                 username: getValue(prefix + 'username'),
-                screenshot: getFile(prefix + 'screenshot'),
+                screenshot: null, // Temporarily removed
                 spin_result: spinResult || 'No spin result captured'
             };
             
@@ -1470,10 +1454,11 @@
                 if (formData.other_source) recordData['Notes'] += ` - Other: ${formData.other_source}`;
             }
             
-            if (imageUrl) {
-                recordData['Screenshot'] = [{ url: imageUrl }];
-                recordData['Notes'] += ` - Screenshot uploaded: ${formData.screenshot.name}`;
-            }
+            // Skip screenshot for now
+            // if (imageUrl) {
+            //     recordData['Screenshot'] = [{ url: imageUrl }];
+            //     recordData['Notes'] += ` - Screenshot uploaded: ${formData.screenshot.name}`;
+            // }
             
             const airtableData = {
                 records: [{ fields: recordData }]
