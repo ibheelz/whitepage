@@ -674,8 +674,8 @@
                     
                     <div class="form-group">
                         <label class="form-label">Deposit Screenshot *</label>
-                        <div class="file-input" id="v-file-input">
-                            <input type="file" id="v-screenshot" accept="image/*" required>
+                        <div class="file-input" id="v-file-input" onclick="document.getElementById('v-screenshot').click(); console.log('V-File input clicked!');">
+                            <input type="file" id="v-screenshot" accept="image/*" required onchange="console.log('V-File changed!'); handleFileChange(event, 'v');">
                             <div class="file-input-icon">📸</div>
                             <div class="file-input-text">Click to Upload Deposit Screenshot</div>
                             <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
@@ -741,8 +741,8 @@
                     
                     <div class="form-group">
                         <label class="form-label">Deposit Screenshot *</label>
-                        <div class="file-input" id="m-file-input">
-                            <input type="file" id="m-screenshot" accept="image/*" required>
+                        <div class="file-input" id="m-file-input" onclick="document.getElementById('m-screenshot').click(); console.log('M-File input clicked!');">
+                            <input type="file" id="m-screenshot" accept="image/*" required onchange="console.log('M-File changed!'); handleFileChange(event, 'm');">
                             <div class="file-input-icon">📸</div>
                             <div class="file-input-text">Click to Upload Deposit Screenshot</div>
                             <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
@@ -799,8 +799,8 @@
         const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
         const SORTEOS_API_KEY = 'pk_00e4ae64a85ec176c1035ce5c7daa0fd31e8df12';
         
-        // Debug mode
-        const debugMode = false;
+        // Debug mode - TEMPORARILY SET TO TRUE
+        const debugMode = true;
         
         if (debugMode || new URLSearchParams(window.location.search).get('debug') === '1') {
             document.getElementById('debug').style.display = 'block';
@@ -1257,49 +1257,52 @@
         function setupFileInputs() {
             debugLog('Setting up file inputs...');
             
-            // Setup for verified form
-            const vFileInput = document.getElementById('v-file-input');
-            const vScreenshot = document.getElementById('v-screenshot');
-            
-            if (vFileInput && vScreenshot) {
-                vFileInput.style.cursor = 'pointer';
-                vFileInput.style.pointerEvents = 'auto';
+            // Simple direct approach
+            setTimeout(() => {
+                const vFileInput = document.getElementById('v-file-input');
+                const vScreenshot = document.getElementById('v-screenshot');
+                const mFileInput = document.getElementById('m-file-input');
+                const mScreenshot = document.getElementById('m-screenshot');
                 
-                vFileInput.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    debugLog('V-file input clicked');
-                    vScreenshot.click();
+                debugLog('V-file elements found:', !!vFileInput, !!vScreenshot);
+                debugLog('M-file elements found:', !!mFileInput, !!mScreenshot);
+                
+                // Force enable file inputs with multiple approaches
+                [vFileInput, mFileInput].forEach((fileInput, index) => {
+                    if (!fileInput) return;
+                    
+                    const prefix = index === 0 ? 'v' : 'm';
+                    const screenshot = index === 0 ? vScreenshot : mScreenshot;
+                    
+                    // Remove any existing event listeners
+                    fileInput.onclick = null;
+                    fileInput.addEventListener = null;
+                    
+                    // Direct onclick approach
+                    fileInput.onclick = function(e) {
+                        console.log(`${prefix.toUpperCase()}-File input clicked!`);
+                        debugLog(`${prefix.toUpperCase()}-File input clicked!`);
+                        
+                        if (screenshot) {
+                            screenshot.click();
+                        } else {
+                            console.error(`${prefix}-screenshot element not found`);
+                        }
+                    };
+                    
+                    // Also add to all child elements
+                    const children = fileInput.querySelectorAll('*');
+                    children.forEach(child => {
+                        child.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            fileInput.click();
+                        };
+                    });
                 });
                 
-                vScreenshot.addEventListener('change', function(e) {
-                    debugLog('V-screenshot changed');
-                    handleFileChange(e, 'v');
-                });
-            }
-            
-            // Setup for manual form
-            const mFileInput = document.getElementById('m-file-input');
-            const mScreenshot = document.getElementById('m-screenshot');
-            
-            if (mFileInput && mScreenshot) {
-                mFileInput.style.cursor = 'pointer';
-                mFileInput.style.pointerEvents = 'auto';
-                
-                mFileInput.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    debugLog('M-file input clicked');
-                    mScreenshot.click();
-                });
-                
-                mScreenshot.addEventListener('change', function(e) {
-                    debugLog('M-screenshot changed');
-                    handleFileChange(e, 'm');
-                });
-            }
-            
-            debugLog('File inputs setup complete');
+                debugLog('File inputs setup with direct onclick handlers');
+            }, 2000);
         }
         
         function handleFileChange(event, prefix) {
