@@ -319,13 +319,8 @@
         }
         
         .file-input input[type="file"] {
-            position: absolute !important;
-            left: -9999px !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            width: 0.1px !important;
-            height: 0.1px !important;
-            overflow: hidden !important;
+            position: absolute;
+            left: -9999px;
         }
         
         .file-input-icon {
@@ -678,34 +673,11 @@
                     <div class="form-group">
                         <label class="form-label">Deposit Screenshot *</label>
                         <div class="file-input" id="v-file-input">
-                            <input type="file" id="v-screenshot" accept="image/*" required style="position: absolute; left: -9999px; opacity: 0;">
+                            <input type="file" id="v-screenshot" accept="image/*" required>
                             <div class="file-input-icon">📸</div>
-                            <div class="file-input-text">Click to Upload Deposit Screenshot</div>
-                            <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
+                            <div class="file-input-text">Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
                         </div>
-                        <script>
-                            (function() {
-                                const fileInput = document.getElementById('v-file-input');
-                                const hiddenInput = document.getElementById('v-screenshot');
-                                
-                                if (fileInput && hiddenInput) {
-                                    fileInput.style.cursor = 'pointer';
-                                    fileInput.addEventListener('click', function(e) {
-                                        console.log('V-File clicked - triggering hidden input');
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        hiddenInput.click();
-                                    });
-                                    
-                                    hiddenInput.addEventListener('change', function(e) {
-                                        console.log('V-File changed');
-                                        if (window.handleFileChange) {
-                                            handleFileChange(e, 'v');
-                                        }
-                                    });
-                                }
-                            })();
-                        </script>
                     </div>
                 </form>
             </div>
@@ -768,34 +740,11 @@
                     <div class="form-group">
                         <label class="form-label">Deposit Screenshot *</label>
                         <div class="file-input" id="m-file-input">
-                            <input type="file" id="m-screenshot" accept="image/*" required style="position: absolute; left: -9999px; opacity: 0;">
+                            <input type="file" id="m-screenshot" accept="image/*" required>
                             <div class="file-input-icon">📸</div>
-                            <div class="file-input-text">Click to Upload Deposit Screenshot</div>
-                            <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
+                            <div class="file-input-text">Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
                         </div>
-                        <script>
-                            (function() {
-                                const fileInput = document.getElementById('m-file-input');
-                                const hiddenInput = document.getElementById('m-screenshot');
-                                
-                                if (fileInput && hiddenInput) {
-                                    fileInput.style.cursor = 'pointer';
-                                    fileInput.addEventListener('click', function(e) {
-                                        console.log('M-File clicked - triggering hidden input');
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        hiddenInput.click();
-                                    });
-                                    
-                                    hiddenInput.addEventListener('change', function(e) {
-                                        console.log('M-File changed');
-                                        if (window.handleFileChange) {
-                                            handleFileChange(e, 'm');
-                                        }
-                                    });
-                                }
-                            })();
-                        </script>
                     </div>
                 </form>
             </div>
@@ -1304,128 +1253,104 @@
         }
         
         function setupFileInputs() {
-            debugLog('Setting up file inputs...');
+            debugLog('Setting up file inputs using working method...');
             
-            // Simple direct approach
-            setTimeout(() => {
-                const vFileInput = document.getElementById('v-file-input');
-                const vScreenshot = document.getElementById('v-screenshot');
-                const mFileInput = document.getElementById('m-file-input');
-                const mScreenshot = document.getElementById('m-screenshot');
+            const vFileInput = document.getElementById('v-file-input');
+            const vScreenshot = document.getElementById('v-screenshot');
+            const mFileInput = document.getElementById('m-file-input');
+            const mScreenshot = document.getElementById('m-screenshot');
+            
+            // Use the exact same approach as the working version
+            if (vFileInput && vScreenshot) {
+                vFileInput.onclick = function() {
+                    debugLog('V-file input clicked - opening dialog');
+                    vScreenshot.click();
+                };
                 
-                debugLog('V-file elements found:', !!vFileInput, !!vScreenshot);
-                debugLog('M-file elements found:', !!mFileInput, !!mScreenshot);
+                vScreenshot.onchange = function(e) {
+                    debugLog('V-screenshot file selected');
+                    handleFileChange(e, 'v');
+                };
+            }
+            
+            if (mFileInput && mScreenshot) {
+                mFileInput.onclick = function() {
+                    debugLog('M-file input clicked - opening dialog');
+                    mScreenshot.click();
+                };
                 
-                // Force enable file inputs with multiple approaches
-                [vFileInput, mFileInput].forEach((fileInput, index) => {
-                    if (!fileInput) return;
-                    
-                    const prefix = index === 0 ? 'v' : 'm';
-                    const screenshot = index === 0 ? vScreenshot : mScreenshot;
-                    
-                    // Remove any existing event listeners
-                    fileInput.onclick = null;
-                    fileInput.addEventListener = null;
-                    
-                    // Direct onclick approach
-                    fileInput.onclick = function(e) {
-                        console.log(`${prefix.toUpperCase()}-File input clicked!`);
-                        debugLog(`${prefix.toUpperCase()}-File input clicked!`);
-                        
-                        if (screenshot) {
-                            screenshot.click();
-                        } else {
-                            console.error(`${prefix}-screenshot element not found`);
-                        }
-                    };
-                    
-                    // Also add to all child elements
-                    const children = fileInput.querySelectorAll('*');
-                    children.forEach(child => {
-                        child.onclick = function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            fileInput.click();
-                        };
-                    });
-                });
-                
-                debugLog('File inputs setup with direct onclick handlers');
-            }, 2000);
+                mScreenshot.onchange = function(e) {
+                    debugLog('M-screenshot file selected');
+                    handleFileChange(e, 'm');
+                };
+            }
+            
+            debugLog('File inputs setup complete using working method');
         }
         
         function handleFileChange(event, prefix) {
-            debugLog(`File change detected for prefix: ${prefix}`);
+            debugLog(`File change handler called for prefix: ${prefix}`);
             const file = event.target.files[0];
             const fileInputDiv = document.getElementById(prefix + '-file-input');
             
-            if (!file) {
-                debugLog('No file selected');
-                return;
+            if (file) {
+                debugLog(`File selected: ${file.name}, size: ${file.size} bytes`);
+                
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File is too large. Please select an image under 10MB.');
+                    event.target.value = '';
+                    return;
+                }
+                
+                const fileName = file.name;
+                const fileSize = Math.round(file.size / 1024);
+                
+                // Store the file reference (same as working version)
+                window['selectedFile_' + prefix] = file;
+                debugLog(`File stored as selectedFile_${prefix}`);
+                
+                // Update the visual display (same as working version)
+                fileInputDiv.innerHTML = `
+                    <div class="file-input-icon">✅</div>
+                    <div class="file-input-text">${fileName}</div>
+                    <div class="file-input-subtext">${fileSize}KB • Click to change</div>
+                `;
+                
+                fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
+                fileInputDiv.style.background = 'rgba(52, 199, 89, 0.1)';
+                fileInputDiv.classList.add('has-file');
+                
+                // Re-add file input (hidden) - exact same approach as working version
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'file';
+                hiddenInput.id = prefix + '-screenshot';
+                hiddenInput.accept = 'image/*';
+                hiddenInput.required = true;
+                hiddenInput.style.position = 'absolute';
+                hiddenInput.style.left = '-9999px';
+                hiddenInput.style.opacity = '0';
+                hiddenInput.files = event.target.files;
+                
+                fileInputDiv.appendChild(hiddenInput);
+                
+                // Re-setup click handler (same as working version)
+                fileInputDiv.onclick = function() {
+                    debugLog(`Re-clicking hidden input for ${prefix}`);
+                    hiddenInput.click();
+                };
+                
+                hiddenInput.onchange = function(e) {
+                    debugLog(`Hidden input changed for ${prefix}`);
+                    handleFileChange(e, prefix);
+                };
+                
+                // Trigger form validation
+                setTimeout(validateForm, 100);
+                
+                debugLog(`File handling complete for ${prefix} - file stored and UI updated`);
+            } else {
+                debugLog('No file selected in change event');
             }
-            
-            debugLog(`File selected: ${file.name}, size: ${file.size}`);
-            
-            if (file.size > 10 * 1024 * 1024) {
-                alert('File is too large. Please select an image under 10MB.');
-                event.target.value = '';
-                return;
-            }
-            
-            const fileName = file.name;
-            const fileSize = Math.round(file.size / 1024);
-            
-            // Store the file reference globally
-            window['selectedFile_' + prefix] = file;
-            debugLog(`File stored as selectedFile_${prefix}`);
-            
-            // Update the visual display
-            fileInputDiv.innerHTML = `
-                <div class="file-input-icon">✅</div>
-                <div class="file-input-text">${fileName}</div>
-                <div class="file-input-subtext">${fileSize}KB • Click to change</div>
-            `;
-            
-            // Add visual feedback
-            fileInputDiv.classList.add('has-file');
-            fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
-            fileInputDiv.style.background = 'rgba(52, 199, 89, 0.1)';
-            
-            // Create new hidden input to maintain functionality
-            const newHiddenInput = document.createElement('input');
-            newHiddenInput.type = 'file';
-            newHiddenInput.id = prefix + '-screenshot';
-            newHiddenInput.accept = 'image/*';
-            newHiddenInput.required = true;
-            newHiddenInput.style.position = 'absolute';
-            newHiddenInput.style.left = '-9999px';
-            newHiddenInput.style.opacity = '0';
-            newHiddenInput.style.pointerEvents = 'none';
-            
-            // Transfer the files to the new input
-            const dt = new DataTransfer();
-            dt.items.add(file);
-            newHiddenInput.files = dt.files;
-            
-            fileInputDiv.appendChild(newHiddenInput);
-            
-            // Re-setup click handler
-            fileInputDiv.onclick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                debugLog('File input clicked - opening file dialog');
-                newHiddenInput.click();
-            };
-            
-            // Setup change handler for new input
-            newHiddenInput.onchange = function(e) {
-                handleFileChange(e, prefix);
-            };
-            
-            // Trigger form validation
-            setTimeout(validateForm, 100);
-            
-            debugLog(`File handling complete for ${prefix}`);
         }
         
         function setupPhoneFormatting() {
