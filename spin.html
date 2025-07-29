@@ -301,13 +301,16 @@
             border-radius: 12px;
             padding: 32px 20px;
             text-align: center;
-            cursor: pointer;
+            cursor: pointer !important;
             transition: all 0.3s ease;
+            pointer-events: auto !important;
+            z-index: 10;
         }
         
         .file-input:hover {
             border-color: #dc143c;
             background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
         }
         
         .file-input.has-file {
@@ -318,6 +321,8 @@
         .file-input input[type="file"] {
             position: absolute;
             left: -9999px;
+            opacity: 0;
+            pointer-events: none;
         }
         
         .file-input-icon {
@@ -672,8 +677,8 @@
                         <div class="file-input" id="v-file-input">
                             <input type="file" id="v-screenshot" accept="image/*" required>
                             <div class="file-input-icon">📸</div>
-                            <div class="file-input-text">Upload Deposit Screenshot</div>
-                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                            <div class="file-input-text">Click to Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
                         </div>
                     </div>
                 </form>
@@ -739,8 +744,8 @@
                         <div class="file-input" id="m-file-input">
                             <input type="file" id="m-screenshot" accept="image/*" required>
                             <div class="file-input-icon">📸</div>
-                            <div class="file-input-text">Upload Deposit Screenshot</div>
-                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                            <div class="file-input-text">Click to Upload Deposit Screenshot</div>
+                            <div class="file-input-subtext">PNG, JPG up to 10MB • Required</div>
                         </div>
                     </div>
                 </form>
@@ -1078,16 +1083,31 @@
             const activeForm = currentFormType === 'automatic' ? 'auto-form' : 'manual-form-element';
             const form = document.getElementById(activeForm);
             
-            if (!form) return;
+            if (!form) {
+                debugLog('No active form found for validation');
+                return;
+            }
             
             const requiredInputs = form.querySelectorAll('input[required], select[required]');
             let completedFields = 0;
             let totalFields = requiredInputs.length;
             
-            requiredInputs.forEach(input => {
-                const isValid = input.type === 'file' ? 
-                    input.files && input.files.length > 0 : 
-                    input.value.trim() !== '';
+            debugLog(`Validating ${totalFields} required fields`);
+            
+            requiredInputs.forEach((input, index) => {
+                let isValid = false;
+                
+                if (input.type === 'file') {
+                    // Check for file in multiple ways
+                    const prefix = input.id.replace('-screenshot', '');
+                    const storedFile = window['selectedFile_' + prefix];
+                    
+                    isValid = (input.files && input.files.length > 0) || storedFile;
+                    debugLog(`File input ${input.id}: ${isValid ? 'valid' : 'invalid'} (stored: ${!!storedFile}, files: ${input.files?.length || 0})`);
+                } else {
+                    isValid = input.value.trim() !== '';
+                    debugLog(`Input ${input.id}: ${isValid ? 'valid' : 'invalid'} (value: "${input.value}")`);
+                }
                 
                 if (isValid) {
                     completedFields++;
@@ -1098,22 +1118,25 @@
             });
             
             const progress = (completedFields / totalFields) * 100;
+            debugLog(`Form progress: ${completedFields}/${totalFields} (${progress.toFixed(1)}%)`);
             
             // Update progress bar
             const progressFill = document.getElementById('progress-fill');
             const progressText = document.getElementById('progress-text');
             
-            progressFill.style.width = progress + '%';
+            if (progressFill) progressFill.style.width = progress + '%';
             
             if (progress === 100) {
-                progressText.textContent = '🎰 Ready to spin! Click the button below';
+                if (progressText) progressText.textContent = '🎰 Ready to spin! Click the button below';
                 formComplete = true;
-                updateSpinButton();
+                debugLog('✅ Form is complete!');
             } else {
-                progressText.textContent = `${completedFields}/${totalFields} fields completed`;
+                if (progressText) progressText.textContent = `${completedFields}/${totalFields} fields completed`;
                 formComplete = false;
-                updateSpinButton();
+                debugLog('❌ Form is incomplete');
             }
+            
+            updateSpinButton();
         }
         
         function updateSpinButton() {
@@ -1232,77 +1255,125 @@
         }
         
         function setupFileInputs() {
+            debugLog('Setting up file inputs...');
+            
+            // Setup for verified form
             const vFileInput = document.getElementById('v-file-input');
             const vScreenshot = document.getElementById('v-screenshot');
+            
+            if (vFileInput && vScreenshot) {
+                vFileInput.style.cursor = 'pointer';
+                vFileInput.style.pointerEvents = 'auto';
+                
+                vFileInput.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    debugLog('V-file input clicked');
+                    vScreenshot.click();
+                });
+                
+                vScreenshot.addEventListener('change', function(e) {
+                    debugLog('V-screenshot changed');
+                    handleFileChange(e, 'v');
+                });
+            }
+            
+            // Setup for manual form
             const mFileInput = document.getElementById('m-file-input');
             const mScreenshot = document.getElementById('m-screenshot');
             
-            if (vFileInput && vScreenshot) {
-                vFileInput.onclick = function() {
-                    vScreenshot.click();
-                };
+            if (mFileInput && mScreenshot) {
+                mFileInput.style.cursor = 'pointer';
+                mFileInput.style.pointerEvents = 'auto';
                 
-                vScreenshot.onchange = function(e) {
-                    handleFileChange(e, 'v');
-                };
+                mFileInput.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    debugLog('M-file input clicked');
+                    mScreenshot.click();
+                });
+                
+                mScreenshot.addEventListener('change', function(e) {
+                    debugLog('M-screenshot changed');
+                    handleFileChange(e, 'm');
+                });
             }
             
-            if (mFileInput && mScreenshot) {
-                mFileInput.onclick = function() {
-                    mScreenshot.click();
-                };
-                
-                mScreenshot.onchange = function(e) {
-                    handleFileChange(e, 'm');
-                };
-            }
+            debugLog('File inputs setup complete');
         }
         
         function handleFileChange(event, prefix) {
+            debugLog(`File change detected for prefix: ${prefix}`);
             const file = event.target.files[0];
             const fileInputDiv = document.getElementById(prefix + '-file-input');
             
-            if (file) {
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('File is too large. Please select an image under 10MB.');
-                    event.target.value = '';
-                    return;
-                }
-                
-                const fileName = file.name;
-                const fileSize = Math.round(file.size / 1024);
-                
-                window['selectedFile_' + prefix] = file;
-                
-                fileInputDiv.innerHTML = `
-                    <div class="file-input-icon">✅</div>
-                    <div class="file-input-text">${fileName}</div>
-                    <div class="file-input-subtext">${fileSize}KB • Click to change</div>
-                `;
-                
-                fileInputDiv.classList.add('has-file');
-                
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'file';
-                hiddenInput.id = prefix + '-screenshot';
-                hiddenInput.accept = 'image/*';
-                hiddenInput.required = true;
-                hiddenInput.style.display = 'none';
-                hiddenInput.files = event.target.files;
-                
-                fileInputDiv.appendChild(hiddenInput);
-                
-                fileInputDiv.onclick = function() {
-                    hiddenInput.click();
-                };
-                
-                hiddenInput.onchange = function(e) {
-                    handleFileChange(e, prefix);
-                };
-                
-                // Trigger form validation
-                validateForm();
+            if (!file) {
+                debugLog('No file selected');
+                return;
             }
+            
+            debugLog(`File selected: ${file.name}, size: ${file.size}`);
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File is too large. Please select an image under 10MB.');
+                event.target.value = '';
+                return;
+            }
+            
+            const fileName = file.name;
+            const fileSize = Math.round(file.size / 1024);
+            
+            // Store the file reference globally
+            window['selectedFile_' + prefix] = file;
+            debugLog(`File stored as selectedFile_${prefix}`);
+            
+            // Update the visual display
+            fileInputDiv.innerHTML = `
+                <div class="file-input-icon">✅</div>
+                <div class="file-input-text">${fileName}</div>
+                <div class="file-input-subtext">${fileSize}KB • Click to change</div>
+            `;
+            
+            // Add visual feedback
+            fileInputDiv.classList.add('has-file');
+            fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
+            fileInputDiv.style.background = 'rgba(52, 199, 89, 0.1)';
+            
+            // Create new hidden input to maintain functionality
+            const newHiddenInput = document.createElement('input');
+            newHiddenInput.type = 'file';
+            newHiddenInput.id = prefix + '-screenshot';
+            newHiddenInput.accept = 'image/*';
+            newHiddenInput.required = true;
+            newHiddenInput.style.position = 'absolute';
+            newHiddenInput.style.left = '-9999px';
+            newHiddenInput.style.opacity = '0';
+            newHiddenInput.style.pointerEvents = 'none';
+            
+            // Transfer the files to the new input
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            newHiddenInput.files = dt.files;
+            
+            fileInputDiv.appendChild(newHiddenInput);
+            
+            // Re-setup click handler
+            fileInputDiv.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                debugLog('File input clicked - opening file dialog');
+                newHiddenInput.click();
+            };
+            
+            // Setup change handler for new input
+            newHiddenInput.onchange = function(e) {
+                handleFileChange(e, prefix);
+            };
+            
+            // Trigger form validation
+            setTimeout(validateForm, 100);
+            
+            debugLog(`File handling complete for ${prefix}`);
         }
         
         function setupPhoneFormatting() {
