@@ -475,19 +475,157 @@
             }
         }
 
-        .pulse-animation {
-            animation: pulse 2s infinite;
+        /* Custom Roulette Wheel Styles */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
         }
 
-        @keyframes pulse {
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+            transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .wheel-segment-text {
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            transform: rotate(-45deg);
+            width: 80px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #ff6b35;
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 3px solid white;
+        }
+
+        .spin-button {
+            margin-top: 30px;
+            padding: 16px 32px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .spin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .spin-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .prize-result {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .prize-result.show {
+            display: block;
+            animation: prizeReveal 0.8s ease;
+        }
+
+        @keyframes prizeReveal {
             0% {
-                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+                opacity: 0;
+                transform: scale(0.8);
             }
             100% {
-                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .prize-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #34c759;
+            margin-bottom: 8px;
+        }
+
+        .prize-description {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .wheel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .wheel-segment-text {
+                font-size: 10px;
+                width: 60px;
             }
         }
     </style>
@@ -643,23 +781,26 @@
 
         <!-- Roulette Wheel Section -->
         <div id="roulette-section" class="roulette-section">
-            <div class="roulette-container pulse-animation">
+            <div class="roulette-container">
                 <h2 class="roulette-title">🎰 Spin the Bonus Wheel!</h2>
                 <p class="roulette-subtitle">You've successfully entered! Now spin for your instant bonus prize!</p>
                 
                 <div class="roulette-embed">
-                    <div id="sorteos-embed-container">
-                        <!-- App Sorteos embed will load here -->
-                        <div id="wheel-loading" style="text-align: center; padding: 40px;">
+                    <div id="pickerwheel-container" style="text-align: center;">
+                        <!-- PickerWheel iframe will be inserted here -->
+                        <div id="wheel-placeholder" style="padding: 40px;">
                             <div style="font-size: 3rem; margin-bottom: 16px;">🎰</div>
-                            <p style="color: rgba(255,255,255,0.7);">Loading your bonus wheel...</p>
+                            <p style="color: rgba(255,255,255,0.7);">Setting up your bonus wheel...</p>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.5); margin-top: 12px;">
+                                Please wait while we load your prizes!
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 <div class="spin-instructions">
                     <h4>🎉 Congratulations!</h4>
-                    <p>Your giveaway entry is confirmed! Click the wheel above to spin for your instant bonus prize. Every spin wins something special!</p>
+                    <p>Your giveaway entry is confirmed! Click the "Spin to Win" button above for your instant bonus prize. Every spin wins something special!</p>
                 </div>
             </div>
         </div>
@@ -690,9 +831,61 @@
         // ImgBB configuration (working image upload)
         const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
         
-        // App Sorteos configuration
-        const SORTEOS_API_KEY = 'pk_00e4ae64a85ec176c1035ce5c7daa0fd31e8df12';
-        const SORTEOS_PROMOTION_ID = 'M4mdDHKi';
+        // PickerWheel Configuration
+        // Your custom PickerWheel embed URL
+        const PICKERWHEEL_EMBED_URL = 'https://pickerwheel.com/emb/?id=PRwgT';
+        
+        function loadPickerWheel() {
+            debugLog('Loading PickerWheel...');
+            
+            const container = document.getElementById('pickerwheel-container');
+            const placeholder = document.getElementById('wheel-placeholder');
+            
+            // Create iframe for PickerWheel
+            const iframe = document.createElement('iframe');
+            iframe.src = PICKERWHEEL_EMBED_URL;
+            iframe.width = '100%';
+            iframe.height = '550px';
+            iframe.style.border = 'none';
+            iframe.style.borderRadius = '12px';
+            iframe.style.maxWidth = '500px';
+            iframe.setAttribute('scrolling', 'no');
+            iframe.setAttribute('frameborder', '0');
+            
+            // Handle iframe load
+            iframe.onload = function() {
+                debugLog('PickerWheel loaded successfully');
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+            };
+            
+            iframe.onerror = function() {
+                debugLog('PickerWheel failed to load');
+                showWheelError();
+            };
+            
+            // Replace placeholder with iframe
+            container.appendChild(iframe);
+            
+            debugLog('PickerWheel iframe created');
+        }
+        
+        function showWheelError() {
+            const container = document.getElementById('pickerwheel-container');
+            container.innerHTML = `
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 16px;">⚠️</div>
+                    <h3 style="color: #ff9500; margin-bottom: 12px;">Wheel Loading Issue</h3>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px;">
+                        Having trouble loading the bonus wheel. Please try refreshing the page.
+                    </p>
+                    <button onclick="loadPickerWheel()" class="spin-button" style="margin: 0;">
+                        Retry Loading Wheel
+                    </button>
+                </div>
+            `;
+        }
         
         // Debug mode (set to false for production)
         const debugMode = false; // Change to true for testing: ?debug=1
@@ -1224,71 +1417,6 @@
             }
         }
         
-        function loadRouletteWheel() {
-            debugLog('Loading roulette wheel...');
-            
-            const container = document.getElementById('sorteos-embed-container');
-            const loadingDiv = document.getElementById('wheel-loading');
-            
-            // Method 1: Try the standard embed script
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://app-sorteos.com/embed/embed.js';
-            script.setAttribute('data-promotion', SORTEOS_PROMOTION_ID);
-            script.async = true;
-            
-            // Add error handling
-            script.onerror = function() {
-                debugLog('Script failed to load, trying alternative method...');
-                loadAlternativeWheel();
-            };
-            
-            script.onload = function() {
-                debugLog('Script loaded successfully');
-                // Hide loading indicator after a delay
-                setTimeout(() => {
-                    if (loadingDiv) loadingDiv.style.display = 'none';
-                }, 3000);
-            };
-            
-            // Append script to head instead of container
-            document.head.appendChild(script);
-            
-            // Method 2: Also try direct iframe embed as backup
-            setTimeout(() => {
-                if (loadingDiv && loadingDiv.style.display !== 'none') {
-                    loadAlternativeWheel();
-                }
-            }, 5000);
-            
-            debugLog('Roulette wheel script loaded');
-        }
-        
-        function loadAlternativeWheel() {
-            debugLog('Loading alternative wheel method...');
-            
-            const container = document.getElementById('sorteos-embed-container');
-            const loadingDiv = document.getElementById('wheel-loading');
-            
-            // Hide loading
-            if (loadingDiv) loadingDiv.style.display = 'none';
-            
-            // Create iframe as alternative
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://app-sorteos.com/promotion/${SORTEOS_PROMOTION_ID}`;
-            iframe.style.width = '100%';
-            iframe.style.height = '500px';
-            iframe.style.border = 'none';
-            iframe.style.borderRadius = '12px';
-            iframe.allow = 'accelerometer; gyroscope';
-            
-            // Clear container and add iframe
-            container.innerHTML = '';
-            container.appendChild(iframe);
-            
-            debugLog('Alternative wheel loaded via iframe');
-        }
-        
         function showRouletteWheel() {
             const rouletteSection = document.getElementById('roulette-section');
             
@@ -1300,8 +1428,8 @@
                 rouletteSection.classList.add('slide-in');
             }, 100);
             
-            // Load the roulette wheel
-            loadRouletteWheel();
+            // Load PickerWheel
+            loadPickerWheel();
             
             // Smooth scroll to roulette section
             setTimeout(() => {
@@ -1311,7 +1439,7 @@
                 });
             }, 500);
             
-            debugLog('Roulette wheel displayed');
+            debugLog('PickerWheel section displayed');
         }
         
         function showSuccessResult(formData, type) {
