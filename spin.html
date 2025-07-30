@@ -1,4 +1,95 @@
-<!DOCTYPE html>
+/* Custom Clean Wheel Styles */
+        .custom-wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        .wheel-custom {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+            transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .wheel-segment-custom {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            border: 2px solid rgba(255,255,255,0.1);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+
+        .wheel-segment-text-custom {
+            position: absolute;
+            top: 25%;
+            left: 35%;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            transform-origin: center;
+            width: 90px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .wheel-pointer-custom {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ff6b35;
+            z-index: 10;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .wheel-center-custom {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            border: 4px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            text-align: center;
+        }
+
+        .wheel-center-custom:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .spin-result-custom {
+            margin-top: 30px;
+            padding: 24px;
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .prize-title-<!DOCTYPE html>
 <html>
 <head>
     <title>🎉 VIP Giveaway — Exclusive Access</title>
@@ -483,6 +574,42 @@
             margin: 0 auto;
         }
 
+        /* Hide unwanted PickerWheel elements */
+        #pickerwheel-container iframe {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* CSS to hide unwanted elements inside iframe (if possible) */
+        .pickerwheel-clean {
+            position: relative;
+        }
+
+        .pickerwheel-clean::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(66, 66, 66, 1) 0%, rgba(66, 66, 66, 0.8) 50%, transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Overlay to hide reset button and branding */
+        .wheel-overlay {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 60px;
+            background: rgba(66, 66, 66, 0.95);
+            border-radius: 8px;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+
         .wheel {
             width: 300px;
             height: 300px;
@@ -786,7 +913,7 @@
                 <p class="roulette-subtitle">You've successfully entered! Now spin for your instant bonus prize!</p>
                 
                 <div class="roulette-embed">
-                    <div id="pickerwheel-container" style="text-align: center;">
+                    <div id="pickerwheel-container" class="pickerwheel-clean" style="text-align: center; position: relative;">
                         <!-- PickerWheel iframe will be inserted here -->
                         <div id="wheel-placeholder" style="padding: 40px;">
                             <div style="font-size: 3rem; margin-bottom: 16px;">🎰</div>
@@ -795,6 +922,8 @@
                                 Please wait while we load your prizes!
                             </p>
                         </div>
+                        <!-- Overlay to hide unwanted elements -->
+                        <div class="wheel-overlay" id="wheel-overlay" style="display: none;"></div>
                     </div>
                 </div>
 
@@ -1472,7 +1601,7 @@
                 rouletteSection.classList.add('slide-in');
             }, 100);
             
-            // Load PickerWheel
+            // Load Wheel of Names
             loadPickerWheel();
             
             // Smooth scroll to roulette section
@@ -1483,7 +1612,7 @@
                 });
             }, 500);
             
-            debugLog('PickerWheel section displayed');
+            debugLog('Wheel of Names section displayed');
         }
         
         function showSuccessResult(formData, type) {
