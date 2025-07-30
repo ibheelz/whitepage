@@ -650,6 +650,10 @@
                 <div class="roulette-embed">
                     <div id="sorteos-embed-container">
                         <!-- App Sorteos embed will load here -->
+                        <div id="wheel-loading" style="text-align: center; padding: 40px;">
+                            <div style="font-size: 3rem; margin-bottom: 16px;">🎰</div>
+                            <p style="color: rgba(255,255,255,0.7);">Loading your bonus wheel...</p>
+                        </div>
                     </div>
                 </div>
 
@@ -1223,18 +1227,66 @@
         function loadRouletteWheel() {
             debugLog('Loading roulette wheel...');
             
-            // Create and append the App Sorteos script
+            const container = document.getElementById('sorteos-embed-container');
+            const loadingDiv = document.getElementById('wheel-loading');
+            
+            // Method 1: Try the standard embed script
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.src = 'https://app-sorteos.com/embed/embed.js';
             script.setAttribute('data-promotion', SORTEOS_PROMOTION_ID);
             script.async = true;
             
-            // Append script to the embed container
-            const container = document.getElementById('sorteos-embed-container');
-            container.appendChild(script);
+            // Add error handling
+            script.onerror = function() {
+                debugLog('Script failed to load, trying alternative method...');
+                loadAlternativeWheel();
+            };
+            
+            script.onload = function() {
+                debugLog('Script loaded successfully');
+                // Hide loading indicator after a delay
+                setTimeout(() => {
+                    if (loadingDiv) loadingDiv.style.display = 'none';
+                }, 3000);
+            };
+            
+            // Append script to head instead of container
+            document.head.appendChild(script);
+            
+            // Method 2: Also try direct iframe embed as backup
+            setTimeout(() => {
+                if (loadingDiv && loadingDiv.style.display !== 'none') {
+                    loadAlternativeWheel();
+                }
+            }, 5000);
             
             debugLog('Roulette wheel script loaded');
+        }
+        
+        function loadAlternativeWheel() {
+            debugLog('Loading alternative wheel method...');
+            
+            const container = document.getElementById('sorteos-embed-container');
+            const loadingDiv = document.getElementById('wheel-loading');
+            
+            // Hide loading
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            
+            // Create iframe as alternative
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://app-sorteos.com/promotion/${SORTEOS_PROMOTION_ID}`;
+            iframe.style.width = '100%';
+            iframe.style.height = '500px';
+            iframe.style.border = 'none';
+            iframe.style.borderRadius = '12px';
+            iframe.allow = 'accelerometer; gyroscope';
+            
+            // Clear container and add iframe
+            container.innerHTML = '';
+            container.appendChild(iframe);
+            
+            debugLog('Alternative wheel loaded via iframe');
         }
         
         function showRouletteWheel() {
