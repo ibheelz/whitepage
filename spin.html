@@ -799,8 +799,8 @@
                 </div>
 
                 <div class="spin-instructions">
-                    <h4>🎉 Congratulations!</h4>
-                    <p>Your giveaway entry is confirmed! Click the "Spin to Win" button above for your instant bonus prize. Every spin wins something special!</p>
+                    <h4>🎉 Ready to Spin!</h4>
+                    <p>Your giveaway entry is confirmed! Click the wheel above to spin for your instant bonus prize. <strong>One spin per entry only.</strong></p>
                 </div>
             </div>
         </div>
@@ -845,12 +845,17 @@
             const iframe = document.createElement('iframe');
             iframe.src = PICKERWHEEL_EMBED_URL;
             iframe.width = '100%';
-            iframe.height = '550px';
+            iframe.height = '650px';
             iframe.style.border = 'none';
             iframe.style.borderRadius = '12px';
-            iframe.style.maxWidth = '500px';
+            iframe.style.maxWidth = '600px';
             iframe.setAttribute('scrolling', 'no');
             iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+            
+            // Security: Prevent iframe manipulation
+            iframe.setAttribute('referrerpolicy', 'no-referrer');
+            iframe.setAttribute('loading', 'lazy');
             
             // Handle iframe load
             iframe.onload = function() {
@@ -1280,6 +1285,12 @@
                 const formData = collectFormData(type);
                 debugLog('Form data collected: ' + JSON.stringify({...formData, screenshot: formData.screenshot ? 'FILE_PRESENT' : 'NO_FILE'}));
                 
+                // Validate form data
+                const validationErrors = validateFormData(formData, type);
+                if (validationErrors.length > 0) {
+                    throw new Error(validationErrors.join(', '));
+                }
+                
                 // Upload screenshot to ImgBB if present
                 let imageUrl = null;
                 if (formData.screenshot) {
@@ -1350,6 +1361,10 @@
         }
         
         async function submitToAirtable(formData, type, submitButton, originalText, imageUrl) {
+            // Store user info for spin tracking
+            localStorage.setItem('user_email', formData.email);
+            localStorage.setItem('user_name', formData.username);
+            
             // Prepare Airtable record
             const recordData = {
                 'Email': formData.email,
@@ -1415,6 +1430,35 @@
                 submitButton.disabled = false;
                 submitButton.textContent = originalText;
             }
+        }
+        
+        // Enhanced form validation
+        function validateFormData(formData, type) {
+            const errors = [];
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                errors.push('Please enter a valid email address');
+            }
+            
+            // Phone validation
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            if (!phoneRegex.test(formData.phone.replace(/\s+/g, ''))) {
+                errors.push('Please enter a valid phone number');
+            }
+            
+            // Username validation
+            if (formData.username.length < 3) {
+                errors.push('Username must be at least 3 characters long');
+            }
+            
+            // Screenshot validation
+            if (!formData.screenshot) {
+                errors.push('Deposit screenshot is required');
+            }
+            
+            return errors;
         }
         
         function showRouletteWheel() {
