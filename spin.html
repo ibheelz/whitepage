@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🎰 Spin to Win — Exclusive Roulette Giveaway</title>
+    <title>🎉 VIP Giveaway — Exclusive Access</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -13,65 +13,28 @@
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(ellipse at center, #1a1a1a 0%, #000000 100%);
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
             color: #f5f5f7;
             min-height: 100vh;
             line-height: 1.6;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        /* Roulette-themed background */
-        .roulette-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.03;
-            background-image: 
-                radial-gradient(circle at 20% 80%, #dc143c 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, #ffd700 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, #000000 0%, transparent 50%);
         }
         
         .hero-section {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b2e 50%, #000000 100%);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
             padding: 80px 20px 60px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-        }
-        
-        .roulette-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: spinSlow 10s linear infinite;
-        }
-        
-        @keyframes spinSlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
         
         .hero-title {
             font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 700;
-            background: linear-gradient(45deg, #dc143c, #ffd700, #000000, #dc143c);
-            background-size: 300% 300%;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd23f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 16px;
             letter-spacing: -0.02em;
-            animation: rouletteGradient 3s ease-in-out infinite;
-        }
-        
-        @keyframes rouletteGradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
         }
         
         .hero-subtitle {
@@ -88,18 +51,18 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(220, 20, 60, 0.15);
-            border: 1px solid rgba(220, 20, 60, 0.3);
+            background: rgba(52, 199, 89, 0.15);
+            border: 1px solid rgba(52, 199, 89, 0.3);
             padding: 12px 20px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 600;
-            color: #dc143c;
+            color: #34c759;
             backdrop-filter: blur(10px);
         }
         
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: -40px auto 40px;
             padding: 0 20px;
         }
@@ -113,88 +76,11 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             margin-bottom: 24px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 24px;
-            padding: 1px;
-            background: linear-gradient(45deg, #dc143c, transparent, #ffd700, transparent);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .card:hover::before {
-            opacity: 0.5;
         }
         
         .card:hover {
             border-color: rgba(255,255,255,0.2);
             box-shadow: 0 24px 48px rgba(0,0,0,0.4);
-            transform: translateY(-2px);
-        }
-        
-        .form-progress {
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .progress-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #dc143c, #ffd700);
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        .progress-text {
-            margin-top: 8px;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
         }
         
         .status-card {
@@ -271,22 +157,13 @@
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: auto !important;
-            cursor: text !important;
-            z-index: 10;
-            position: relative;
         }
         
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #dc143c;
+            border-color: #007aff;
             background: rgba(255,255,255,0.12);
-            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.2);
-        }
-        
-        input.valid {
-            border-color: #34c759;
-            background: rgba(52, 199, 89, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
         }
         
         input::placeholder, select::placeholder, textarea::placeholder {
@@ -301,21 +178,13 @@
             border-radius: 12px;
             padding: 32px 20px;
             text-align: center;
-            cursor: pointer !important;
+            cursor: pointer;
             transition: all 0.3s ease;
-            pointer-events: auto !important;
-            z-index: 10;
         }
         
         .file-input:hover {
-            border-color: #dc143c;
-            background: rgba(220, 20, 60, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .file-input.has-file {
-            border-color: #34c759;
-            background: rgba(52, 199, 89, 0.1);
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.12);
         }
         
         .file-input input[type="file"] {
@@ -339,97 +208,50 @@
             color: rgba(255,255,255,0.6);
         }
         
-        .spin-button {
+        .primary-button {
             width: 100%;
-            padding: 24px 32px;
-            background: linear-gradient(45deg, #dc143c, #ff6b35, #ffd700);
-            background-size: 300% 300%;
+            padding: 18px 32px;
+            background: linear-gradient(45deg, #007aff, #0051d5);
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             color: white;
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 600;
             font-family: inherit;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.3);
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-            animation: rouletteGradient 3s ease-in-out infinite;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            letter-spacing: 0.01em;
         }
         
-        .spin-button:disabled {
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+        }
+        
+        .primary-button:active {
+            transform: translateY(0);
+        }
+        
+        .primary-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            animation: none;
-            background: linear-gradient(45deg, #666, #888);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            transform: none;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
         }
         
-        .spin-button:not(:disabled):hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 40px rgba(220, 20, 60, 0.4);
+        .secondary-button {
+            background: linear-gradient(45deg, #ff9500, #ff8c00);
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
         }
         
-        .spin-button:not(:disabled):active {
-            transform: translateY(-1px) scale(1.01);
-        }
-        
-        .spin-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .spin-button:not(:disabled):hover::before {
-            left: 100%;
-        }
-        
-        .wheel-container {
-            margin: 32px 0;
-            text-align: center;
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 32px;
-            border: 1px solid rgba(255,255,255,0.1);
-            display: none;
-            min-height: 400px;
-        }
-        
-        .wheel-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .wheel-embed {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 16px 32px rgba(0,0,0,0.3);
-            min-height: 300px;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .wheel-loading {
-            color: rgba(255,255,255,0.7);
-            font-size: 1.1rem;
+        .secondary-button:hover {
+            box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4);
         }
         
         .result-card {
             margin-top: 32px;
             text-align: center;
-            display: none;
         }
         
         .result-success {
@@ -446,34 +268,80 @@
             border-color: rgba(255, 59, 48, 0.3);
             background: rgba(255, 59, 48, 0.1);
         }
-        
-        .prize-celebration {
-            position: fixed;
+
+        /* Roulette Wheel Section */
+        .roulette-section {
+            margin-top: 40px;
+            text-align: center;
+            display: none;
+        }
+
+        .roulette-container {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roulette-container::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1), rgba(255, 210, 63, 0.1));
             pointer-events: none;
-            z-index: 1000;
         }
-        
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #ffd700;
-            animation: confettiFall 3s linear infinite;
+
+        .roulette-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd23f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
         }
-        
-        @keyframes confettiFall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
+
+        .roulette-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+
+        .roulette-embed {
+            position: relative;
+            z-index: 1;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spin-instructions {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .spin-instructions h4 {
+            color: #34c759;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .spin-instructions p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
         }
         
         .rules-section {
@@ -505,42 +373,11 @@
         }
         
         .rules-list li::before {
-            content: "🎰";
+            content: "●";
             position: absolute;
             left: 0;
-            font-size: 1.2rem;
-        }
-        
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        .floating-element {
-            position: absolute;
-            font-size: 1.5rem;
-            animation: float 20s linear infinite;
-            opacity: 0.1;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10%, 90% {
-                opacity: 0.1;
-            }
-            100% {
-                transform: translateY(-10vh) rotate(360deg);
-                opacity: 0;
-            }
+            color: #007aff;
+            font-weight: bold;
         }
         
         .debug {
@@ -562,6 +399,43 @@
             backdrop-filter: blur(20px);
         }
         
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .floating-element {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 15s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
         @media (max-width: 768px) {
             .hero-section {
                 padding: 60px 20px 40px;
@@ -576,10 +450,13 @@
                 margin: -20px auto 40px;
                 padding: 0 16px;
             }
-            
-            .spin-button {
-                font-size: 1.1rem;
-                padding: 20px 24px;
+
+            .roulette-container {
+                padding: 24px 16px;
+            }
+
+            .roulette-title {
+                font-size: 1.5rem;
             }
         }
         
@@ -597,33 +474,45 @@
                 transform: translateY(0);
             }
         }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Roulette background -->
-    <div class="roulette-bg"></div>
-
-    <!-- Floating roulette elements -->
+    <!-- Floating background elements -->
     <div class="floating-elements">
-        <div class="floating-element" style="left: 10%; animation-delay: -5s;">🎰</div>
-        <div class="floating-element" style="left: 20%; animation-delay: -1s;">🎲</div>
-        <div class="floating-element" style="left: 30%; animation-delay: -3s;">🃏</div>
-        <div class="floating-element" style="left: 40%; animation-delay: -6s;">💰</div>
-        <div class="floating-element" style="left: 50%; animation-delay: -2s;">🎯</div>
-        <div class="floating-element" style="left: 60%; animation-delay: -4s;">💎</div>
-        <div class="floating-element" style="left: 70%; animation-delay: -7s;">🎰</div>
-        <div class="floating-element" style="left: 80%; animation-delay: 0s;">🏆</div>
-        <div class="floating-element" style="left: 90%; animation-delay: -8s;">🎊</div>
+        <div class="floating-element" style="left: 10%; animation-delay: -5s;"></div>
+        <div class="floating-element" style="left: 20%; animation-delay: -1s;"></div>
+        <div class="floating-element" style="left: 30%; animation-delay: -3s;"></div>
+        <div class="floating-element" style="left: 40%; animation-delay: -6s;"></div>
+        <div class="floating-element" style="left: 50%; animation-delay: -2s;"></div>
+        <div class="floating-element" style="left: 60%; animation-delay: -4s;"></div>
+        <div class="floating-element" style="left: 70%; animation-delay: -7s;"></div>
+        <div class="floating-element" style="left: 80%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="left: 90%; animation-delay: -8s;"></div>
     </div>
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <div class="roulette-icon">🎰</div>
-        <h1 id="giveaway-title" class="hero-title">Spin to Win VIP</h1>
-        <p id="giveaway-subtitle" class="hero-subtitle">Fill the form, spin the wheel, win amazing prizes!</p>
+        <h1 id="giveaway-title" class="hero-title">VIP Exclusive</h1>
+        <p id="giveaway-subtitle" class="hero-subtitle">Join our premium giveaway experience</p>
         <div id="verification-badge" class="verification-badge" style="display: none;">
             <span>✓</span>
-            <span>Verified Player</span>
+            <span>Verified Member</span>
         </div>
     </section>
 
@@ -637,26 +526,17 @@
             <div id="verification-info" class="verification-info" style="display: none;"></div>
         </div>
 
-        <!-- Form Progress -->
-        <div id="form-progress" class="card form-progress slide-in" style="display: none;">
-            <div class="progress-title">Complete your entry to unlock the wheel</div>
-            <div class="progress-bar">
-                <div id="progress-fill" class="progress-fill"></div>
-            </div>
-            <div id="progress-text" class="progress-text">Please fill all required fields</div>
-        </div>
-
         <!-- Auto-Verified Form -->
         <div id="verified-form" class="card slide-in" style="display: none;">
             <div class="form-section">
                 <form id="auto-form">
                     <div class="form-group">
-                        <label class="form-label" for="v-email">Email Address *</label>
+                        <label class="form-label" for="v-email">Email Address</label>
                         <input type="email" id="v-email" placeholder="Enter your email address" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="v-phone">Phone Number *</label>
+                        <label class="form-label" for="v-phone">Phone Number</label>
                         <input type="tel" id="v-phone" placeholder="Enter your phone number" required>
                     </div>
                     
@@ -666,12 +546,12 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="v-username">Casino Username *</label>
+                        <label class="form-label" for="v-username">Casino Username</label>
                         <input type="text" id="v-username" placeholder="Your casino username" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Deposit Screenshot *</label>
+                        <label class="form-label">Deposit Screenshot</label>
                         <div class="file-input" id="v-file-input">
                             <input type="file" id="v-screenshot" accept="image/*" required>
                             <div class="file-input-icon">📸</div>
@@ -679,6 +559,10 @@
                             <div class="file-input-subtext">PNG, JPG up to 10MB</div>
                         </div>
                     </div>
+                    
+                    <button type="submit" id="v-submit" class="primary-button">
+                        Enter Giveaway
+                    </button>
                 </form>
             </div>
         </div>
@@ -688,12 +572,12 @@
             <div class="form-section">
                 <form id="manual-form-element">
                     <div class="form-group">
-                        <label class="form-label" for="m-email">Email Address *</label>
+                        <label class="form-label" for="m-email">Email Address</label>
                         <input type="email" id="m-email" placeholder="Enter your email address" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-phone">Phone Number *</label>
+                        <label class="form-label" for="m-phone">Phone Number</label>
                         <input type="tel" id="m-phone" placeholder="Enter your phone number" required>
                     </div>
                     
@@ -703,12 +587,12 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-username">Casino Username *</label>
+                        <label class="form-label" for="m-username">Casino Username</label>
                         <input type="text" id="m-username" placeholder="Your casino username" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-influencer">Traffic Source *</label>
+                        <label class="form-label" for="m-influencer">Traffic Source</label>
                         <select id="m-influencer" required>
                             <option value="">How did you find us?</option>
                             <option value="facebook_ad">Facebook Advertisement</option>
@@ -728,7 +612,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-reg-date">Registration Date *</label>
+                        <label class="form-label" for="m-reg-date">Registration Date</label>
                         <input type="date" id="m-reg-date" required>
                     </div>
                     
@@ -738,7 +622,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Deposit Screenshot *</label>
+                        <label class="form-label">Deposit Screenshot</label>
                         <div class="file-input" id="m-file-input">
                             <input type="file" id="m-screenshot" accept="image/*" required>
                             <div class="file-input-icon">📸</div>
@@ -746,46 +630,50 @@
                             <div class="file-input-subtext">PNG, JPG up to 10MB</div>
                         </div>
                     </div>
+                    
+                    <button type="submit" id="m-submit" class="primary-button secondary-button">
+                        Submit for Review
+                    </button>
                 </form>
             </div>
         </div>
 
-        <!-- Wheel Container -->
-        <div id="wheel-container" class="wheel-container">
-            <div class="wheel-title">🎰 Spin the Wheel to Complete Your Entry! 🎰</div>
-            <div class="wheel-embed">
-                <div class="wheel-loading">🎰 Loading wheel... Please wait</div>
-                <div id="wheel-script-container"></div>
+        <!-- Result Card -->
+        <div id="result-card" class="card result-card" style="display: none;"></div>
+
+        <!-- Roulette Wheel Section -->
+        <div id="roulette-section" class="roulette-section">
+            <div class="roulette-container pulse-animation">
+                <h2 class="roulette-title">🎰 Spin the Bonus Wheel!</h2>
+                <p class="roulette-subtitle">You've successfully entered! Now spin for your instant bonus prize!</p>
+                
+                <div class="roulette-embed">
+                    <div id="sorteos-embed-container">
+                        <!-- App Sorteos embed will load here -->
+                    </div>
+                </div>
+
+                <div class="spin-instructions">
+                    <h4>🎉 Congratulations!</h4>
+                    <p>Your giveaway entry is confirmed! Click the wheel above to spin for your instant bonus prize. Every spin wins something special!</p>
+                </div>
             </div>
         </div>
 
-        <!-- Spin Button -->
-        <div id="spin-section" style="display: none;">
-            <button id="spin-button" class="spin-button" disabled>
-                🎰 Complete Form to Unlock Spin 🎰
-            </button>
-        </div>
-
-        <!-- Result Card -->
-        <div id="result-card" class="card result-card"></div>
-
         <!-- Rules Section -->
         <div class="rules-section">
-            <h3 class="rules-title">🎰 Roulette Giveaway Rules</h3>
+            <h3 class="rules-title">Giveaway Guidelines</h3>
             <ul class="rules-list">
                 <li>Must be registered through our official promotional channels</li>
                 <li>Valid deposit screenshot required for verification</li>
-                <li>Complete the form to unlock the spin wheel</li>
-                <li>One spin per person — duplicate entries will be disqualified</li>
+                <li>One entry per person — duplicate entries will be disqualified</li>
                 <li>Must be 18+ and legally eligible to participate</li>
-                <li>Winners contacted within 24 hours via email and Telegram</li>
-                <li>Prizes are final and cannot be exchanged</li>
+                <li>Winners announced weekly via email and Telegram</li>
+                <li>Valid contact information required for prize delivery</li>
+                <li>Spin the bonus wheel after form submission for instant prizes</li>
             </ul>
         </div>
     </div>
-
-    <!-- Prize Celebration -->
-    <div id="prize-celebration" class="prize-celebration"></div>
 
     <!-- Debug Console -->
     <div id="debug" class="debug"></div>
@@ -794,11 +682,16 @@
         // Configuration
         const AIRTABLE_TOKEN = 'patDS5YMB7hzvJTCS.7559c701e84181c5558a048c8ae8a611b1ba15284846cf66833866788dbc7d77';
         const BASE_ID = 'appcH8x1W3uCmFJip';
-        const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
-        const SORTEOS_API_KEY = 'pk_00e4ae64a85ec176c1035ce5c7daa0fd31e8df12';
         
-        // Debug mode - TEMPORARILY SET TO TRUE
-        const debugMode = true;
+        // ImgBB configuration (working image upload)
+        const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
+        
+        // App Sorteos configuration
+        const SORTEOS_API_KEY = 'pk_00e4ae64a85ec176c1035ce5c7daa0fd31e8df12';
+        const SORTEOS_PROMOTION_ID = 'M4mdDHKi';
+        
+        // Debug mode (set to false for production)
+        const debugMode = false; // Change to true for testing: ?debug=1
         
         if (debugMode || new URLSearchParams(window.location.search).get('debug') === '1') {
             document.getElementById('debug').style.display = 'block';
@@ -813,90 +706,76 @@
             }
         }
         
-        // Campaign configurations
+        // Campaign configurations - ADD YOUR CAMPAIGNS HERE
         const campaignConfig = {
             'graficos_1': {
-                title: '🎰 Win $1,000 Betsson Bonus - Graficos',
-                subtitle: 'Spin the wheel for exclusive Graficos campaign prizes',
+                title: 'Win $1,000 Betsson Bonus - Graficos',
+                subtitle: 'Exclusive giveaway for Graficos campaign players',
                 color: '#ff6b35'
             },
             'graficos_2': {
-                title: '🎰 Win $1,500 Betsson Bonus - Graficos 2',
-                subtitle: 'Premium Graficos 2 campaign roulette',
+                title: 'Win $1,500 Betsson Bonus - Graficos 2',
+                subtitle: 'Premium Graficos 2 campaign exclusive',
                 color: '#34c759'
             },
             'graficos_3': {
-                title: '🎰 Win $2,000 Betsson Bonus - Graficos 3',
-                subtitle: 'High-value Graficos 3 campaign wheel',
+                title: 'Win $2,000 Betsson Bonus - Graficos 3',
+                subtitle: 'High-value Graficos 3 campaign',
                 color: '#f7931e'
             },
             'baile_1': {
-                title: '🎰 Win $800 Betsson Bonus - Baile',
-                subtitle: 'Baile campaign exclusive spin',
+                title: 'Win $800 Betsson Bonus - Baile',
+                subtitle: 'Baile campaign exclusive offer',
                 color: '#e74c3c'
             },
             'baile_2': {
-                title: '🎰 Win $1,200 Betsson Bonus - Baile 2',
-                subtitle: 'Enhanced Baile campaign roulette',
+                title: 'Win $1,200 Betsson Bonus - Baile 2',
+                subtitle: 'Enhanced Baile campaign rewards',
                 color: '#9b59b6'
             },
             'baile_3': {
-                title: '🎰 Win $1,800 Betsson Bonus - Baile 3',
-                subtitle: 'Premium Baile campaign wheel',
+                title: 'Win $1,800 Betsson Bonus - Baile 3',
+                subtitle: 'Premium Baile campaign giveaway',
                 color: '#1abc9c'
             },
             'meta_1': {
-                title: '🎰 Win $600 Betsson Bonus - Meta',
-                subtitle: 'Meta campaign starter roulette',
+                title: 'Win $600 Betsson Bonus - Meta',
+                subtitle: 'Meta campaign starter bonus',
                 color: '#3498db'
             },
             'meta_2': {
-                title: '🎰 Win $1,000 Betsson Bonus - Meta 2',
-                subtitle: 'Enhanced Meta campaign spin',
+                title: 'Win $1,000 Betsson Bonus - Meta 2',
+                subtitle: 'Enhanced Meta campaign offer',
                 color: '#e67e22'
             },
             'meta_3': {
-                title: '🎰 Win $1,500 Betsson Bonus - Meta 3',
+                title: 'Win $1,500 Betsson Bonus - Meta 3',
                 subtitle: 'Premium Meta campaign exclusive',
                 color: '#95a5a6'
             },
+            // Default fallback
             'default': {
-                title: '🎰 Spin to Win VIP Exclusive',
-                subtitle: 'Premium member roulette rewards',
-                color: '#dc143c'
+                title: 'VIP Exclusive Giveaway',
+                subtitle: 'Premium member rewards program',
+                color: '#007aff'
             }
         };
         
-        // Global variables
-        let currentFormType = '';
-        let formComplete = false;
-        let spinResult = null;
-        
         // Initialize page
         window.onload = function() {
-            debugLog('Roulette giveaway page loaded');
+            debugLog('Premium giveaway page loaded');
+            checkVerificationStatus();
             
-            // Add delay to ensure DOM is fully ready
-            setTimeout(() => {
-                checkVerificationStatus();
+            // Set up events after a short delay
+            setTimeout(function() {
                 setupEventListeners();
-                setupFormValidation();
-                
-                // Force all inputs to be interactive
-                const allInputs = document.querySelectorAll('input, select, textarea');
-                allInputs.forEach(input => {
-                    input.style.pointerEvents = 'auto';
-                    input.style.cursor = 'text';
-                    input.tabIndex = 0;
-                });
-                
-                debugLog('Page initialization complete');
-            }, 500);
+            }, 2000);
         }
         
         function checkVerificationStatus() {
             debugLog('Checking verification status...');
             
+            // Check multiple storage methods
             let clickid = localStorage.getItem('verified_clickid') || 
                          sessionStorage.getItem('verified_clickid') || 
                          getCookie('vc_id');
@@ -909,6 +788,7 @@
             
             debugLog(`Verification data: clickid=${clickid}, campaign=${campaign}`);
             
+            // Update page theme
             updatePageTheme(campaign);
             
             if (!clickid) {
@@ -916,6 +796,7 @@
                 return;
             }
             
+            // Check if verification is still valid (30 days)
             const daysSinceVerification = timestamp ? 
                 (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24) : 0;
             
@@ -935,8 +816,6 @@
         }
         
         function showAutoVerification(clickid, campaign, timestamp) {
-            currentFormType = 'automatic';
-            
             const statusCard = document.getElementById('status-card');
             const statusIcon = document.getElementById('status-icon');
             const statusTitle = document.getElementById('status-title');
@@ -944,13 +823,16 @@
             const verificationInfo = document.getElementById('verification-info');
             const verificationBadge = document.getElementById('verification-badge');
             
+            // Show verification badge
             verificationBadge.style.display = 'inline-flex';
             
+            // Configure status card
             statusIcon.innerHTML = '✓';
             statusIcon.classList.add('status-verified');
             statusTitle.textContent = 'Automatically Verified';
-            statusDescription.textContent = 'Your registration has been verified! Complete the form to unlock the spin wheel.';
+            statusDescription.textContent = 'Your registration has been verified and you\'re eligible for fast-track entry.';
             
+            // Show verification details
             verificationInfo.style.display = 'block';
             verificationInfo.innerHTML = `
                 <strong>Campaign:</strong> ${campaign.toUpperCase()}<br>
@@ -961,15 +843,11 @@
             
             statusCard.style.display = 'block';
             document.getElementById('verified-form').style.display = 'block';
-            document.getElementById('form-progress').style.display = 'block';
-            document.getElementById('spin-section').style.display = 'block';
             
             debugLog('Showing auto-verification form');
         }
         
         function showManualVerification() {
-            currentFormType = 'manual';
-            
             const statusCard = document.getElementById('status-card');
             const statusIcon = document.getElementById('status-icon');
             const statusTitle = document.getElementById('status-title');
@@ -978,19 +856,15 @@
             statusIcon.innerHTML = '?';
             statusIcon.classList.add('status-manual');
             statusTitle.textContent = 'Manual Verification Required';
-            statusDescription.textContent = 'Complete the form below to unlock the spin wheel and enter our exclusive giveaway.';
+            statusDescription.textContent = 'We couldn\'t automatically verify your registration. Please provide additional information for manual review.';
             
             statusCard.style.display = 'block';
             document.getElementById('manual-form').style.display = 'block';
-            document.getElementById('form-progress').style.display = 'block';
-            document.getElementById('spin-section').style.display = 'block';
             
             debugLog('Showing manual verification form');
         }
         
         function showExpiredVerification() {
-            currentFormType = 'expired';
-            
             const statusCard = document.getElementById('status-card');
             const statusIcon = document.getElementById('status-icon');
             const statusTitle = document.getElementById('status-title');
@@ -999,12 +873,10 @@
             statusIcon.innerHTML = '⏰';
             statusIcon.classList.add('status-manual');
             statusTitle.textContent = 'Verification Expired';
-            statusDescription.textContent = 'Your verification has expired. Complete the form to unlock the spin wheel.';
+            statusDescription.textContent = 'Your verification link has expired. Please provide your information for manual review.';
             
             statusCard.style.display = 'block';
             document.getElementById('manual-form').style.display = 'block';
-            document.getElementById('form-progress').style.display = 'block';
-            document.getElementById('spin-section').style.display = 'block';
             
             debugLog('Showing expired verification form');
         }
@@ -1012,274 +884,97 @@
         function setupEventListeners() {
             debugLog('Setting up event listeners...');
             
-            // Wait for DOM to be ready
-            setTimeout(() => {
-                // Spin button event
-                const spinButton = document.getElementById('spin-button');
-                if (spinButton) {
-                    spinButton.addEventListener('click', handleSpinClick);
+            setTimeout(function() {
+                const autoForm = document.getElementById('auto-form');
+                const submitButton = document.getElementById('v-submit');
+                
+                debugLog('Auto form found: ' + (autoForm ? 'YES' : 'NO'));
+                debugLog('Submit button found: ' + (submitButton ? 'YES' : 'NO'));
+                
+                if (autoForm) {
+                    autoForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        debugLog('AUTO FORM SUBMITTED!');
+                        handleFormSubmission('automatic');
+                    });
+                    
+                    autoForm.onsubmit = function(e) {
+                        e.preventDefault();
+                        debugLog('AUTO FORM ONSUBMIT!');
+                        handleFormSubmission('automatic');
+                        return false;
+                    };
                 }
                 
-                // Make sure all form inputs are clickable
-                const allInputs = document.querySelectorAll('input, select, textarea');
-                allInputs.forEach(input => {
-                    input.style.pointerEvents = 'auto';
-                    input.style.cursor = 'text';
-                    
-                    // Add click handler to ensure focus
-                    input.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        this.focus();
+                if (submitButton) {
+                    submitButton.onclick = function(e) {
+                        e.preventDefault();
+                        debugLog('SUBMIT BUTTON CLICKED!');
+                        handleFormSubmission('automatic');
+                        return false;
+                    };
+                }
+                
+                // Manual form
+                const manualForm = document.getElementById('manual-form-element');
+                const manualButton = document.getElementById('m-submit');
+                
+                if (manualForm) {
+                    manualForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        debugLog('MANUAL FORM SUBMITTED!');
+                        handleFormSubmission('manual');
                     });
-                });
+                }
+                
+                if (manualButton) {
+                    manualButton.onclick = function(e) {
+                        e.preventDefault();
+                        debugLog('MANUAL BUTTON CLICKED!');
+                        handleFormSubmission('manual');
+                        return false;
+                    };
+                }
                 
                 setupFileInputs();
                 setupPhoneFormatting();
                 
-                debugLog('Event listeners set up complete!');
-            }, 1000);
-            
-            // Listen for wheel result
-            window.addEventListener('message', handleWheelMessage);
-        }
-        
-        function setupFormValidation() {
-            const forms = ['auto-form', 'manual-form-element'];
-            
-            forms.forEach(formId => {
-                const form = document.getElementById(formId);
-                if (!form) return;
-                
-                const inputs = form.querySelectorAll('input[required], select[required]');
-                
-                inputs.forEach(input => {
-                    // Ensure inputs are interactive
-                    input.style.pointerEvents = 'auto';
-                    input.style.cursor = 'text';
-                    
-                    // Add multiple event listeners for better compatibility
-                    input.addEventListener('input', validateForm);
-                    input.addEventListener('change', validateForm);
-                    input.addEventListener('blur', validateForm);
-                    input.addEventListener('keyup', validateForm);
-                    
-                    // Force focus on click
-                    input.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.focus();
-                        return false;
-                    });
-                });
-            });
-            
-            // Initial validation
-            setTimeout(validateForm, 1000);
-        }
-        
-        function validateForm() {
-            const activeForm = currentFormType === 'automatic' ? 'auto-form' : 'manual-form-element';
-            const form = document.getElementById(activeForm);
-            
-            if (!form) {
-                debugLog('No active form found for validation');
-                return;
-            }
-            
-            const requiredInputs = form.querySelectorAll('input[required], select[required]');
-            let completedFields = 0;
-            let totalFields = requiredInputs.length;
-            
-            debugLog(`Validating ${totalFields} required fields`);
-            
-            requiredInputs.forEach((input, index) => {
-                let isValid = false;
-                
-                // Skip file inputs since we removed them
-                if (input.type === 'file') {
-                    return;
-                }
-                
-                isValid = input.value.trim() !== '';
-                debugLog(`Input ${input.id}: ${isValid ? 'valid' : 'invalid'} (value: "${input.value}")`);
-                
-                if (isValid) {
-                    completedFields++;
-                    input.classList.add('valid');
-                } else {
-                    input.classList.remove('valid');
-                }
-            });
-            
-            const progress = (completedFields / totalFields) * 100;
-            debugLog(`Form progress: ${completedFields}/${totalFields} (${progress.toFixed(1)}%)`);
-            
-            // Update progress bar
-            const progressFill = document.getElementById('progress-fill');
-            const progressText = document.getElementById('progress-text');
-            
-            if (progressFill) progressFill.style.width = progress + '%';
-            
-            if (progress === 100) {
-                if (progressText) progressText.textContent = '🎰 Ready to spin! Click the button below';
-                formComplete = true;
-                debugLog('✅ Form is complete!');
-            } else {
-                if (progressText) progressText.textContent = `${completedFields}/${totalFields} fields completed`;
-                formComplete = false;
-                debugLog('❌ Form is incomplete');
-            }
-            
-            updateSpinButton();
-        }
-        
-        function updateSpinButton() {
-            const spinButton = document.getElementById('spin-button');
-            
-            if (formComplete) {
-                spinButton.disabled = false;
-                spinButton.textContent = '🎰 SPIN THE WHEEL TO WIN! 🎰';
-                spinButton.style.animation = 'rouletteGradient 2s ease-in-out infinite';
-            } else {
-                spinButton.disabled = true;
-                spinButton.textContent = '🎰 Complete Form to Unlock Spin 🎰';
-                spinButton.style.animation = 'none';
-            }
-        }
-        
-        function handleSpinClick() {
-            if (!formComplete) {
-                alert('Please complete all required fields first!');
-                return;
-            }
-            
-            debugLog('Spin button clicked! Loading wheel...');
-            
-            // Show the wheel container
-            const wheelContainer = document.getElementById('wheel-container');
-            wheelContainer.style.display = 'block';
-            
-            // Load the wheel script
-            const scriptContainer = document.getElementById('wheel-script-container');
-            const loadingText = wheelContainer.querySelector('.wheel-loading');
-            
-            // Create and inject the wheel script
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://app-sorteos.com/embed/embed.js';
-            script.setAttribute('data-promotion', 'M4mdDHKi');
-            script.async = true;
-            
-            script.onload = function() {
-                debugLog('Wheel script loaded successfully');
-                if (loadingText) {
-                    loadingText.style.display = 'none';
-                }
-            };
-            
-            script.onerror = function() {
-                debugLog('Wheel script failed to load');
-                if (loadingText) {
-                    loadingText.textContent = '❌ Failed to load wheel. Please refresh the page.';
-                }
-            };
-            
-            scriptContainer.appendChild(script);
-            
-            // Scroll to wheel
-            setTimeout(() => {
-                wheelContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 1000);
-            
-            // Update button
-            const spinButton = document.getElementById('spin-button');
-            spinButton.textContent = '🎰 Spin the wheel above to win your prize! 🎰';
-            spinButton.disabled = true;
-            spinButton.style.background = 'linear-gradient(45deg, #666, #888)';
-            spinButton.style.animation = 'none';
-        }
-        
-        function handleWheelMessage(event) {
-            // Listen for messages from the embedded wheel
-            if (event.origin !== 'https://app-sorteos.com') return;
-            
-            debugLog('Received wheel message:', event.data);
-            
-            if (event.data.type === 'wheel_result') {
-                spinResult = event.data.result;
-                debugLog('Spin result:', spinResult);
-                
-                // Process the spin result
-                setTimeout(() => {
-                    submitFormWithSpinResult();
-                }, 1000);
-            }
-        }
-        
-        async function submitFormWithSpinResult() {
-            debugLog('Submitting form with spin result...');
-            
-            const spinButton = document.getElementById('spin-button');
-            spinButton.textContent = '🎰 Processing your entry...';
-            
-            try {
-                const formData = collectFormData();
-                debugLog('Form data collected with spin result');
-                
-                // Skip image upload since we removed the screenshot field
-                // Submit to Airtable with spin result
-                await submitToAirtable(formData, null);
-                
-            } catch (error) {
-                debugLog('Form submission error: ' + error.message);
-                showErrorResult(error.message);
-            }
+                debugLog('All event listeners set up complete!');
+            }, 500);
         }
         
         function setupFileInputs() {
-            debugLog('Setting up file inputs using working method...');
-            
             const vFileInput = document.getElementById('v-file-input');
             const vScreenshot = document.getElementById('v-screenshot');
             const mFileInput = document.getElementById('m-file-input');
             const mScreenshot = document.getElementById('m-screenshot');
             
-            // Use the exact same approach as the working version
             if (vFileInput && vScreenshot) {
                 vFileInput.onclick = function() {
-                    debugLog('V-file input clicked - opening dialog');
                     vScreenshot.click();
                 };
                 
                 vScreenshot.onchange = function(e) {
-                    debugLog('V-screenshot file selected');
                     handleFileChange(e, 'v');
                 };
             }
             
             if (mFileInput && mScreenshot) {
                 mFileInput.onclick = function() {
-                    debugLog('M-file input clicked - opening dialog');
                     mScreenshot.click();
                 };
                 
                 mScreenshot.onchange = function(e) {
-                    debugLog('M-screenshot file selected');
                     handleFileChange(e, 'm');
                 };
             }
-            
-            debugLog('File inputs setup complete using working method');
         }
         
         function handleFileChange(event, prefix) {
-            debugLog(`File change handler called for prefix: ${prefix}`);
             const file = event.target.files[0];
             const fileInputDiv = document.getElementById(prefix + '-file-input');
             
             if (file) {
-                debugLog(`File selected: ${file.name}, size: ${file.size} bytes`);
-                
                 if (file.size > 10 * 1024 * 1024) {
                     alert('File is too large. Please select an image under 10MB.');
                     event.target.value = '';
@@ -1289,11 +984,9 @@
                 const fileName = file.name;
                 const fileSize = Math.round(file.size / 1024);
                 
-                // Store the file reference (same as working version)
+                // Store the file reference
                 window['selectedFile_' + prefix] = file;
-                debugLog(`File stored as selectedFile_${prefix}`);
                 
-                // Update the visual display (same as working version)
                 fileInputDiv.innerHTML = `
                     <div class="file-input-icon">✅</div>
                     <div class="file-input-text">${fileName}</div>
@@ -1302,38 +995,25 @@
                 
                 fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
                 fileInputDiv.style.background = 'rgba(52, 199, 89, 0.1)';
-                fileInputDiv.classList.add('has-file');
                 
-                // Re-add file input (hidden) - exact same approach as working version
+                // Re-add file input (hidden)
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'file';
                 hiddenInput.id = prefix + '-screenshot';
                 hiddenInput.accept = 'image/*';
                 hiddenInput.required = true;
-                hiddenInput.style.position = 'absolute';
-                hiddenInput.style.left = '-9999px';
-                hiddenInput.style.opacity = '0';
+                hiddenInput.style.display = 'none';
                 hiddenInput.files = event.target.files;
                 
                 fileInputDiv.appendChild(hiddenInput);
                 
-                // Re-setup click handler (same as working version)
                 fileInputDiv.onclick = function() {
-                    debugLog(`Re-clicking hidden input for ${prefix}`);
                     hiddenInput.click();
                 };
                 
                 hiddenInput.onchange = function(e) {
-                    debugLog(`Hidden input changed for ${prefix}`);
                     handleFileChange(e, prefix);
                 };
-                
-                // Trigger form validation
-                setTimeout(validateForm, 100);
-                
-                debugLog(`File handling complete for ${prefix} - file stored and UI updated`);
-            } else {
-                debugLog('No file selected in change event');
             }
         }
         
@@ -1361,6 +1041,7 @@
             debugLog('Starting ImgBB upload...');
             
             const url = 'https://api.imgbb.com/1/upload';
+            
             const formData = new FormData();
             formData.append('key', IMGBB_API_KEY);
             formData.append('image', file);
@@ -1389,20 +1070,58 @@
             }
         }
         
-        function collectFormData() {
-            const prefix = currentFormType === 'automatic' ? 'v-' : 'm-';
+        async function handleFormSubmission(type) {
+            debugLog(`${type} form submission started`);
+            
+            const submitButton = document.getElementById(type === 'automatic' ? 'v-submit' : 'm-submit');
+            const originalText = submitButton.textContent;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            
+            try {
+                const formData = collectFormData(type);
+                debugLog('Form data collected: ' + JSON.stringify({...formData, screenshot: formData.screenshot ? 'FILE_PRESENT' : 'NO_FILE'}));
+                
+                // Upload screenshot to ImgBB if present
+                let imageUrl = null;
+                if (formData.screenshot) {
+                    try {
+                        imageUrl = await uploadToImgBB(formData.screenshot);
+                        debugLog('Screenshot uploaded: ' + imageUrl);
+                    } catch (e) {
+                        debugLog('Image upload failed: ' + e.message);
+                        showErrorResult('Image upload failed: ' + e.message);
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalText;
+                        return;
+                    }
+                }
+                
+                // Submit to Airtable
+                await submitToAirtable(formData, type, submitButton, originalText, imageUrl);
+                
+            } catch (error) {
+                debugLog('Form submission error: ' + error.message);
+                showErrorResult(error.message);
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+        
+        function collectFormData(type) {
+            const prefix = type === 'automatic' ? 'v-' : 'm-';
             
             const formData = {
-                verification_type: currentFormType,
+                verification_type: type,
                 email: getValue(prefix + 'email'),
                 phone: getValue(prefix + 'phone'),
                 telegram: getValue(prefix + 'telegram'),
                 username: getValue(prefix + 'username'),
-                screenshot: null, // Temporarily removed
-                spin_result: spinResult || 'No spin result captured'
+                screenshot: getFile(prefix + 'screenshot')
             };
             
-            if (currentFormType === 'automatic') {
+            if (type === 'automatic') {
                 formData.clickid = localStorage.getItem('verified_clickid') || getCookie('vc_id') || '';
                 formData.campaign = localStorage.getItem('campaign_source') || getCookie('vc_camp') || '';
             } else {
@@ -1423,15 +1142,18 @@
         function getFile(id) {
             const prefix = id.replace('-screenshot', '');
             
+            // Try to get from stored reference first
             if (window['selectedFile_' + prefix]) {
                 return window['selectedFile_' + prefix];
             }
             
+            // Fallback to DOM element
             const element = document.getElementById(id);
             return (element && element.files && element.files[0]) ? element.files[0] : null;
         }
         
-        async function submitToAirtable(formData, imageUrl) {
+        async function submitToAirtable(formData, type, submitButton, originalText, imageUrl) {
+            // Prepare Airtable record
             const recordData = {
                 'Email': formData.email,
                 'Phone': formData.phone,
@@ -1439,27 +1161,28 @@
                 'Username': formData.username,
                 'Verification': formData.verification_type,
                 'Status': 'pending',
-                'Submitted': new Date().toISOString(),
-                'Spin Result': formData.spin_result
+                'Submitted': new Date().toISOString()
             };
             
-            if (currentFormType === 'automatic') {
+            // Add type-specific fields
+            if (type === 'automatic') {
                 recordData['ClickID'] = formData.clickid || '';
                 recordData['Campaign'] = formData.campaign || '';
-                recordData['Notes'] = `Auto-verified roulette entry - Campaign: ${formData.campaign} - Prize: ${formData.spin_result}`;
+                recordData['Notes'] = `Auto-verified entry - Campaign: ${formData.campaign}`;
             } else {
-                recordData['Notes'] = `Manual verification roulette - Source: ${formData.influencer} - Prize: ${formData.spin_result}`;
+                recordData['Notes'] = `Manual verification - Source: ${formData.influencer}`;
                 if (formData.details) recordData['Notes'] += ` - Details: ${formData.details}`;
                 if (formData.registration_date) recordData['Notes'] += ` - Reg Date: ${formData.registration_date}`;
                 if (formData.other_source) recordData['Notes'] += ` - Other: ${formData.other_source}`;
             }
             
-            // Skip screenshot for now
-            // if (imageUrl) {
-            //     recordData['Screenshot'] = [{ url: imageUrl }];
-            //     recordData['Notes'] += ` - Screenshot uploaded: ${formData.screenshot.name}`;
-            // }
+            // Add screenshot if uploaded
+            if (imageUrl) {
+                recordData['Screenshot'] = [{ url: imageUrl }];
+                recordData['Notes'] += ` - Screenshot uploaded: ${formData.screenshot.name}`;
+            }
             
+            // Submit to Airtable
             const airtableData = {
                 records: [{ fields: recordData }]
             };
@@ -1486,53 +1209,124 @@
                 
                 const data = await response.json();
                 debugLog('✅ Successfully submitted to Airtable');
-                showSuccessResult(formData);
+                showSuccessResult(formData, type);
                 
             } catch (error) {
                 debugLog('❌ Airtable submission failed: ' + error.message);
                 showErrorResult(error.message);
+                
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
             }
         }
         
-        function showSuccessResult(formData) {
-            createConfetti();
+        function loadRouletteWheel() {
+            debugLog('Loading roulette wheel...');
             
+            // Create and append the App Sorteos script
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://app-sorteos.com/embed/embed.js';
+            script.setAttribute('data-promotion', SORTEOS_PROMOTION_ID);
+            script.async = true;
+            
+            // Append script to the embed container
+            const container = document.getElementById('sorteos-embed-container');
+            container.appendChild(script);
+            
+            debugLog('Roulette wheel script loaded');
+        }
+        
+        function showRouletteWheel() {
+            const rouletteSection = document.getElementById('roulette-section');
+            
+            // Show the roulette section with animation
+            rouletteSection.style.display = 'block';
+            
+            // Add slide-in animation
+            setTimeout(() => {
+                rouletteSection.classList.add('slide-in');
+            }, 100);
+            
+            // Load the roulette wheel
+            loadRouletteWheel();
+            
+            // Smooth scroll to roulette section
+            setTimeout(() => {
+                rouletteSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 500);
+            
+            debugLog('Roulette wheel displayed');
+        }
+        
+        function showSuccessResult(formData, type) {
             const resultCard = document.getElementById('result-card');
-            const prizeEmoji = getPrizeEmoji(formData.spin_result);
             
-            resultCard.innerHTML = `
-                <div class="status-icon status-verified">${prizeEmoji}</div>
-                <h2 class="status-title">🎉 Congratulations! You Won! 🎉</h2>
-                <div class="status-description">
-                    <p><strong>Your Prize:</strong> ${formData.spin_result}</p>
-                    
-                    <div class="verification-info" style="margin: 24px 0; background: rgba(220, 20, 60, 0.1); border-color: rgba(220, 20, 60, 0.3);">
-                        <strong>🏆 Winner Details:</strong><br>
-                        📧 Email: ${formData.email}<br>
-                        🎮 Username: ${formData.username}<br>
-                        🎰 Prize Won: ${formData.spin_result}<br>
-                        🆔 Entry ID: ${(formData.clickid || 'SPIN').substring(0, 8)}...<br>
-                        ✅ Status: Winner - Prize Confirmed!
+            if (type === 'automatic') {
+                resultCard.innerHTML = `
+                    <div class="status-icon status-verified">🎉</div>
+                    <h2 class="status-title">Entry Successful!</h2>
+                    <div class="status-description">
+                        <p><strong>Congratulations!</strong> You've been automatically verified and entered into our exclusive giveaway.</p>
+                        
+                        <div class="verification-info" style="margin: 24px 0;">
+                            <strong>Entry Details:</strong><br>
+                            📧 Email: ${formData.email}<br>
+                            🎮 Username: ${formData.username}<br>
+                            🆔 Entry ID: ${(formData.clickid || 'AUTO').substring(0, 8)}...<br>
+                            ✅ Status: Active Entry
+                        </div>
+                        
+                        <p><strong>What's Next?</strong></p>
+                        <p>• Winners are announced weekly via email and Telegram</p>
+                        <p>• Keep an eye on your inbox for updates</p>
+                        <p>• Scroll down to spin the bonus wheel! 🎰</p>
+                        <p>• Good luck! 🍀</p>
                     </div>
-                    
-                    <p><strong>🎊 What happens next?</strong></p>
-                    <p>• Our team will contact you within 24 hours</p>
-                    <p>• Prize will be credited to your account</p>
-                    <p>• Check your email and Telegram for updates</p>
-                    <p>• Enjoy your winnings! 🍀</p>
-                </div>
-            `;
+                `;
+                resultCard.classList.add('result-success');
+            } else {
+                resultCard.innerHTML = `
+                    <div class="status-icon status-manual">📝</div>
+                    <h2 class="status-title">Submitted for Review</h2>
+                    <div class="status-description">
+                        <p><strong>Thank you!</strong> Your entry has been submitted for manual verification.</p>
+                        
+                        <div class="verification-info" style="margin: 24px 0;">
+                            <strong>Submission Details:</strong><br>
+                            📧 Email: ${formData.email}<br>
+                            🎮 Username: ${formData.username}<br>
+                            🔍 Status: Under Review<br>
+                            ⏱️ Timeline: 24-48 hours
+                        </div>
+                        
+                        <p><strong>Review Process:</strong></p>
+                        <p>• Our team will verify your registration details</p>
+                        <p>• You'll be contacted via email if approved</p>
+                        <p>• Once verified, you'll be entered automatically</p>
+                        <p>• Scroll down to spin the bonus wheel! 🎰</p>
+                        
+                        <p>Thank you for your patience! 🙏</p>
+                    </div>
+                `;
+                resultCard.classList.add('result-warning');
+            }
             
-            resultCard.classList.add('result-success');
-            resultCard.style.display = 'block';
-            
-            // Hide forms and wheel
+            // Hide forms and show result
             document.getElementById('verified-form').style.display = 'none';
             document.getElementById('manual-form').style.display = 'none';
-            document.getElementById('wheel-container').style.display = 'none';
-            document.getElementById('spin-section').style.display = 'none';
+            resultCard.style.display = 'block';
             
+            // Smooth scroll to result
             resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Show roulette wheel after a short delay
+            setTimeout(() => {
+                showRouletteWheel();
+            }, 2000);
         }
         
         function showErrorResult(error) {
@@ -1542,7 +1336,7 @@
                 <div class="status-icon" style="background: linear-gradient(45deg, #ff3b30, #ff6b60);">❌</div>
                 <h2 class="status-title">Submission Failed</h2>
                 <div class="status-description">
-                    <p>We encountered a technical issue while processing your spin entry.</p>
+                    <p>We encountered a technical issue while processing your entry.</p>
                     
                     <div class="verification-info" style="margin: 24px 0;">
                         <strong>Error Details:</strong><br>
@@ -1550,7 +1344,7 @@
                     </div>
                     
                     <p><strong>What to do:</strong></p>
-                    <p>• Please refresh the page and try again</p>
+                    <p>• Please try again in a few minutes</p>
                     <p>• Check your internet connection</p>
                     <p>• Contact support if the issue persists</p>
                 </div>
@@ -1562,38 +1356,6 @@
             resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
-        function getPrizeEmoji(prize) {
-            const prizeEmojis = {
-                'Gorra Cola-Cola': '🧢',
-                'Mala Suerte': '😔',
-                'Polera Cola-Cola': '👕',
-                'Entradas Cola-Cola': '🎫',
-                '$5,000 Re-Deposito': '💰',
-                'polera D,Lunche': '👔',
-                '$7,000 Re-Deposito': '💵',
-                '$5,000 Re-Deposito': '💸'
-            };
-            
-            return prizeEmojis[prize] || '🎁';
-        }
-        
-        function createConfetti() {
-            const celebration = document.getElementById('prize-celebration');
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                confetti.style.background = ['#ffd700', '#dc143c', '#34c759', '#007aff'][Math.floor(Math.random() * 4)];
-                celebration.appendChild(confetti);
-                
-                setTimeout(() => {
-                    confetti.remove();
-                }, 3000);
-            }
-        }
-        
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
@@ -1601,7 +1363,7 @@
             return null;
         }
         
-        // Initialize animations and interactions
+        // Add premium animations and interactions
         document.addEventListener('DOMContentLoaded', function() {
             const observerOptions = {
                 threshold: 0.1,
@@ -1619,11 +1381,16 @@
             document.querySelectorAll('.card').forEach(card => {
                 observer.observe(card);
             });
+            
+            document.querySelectorAll('.floating-element').forEach((el, index) => {
+                el.style.animationDelay = `${-index * 2}s`;
+                el.style.left = `${10 + index * 10}%`;
+            });
         });
         
-        // Touch interactions for mobile
+        // Add premium touch interactions for mobile
         if ('ontouchstart' in window) {
-            document.querySelectorAll('.spin-button, .card').forEach(element => {
+            document.querySelectorAll('.primary-button, .card').forEach(element => {
                 element.addEventListener('touchstart', function() {
                     this.style.transform = 'scale(0.98)';
                 });
