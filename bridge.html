@@ -75,23 +75,13 @@
             letter-spacing: 0.5px;
         }
         
-        .badge-pinup {
-            background: linear-gradient(45deg, #ff4757, #ff6348);
+        .badge-success {
+            background: linear-gradient(45deg, #2ed573, #1dd1a1);
             color: white;
         }
         
-        .badge-betsson {
-            background: linear-gradient(45deg, #00d2d3, #54a0ff);
-            color: white;
-        }
-        
-        .badge-wows {
-            background: linear-gradient(45deg, #ffa502, #ff6348);
-            color: white;
-        }
-        
-        .badge-unknown {
-            background: linear-gradient(45deg, #747d8c, #57606f);
+        .badge-error {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
             color: white;
         }
         
@@ -108,11 +98,46 @@
             height: 100%;
             background: linear-gradient(90deg, #007aff, #0051d5);
             width: 0%;
-            animation: progress 2.5s ease-out forwards;
+            animation: progress 2s ease-out forwards;
         }
         
         @keyframes progress {
             to { width: 100%; }
+        }
+
+        .error-container {
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ff4757;
+        }
+        
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #ff4757;
+        }
+        
+        .error-message {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .error-details {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #ffa502;
+            margin-top: 20px;
         }
 
         .debug-panel {
@@ -147,24 +172,24 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="spinner"></div>
-        <div id="campaign-badge" class="campaign-badge badge-unknown">Detecting Campaign...</div>
-        <h2>Loading Your Exclusive Offer</h2>
-        <p id="loading-text">Verifying your registration and preparing your personalized bonus...</p>
-        <div class="progress-bar">
+    <div class="container" id="main-container">
+        <div class="spinner" id="loading-spinner"></div>
+        <div id="campaign-badge" class="campaign-badge badge-success">Processing...</div>
+        <h2 id="main-title">Loading Your Exclusive Offer</h2>
+        <p id="loading-text">Verifying parameters and preparing redirect...</p>
+        <div class="progress-bar" id="progress-bar">
             <div class="progress-fill"></div>
         </div>
     </div>
 
-    <!-- Debug Panel for Testing -->
+    <!-- Debug Panel -->
     <div id="debug-panel" class="debug-panel">
         <div class="debug-header">🌉 DYNAMIC BRIDGE DEBUG</div>
         <div id="debug-content"></div>
     </div>
 
     <script>
-        // Enhanced parameter detection for multiple tracking systems
+        // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         
         // Debug mode detection
@@ -194,334 +219,128 @@
             document.getElementById('debug-panel').classList.add('show');
         }
         
-        debugLog('🚀 Dynamic Bridge v3.0 Initialized', 'success');
+        debugLog('🚀 Pure Dynamic Bridge v4.0 Initialized', 'success');
         debugLog('Full URL: ' + window.location.href);
         
-        // Campaign Detection Engine with Dynamic URL Resolution
-        class CampaignDetector {
-            constructor() {
-                this.campaigns = {
-                    pinup: {
-                        name: 'PinUp Casino',
-                        urlPatterns: [
-                            /toptdspup\.com/i,
-                            /pinup/i,
-                            /pin-up/i
-                        ],
-                        parameterNames: ['subid', 'clickid', 'sub1', 'cid'],
-                        urlTemplates: {
-                            'abiola': 'https://toptdspup.com/ftwsP3C2/?subid=',
-                            'james': 'https://toptdspup.com/ftwsP3C2/?subid=',
-                            'maria': 'https://toptdspup.com/ftwsP3C2/?subid=',
-                            'default': 'https://toptdspup.com/ftwsP3C2/?subid='
-                        },
-                        badge: 'badge-pinup',
-                        identifier: 'PINUP'
-                    },
-                    betsson: {
-                        name: 'Betsson',
-                        urlPatterns: [
-                            /betsson\.com/i,
-                            /record\.betsson/i,
-                            /betsson/i
-                        ],
-                        parameterNames: ['payload', 'clickid', 'subid', 'cid'],
-                        urlTemplates: {
-                            'abiola': 'https://record.betsson.com/_5BnvWPFDzu0dxNX0OZ70QmNd7ZgqdRLk/17/?payload=',
-                            'james': 'https://record.betsson.com/_JAMES_LINK_HERE/?payload=',
-                            'maria': 'https://record.betsson.com/_MARIA_LINK_HERE/?payload=',
-                            'samuel': 'https://record.betsson.com/_SAMUEL_LINK_HERE/?payload=',
-                            'default': 'https://record.betsson.com/_5BnvWPFDzu0dxNX0OZ70QmNd7ZgqdRLk/17/?payload='
-                        },
-                        badge: 'badge-betsson',
-                        identifier: 'BETSSON'
-                    },
-                    wows: {
-                        name: 'World of Warships',
-                        urlPatterns: [
-                            /wargaming\.net/i,
-                            /redir\.wargaming/i,
-                            /warships/i,
-                            /wows/i
-                        ],
-                        parameterNames: ['pub_id', 'clickid', 'subid', 'cid'],
-                        urlTemplates: {
-                            'abiola': 'https://redir.wargaming.net/iddu5g4d/?pub_id=',
-                            'james': 'https://redir.wargaming.net/JAMES_ID/?pub_id=',
-                            'maria': 'https://redir.wargaming.net/MARIA_ID/?pub_id=',
-                            'default': 'https://redir.wargaming.net/iddu5g4d/?pub_id='
-                        },
-                        badge: 'badge-wows',
-                        identifier: 'WOWS'
-                    }
-                };
-                
-                // Dynamic campaign URL mapping (can be loaded from external source)
-                this.campaignUrlMap = this.loadCampaignUrls();
-            }
-            
-            // Load campaign URLs from URL parameters, localStorage, or external config
-            loadCampaignUrls() {
-                let urlMap = {};
-                
-                // Method 1: Check URL parameters for campaign-specific URLs
-                const campaignUrl = urlParams.get('campaign_url') || urlParams.get('offer_url');
-                const campaignName = urlParams.get('campaign_name') || urlParams.get('camp_name') || 'dynamic';
-                
-                if (campaignUrl) {
-                    debugLog(`Custom campaign URL found: ${campaignUrl}`, 'success');
-                    urlMap[campaignName] = campaignUrl;
-                }
-                
-                // Method 2: Check localStorage for saved campaign URLs
-                try {
-                    const savedUrls = localStorage.getItem('campaign_urls');
-                    if (savedUrls) {
-                        const parsed = JSON.parse(savedUrls);
-                        urlMap = { ...urlMap, ...parsed };
-                        debugLog(`Loaded ${Object.keys(parsed).length} saved campaign URLs`, 'info');
-                    }
-                } catch (e) {
-                    debugLog('Failed to load saved campaign URLs: ' + e.message, 'warning');
-                }
-                
-                // Method 3: Check for external config (you can implement this)
-                // urlMap = { ...urlMap, ...this.loadExternalConfig() };
-                
-                return urlMap;
-            }
-            
-            
-            getOfferUrl(campaign, campaignName, clickId) {
-                debugLog(`Resolving offer URL for campaign: ${campaignName}`, 'info');
-                
-                // Method 1: Check for redirect parameter (PRIMARY METHOD)
-                const redirectUrl = urlParams.get('redirect') || 
-                                  urlParams.get('redirect_url') || 
-                                  urlParams.get('offer_url') || 
-                                  urlParams.get('destination');
-                
-                if (redirectUrl) {
-                    debugLog(`Found redirect parameter: ${redirectUrl}`, 'success');
-                    
-                    // Handle clickid replacement in redirect URL
-                    let finalUrl = redirectUrl;
-                    
-                    // Replace {clickid} placeholder with actual clickid
-                    if (finalUrl.includes('{clickid}')) {
-                        finalUrl = finalUrl.replace(/\{clickid\}/g, encodeURIComponent(clickId));
-                        debugLog(`Replaced {clickid} placeholder in redirect URL`, 'success');
-                    }
-                    
-                    // If URL doesn't end with = and doesn't have clickid, append it
-                    if (!finalUrl.includes('{clickid}') && !finalUrl.endsWith('=')) {
-                        const separator = finalUrl.includes('?') ? '&' : '?';
-                        const paramName = this.getClickIdParamName(finalUrl);
-                        finalUrl = `${finalUrl}${separator}${paramName}=${encodeURIComponent(clickId)}`;
-                        debugLog(`Appended clickid parameter: ${paramName}`, 'info');
-                    }
-                    
-                    return finalUrl;
-                }
-                
-                // Method 2: Check dynamic campaign URL mapping
-                if (this.campaignUrlMap[campaignName]) {
-                    debugLog(`Using dynamic URL for ${campaignName}`, 'success');
-                    return this.campaignUrlMap[campaignName];
-                }
-                
-                // Method 3: Check campaign's URL templates
-                if (campaign.urlTemplates) {
-                    if (campaign.urlTemplates[campaignName]) {
-                        debugLog(`Using template URL for ${campaignName}`, 'success');
-                        return campaign.urlTemplates[campaignName];
-                    }
-                    
-                    // Fallback to default template
-                    debugLog(`Using default template URL for ${campaignName}`, 'warning');
-                    return campaign.urlTemplates.default || campaign.urlTemplates[Object.keys(campaign.urlTemplates)[0]];
-                }
-                
-                // Method 4: Construct URL from base parameters
-                const baseUrl = urlParams.get('base_url');
-                const offerParam = urlParams.get('offer_param') || 'clickid';
-                if (baseUrl) {
-                    const separator = baseUrl.includes('?') ? '&' : '?';
-                    const constructedUrl = `${baseUrl}${separator}${offerParam}=`;
-                    debugLog(`Constructed URL from parameters: ${constructedUrl}`, 'info');
-                    return constructedUrl;
-                }
-                
-                // Final fallback - this shouldn't happen with proper setup
-                debugLog('No URL found, using emergency fallback', 'error');
-                return 'https://example.com/?id=';
-            }
-            
-            // Determine the correct clickid parameter name based on URL
-            getClickIdParamName(url) {
-                const lowerUrl = url.toLowerCase();
-                
-                if (lowerUrl.includes('betsson') || lowerUrl.includes('record.')) {
-                    return 'payload';
-                } else if (lowerUrl.includes('wargaming') || lowerUrl.includes('warships')) {
-                    return 'pub_id';
-                } else if (lowerUrl.includes('pinup') || lowerUrl.includes('toptdspup')) {
-                    return 'subid';
-                } else {
-                    // Default fallback
-                    return 'clickid';
-                }
-            }
-            
-            // Save new campaign URL for future use
-            saveCampaignUrl(campaignName, url) {
-                try {
-                    const existing = JSON.parse(localStorage.getItem('campaign_urls') || '{}');
-                    existing[campaignName] = url;
-                    localStorage.setItem('campaign_urls', JSON.stringify(existing));
-                    debugLog(`Saved campaign URL for ${campaignName}`, 'success');
-                } catch (e) {
-                    debugLog('Failed to save campaign URL: ' + e.message, 'error');
-                }
-            }
-                const currentUrl = window.location.href.toLowerCase();
-                const referrer = document.referrer.toLowerCase();
-                
-                // Check URL patterns
-                for (const [key, campaign] of Object.entries(this.campaigns)) {
-                    for (const pattern of campaign.urlPatterns) {
-                        if (pattern.test(currentUrl) || pattern.test(referrer)) {
-                            debugLog(`Campaign detected via URL pattern: ${campaign.name}`, 'success');
-                            return { key, ...campaign };
-                        }
-                    }
-                }
-                
-                // Check URL parameters for campaign hints
-                const campaignParam = urlParams.get('campaign') || urlParams.get('camp') || '';
-                if (campaignParam) {
-                    const lowerCamp = campaignParam.toLowerCase();
-                    for (const [key, campaign] of Object.entries(this.campaigns)) {
-                        if (lowerCamp.includes(key) || lowerCamp.includes(campaign.identifier.toLowerCase())) {
-                            debugLog(`Campaign detected via parameter: ${campaign.name}`, 'success');
-                            return { key, ...campaign };
-                        }
-                    }
-                }
-                
-                // Default fallback (you can change this to your most common campaign)
-                debugLog('No specific campaign detected, using Betsson as default', 'warning');
-                return { key: 'betsson', ...this.campaigns.betsson };
-            }
-            
-            extractClickId(campaign) {
-                for (const paramName of campaign.parameterNames) {
-                    const value = urlParams.get(paramName);
-                    if (value && value !== '' && !value.includes('{') && !value.includes('}')) {
-                        debugLog(`ClickID found in parameter '${paramName}': ${value}`, 'success');
-                        return value;
-                    }
-                }
-                
-                // Generate fallback ID
-                const fallbackId = `${campaign.identifier}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
-                debugLog(`No valid ClickID found, generated fallback: ${fallbackId}`, 'warning');
-                return fallbackId;
-            }
-        }
+        // Extract parameters
+        const clickId = urlParams.get('payload') || 
+                       urlParams.get('clickid') || 
+                       urlParams.get('subid') || 
+                       urlParams.get('cid') ||
+                       urlParams.get('pub_id');
         
-        // Initialize campaign detection
-        const detector = new CampaignDetector();
-        const detectedCampaign = detector.detectCampaign();
-        const clickId = detector.extractClickId(detectedCampaign);
+        const redirectUrl = urlParams.get('redirect') || 
+                           urlParams.get('redirect_url') || 
+                           urlParams.get('offer_url') || 
+                           urlParams.get('destination');
         
-        // Extract campaign name for URL resolution
         const campaignName = urlParams.get('campaign') || 
                             urlParams.get('camp') || 
-                            urlParams.get('aff') || 
-                            urlParams.get('affiliate') ||
-                            'abiola'; // default campaign name
+                            'unknown';
         
-        debugLog(`Campaign Name Detected: ${campaignName}`, 'info');
-        debugLog(`All URL Parameters: ${window.location.search}`, 'info');
+        const source = urlParams.get('source') || 'direct';
         
-        // Update UI with detected campaign
-        const badgeElement = document.getElementById('campaign-badge');
-        const loadingText = document.getElementById('loading-text');
+        debugLog(`Parameters Detected:`, 'info');
+        debugLog(`- ClickID: ${clickId}`, 'info');
+        debugLog(`- Redirect URL: ${redirectUrl}`, 'info');
+        debugLog(`- Campaign: ${campaignName}`, 'info');
+        debugLog(`- Source: ${source}`, 'info');
         
-        badgeElement.textContent = detectedCampaign.name;
-        badgeElement.className = `campaign-badge ${detectedCampaign.badge}`;
-        loadingText.textContent = `Preparing your ${detectedCampaign.name} exclusive bonus...`;
+        // Function to show error
+        function showError(title, message, details = null) {
+            const container = document.getElementById('main-container');
+            container.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon">⚠️</div>
+                    <div class="campaign-badge badge-error">Configuration Error</div>
+                    <div class="error-title">${title}</div>
+                    <div class="error-message">${message}</div>
+                    ${details ? `<div class="error-details">${details}</div>` : ''}
+                </div>
+            `;
+            debugLog(`ERROR: ${title} - ${message}`, 'error');
+        }
         
-        // Extract additional parameters
-        const additionalParams = {
-            campaign: urlParams.get('campaign') || urlParams.get('camp') || detectedCampaign.key,
-            source: urlParams.get('source') || urlParams.get('src') || urlParams.get('traffic_source') || 'direct',
-            subid2: urlParams.get('subid2') || urlParams.get('sub2') || '',
-            subid3: urlParams.get('subid3') || urlParams.get('sub3') || '',
-            subid4: urlParams.get('subid4') || urlParams.get('sub4') || '',
-            subid5: urlParams.get('subid5') || urlParams.get('sub5') || '',
-            creative: urlParams.get('creative') || urlParams.get('ad') || '',
-            geo: urlParams.get('geo') || urlParams.get('country') || '',
-            device: urlParams.get('device') || (navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop'),
-            lang: urlParams.get('lang') || navigator.language || 'en'
-        };
+        // Validate required parameters
+        if (!redirectUrl) {
+            showError(
+                'Missing Redirect URL', 
+                'No redirect parameter found. Please check your RedTrack offer URL configuration.',
+                'Required parameter: redirect, redirect_url, offer_url, or destination'
+            );
+            debugLog('Bridge stopped - No redirect URL provided', 'error');
+            return;
+        }
         
+        if (!clickId) {
+            showError(
+                'Missing Click ID', 
+                'No tracking ID found. Please check your RedTrack setup.',
+                'Required parameter: payload, clickid, subid, cid, or pub_id'
+            );
+            debugLog('Bridge stopped - No clickid provided', 'error');
+            return;
+        }
+        
+        // Process redirect URL
+        let finalDestinationUrl = redirectUrl;
+        
+        // Replace {clickid} placeholder if present
+        if (finalDestinationUrl.includes('{clickid}')) {
+            finalDestinationUrl = finalDestinationUrl.replace(/\{clickid\}/g, encodeURIComponent(clickId));
+            debugLog('Replaced {clickid} placeholder in redirect URL', 'success');
+        }
+        // If URL ends with = (expecting parameter), append clickid
+        else if (finalDestinationUrl.endsWith('=')) {
+            finalDestinationUrl = finalDestinationUrl + encodeURIComponent(clickId);
+            debugLog('Appended clickid to URL ending with =', 'success');
+        }
+        // If URL doesn't have clickid and doesn't end with =, try to append it intelligently
+        else if (!finalDestinationUrl.includes(clickId)) {
+            const separator = finalDestinationUrl.includes('?') ? '&' : '?';
+            
+            // Determine parameter name based on URL
+            let paramName = 'clickid'; // default
+            const lowerUrl = finalDestinationUrl.toLowerCase();
+            
+            if (lowerUrl.includes('betsson') || lowerUrl.includes('record.')) {
+                paramName = 'payload';
+            } else if (lowerUrl.includes('wargaming') || lowerUrl.includes('warships')) {
+                paramName = 'pub_id';
+            } else if (lowerUrl.includes('pinup') || lowerUrl.includes('toptdspup')) {
+                paramName = 'subid';
+            }
+            
+            finalDestinationUrl = `${finalDestinationUrl}${separator}${paramName}=${encodeURIComponent(clickId)}`;
+            debugLog(`Appended clickid with parameter name: ${paramName}`, 'success');
+        }
+        
+        debugLog(`Final destination URL: ${finalDestinationUrl}`, 'success');
+        
+        // Store verification data
         const timestamp = Date.now().toString();
-        
-        // Comprehensive verification data for giveaway form
         const verificationData = {
-            // Core tracking data
             verified_clickid: clickId,
-            campaign_type: detectedCampaign.identifier,
-            campaign_name: detectedCampaign.name,
-            campaign_key: detectedCampaign.key,
-            
-            // Timestamp and session data
+            campaign_name: campaignName,
+            traffic_source: source,
             user_timestamp: timestamp,
-            session_id: `${detectedCampaign.identifier}_${timestamp}`,
-            bridge_version: '3.0',
-            
-            // Traffic data
-            traffic_source: additionalParams.source,
-            referrer_url: document.referrer || 'direct',
-            user_agent: navigator.userAgent,
-            
-            // Additional tracking parameters
-            campaign_source: additionalParams.campaign,
-            sub_id_2: additionalParams.subid2,
-            sub_id_3: additionalParams.subid3,
-            sub_id_4: additionalParams.subid4,
-            sub_id_5: additionalParams.subid5,
-            creative_id: additionalParams.creative,
-            user_geo: additionalParams.geo,
-            user_device: additionalParams.device,
-            user_language: additionalParams.lang,
-            
-            // Verification flags
+            session_id: `BRIDGE_${timestamp}`,
+            redirect_url: redirectUrl,
+            final_url: finalDestinationUrl,
+            bridge_version: '4.0',
             is_verified: 'true',
-            verification_method: 'dynamic_bridge',
-            campaign_detected: 'true'
+            verification_method: 'pure_dynamic_bridge'
         };
         
-        debugLog('Detected Campaign Data:', 'info');
-        debugLog(JSON.stringify({
-            campaign: detectedCampaign.name,
-            clickId: clickId,
-            additionalParams: additionalParams
-        }, null, 2));
-        
-        // Enhanced data storage with multiple methods
+        // Store data using multiple methods
         function storeVerificationData() {
             let successCount = 0;
             
-            // Method 1: LocalStorage (primary for giveaway form)
+            // LocalStorage
             try {
                 Object.keys(verificationData).forEach(key => {
                     localStorage.setItem(`vc_${key}`, verificationData[key]);
                 });
-                
-                // Store as JSON for easy retrieval
                 localStorage.setItem('vc_all_data', JSON.stringify(verificationData));
                 debugLog('✅ LocalStorage: All verification data stored', 'success');
                 successCount++;
@@ -529,7 +348,7 @@
                 debugLog('❌ LocalStorage failed: ' + e.message, 'error');
             }
             
-            // Method 2: SessionStorage (backup)
+            // SessionStorage
             try {
                 Object.keys(verificationData).forEach(key => {
                     sessionStorage.setItem(`vc_${key}`, verificationData[key]);
@@ -541,16 +360,15 @@
                 debugLog('❌ SessionStorage failed: ' + e.message, 'error');
             }
             
-            // Method 3: Cookies (for cross-domain compatibility)
+            // Cookies
             try {
                 const cookieExpiry = new Date(Date.now() + 30*24*60*60*1000).toUTCString();
                 const domain = window.location.hostname.includes('.') ? 
                               `; domain=.${window.location.hostname.split('.').slice(-2).join('.')}` : '';
                 const cookieOptions = `; expires=${cookieExpiry}; path=/${domain}; SameSite=Lax; Secure`;
                 
-                // Store essential data in cookies
                 document.cookie = `vc_clickid=${clickId}${cookieOptions}`;
-                document.cookie = `vc_campaign=${detectedCampaign.identifier}${cookieOptions}`;
+                document.cookie = `vc_campaign=${campaignName}${cookieOptions}`;
                 document.cookie = `vc_timestamp=${timestamp}${cookieOptions}`;
                 document.cookie = `vc_verified=true${cookieOptions}`;
                 
@@ -563,39 +381,31 @@
             return successCount;
         }
         
-        // Store all verification data
+        // Store verification data
         const storageSuccess = storeVerificationData();
-        debugLog(`Data storage completed: ${storageSuccess}/3 methods successful`, 
-                storageSuccess > 0 ? 'success' : 'error');
+        debugLog(`Data storage: ${storageSuccess}/3 methods successful`, 
+                storageSuccess > 0 ? 'success' : 'warning');
         
-        // Build destination URL using dynamic resolution
-        const destinationUrl = detector.getOfferUrl(detectedCampaign, campaignName, clickId);
+        // Update UI
+        document.getElementById('campaign-badge').textContent = `Campaign: ${campaignName}`;
+        document.getElementById('loading-text').textContent = `Redirecting to your exclusive offer...`;
         
-        debugLog('Campaign Resolution Results:', 'info');
-        debugLog(`- Campaign Name: ${campaignName}`, 'info');
-        debugLog(`- Campaign Type: ${detectedCampaign.name}`, 'info');
-        debugLog(`- ClickID: ${clickId}`, 'info');
-        debugLog(`- Final Destination: ${destinationUrl}`, 'success');
-        
-        // Enhanced redirect function with error handling
+        // Redirect function
         function performRedirect() {
-            debugLog('🚀 Initiating redirect to: ' + destinationUrl, 'info');
+            debugLog('🚀 Initiating redirect to: ' + finalDestinationUrl, 'success');
             
             try {
-                // Primary redirect method
-                window.location.href = destinationUrl;
+                window.location.href = finalDestinationUrl;
             } catch (e) {
                 debugLog('Primary redirect failed: ' + e.message, 'error');
                 try {
-                    // Fallback method 1
-                    window.location.replace(destinationUrl);
+                    window.location.replace(finalDestinationUrl);
                 } catch (e2) {
                     debugLog('Replace redirect failed: ' + e2.message, 'error');
                     try {
-                        // Fallback method 2
-                        window.open(destinationUrl, '_self');
+                        window.open(finalDestinationUrl, '_self');
                     } catch (e3) {
-                        debugLog('All redirect methods failed, showing manual link', 'error');
+                        debugLog('All redirect methods failed', 'error');
                         showManualRedirect();
                     }
                 }
@@ -604,36 +414,33 @@
         
         // Manual redirect fallback
         function showManualRedirect() {
-            document.body.innerHTML = `
-                <div class="container">
-                    <div class="campaign-badge ${detectedCampaign.badge}">
-                        ${detectedCampaign.name}
-                    </div>
-                    <h2>Click to Continue</h2>
-                    <p>If you're not redirected automatically, click below:</p>
-                    <br>
-                    <a href="${destinationUrl}" 
-                       style="color: #007aff; text-decoration: none; font-weight: bold; font-size: 1.2rem; 
-                              padding: 12px 24px; border: 2px solid #007aff; border-radius: 12px; 
-                              display: inline-block; transition: all 0.3s ease;">
-                        Continue to ${detectedCampaign.name} →
-                    </a>
-                </div>
+            const container = document.getElementById('main-container');
+            container.innerHTML = `
+                <div class="campaign-badge badge-success">Campaign: ${campaignName}</div>
+                <h2>Click to Continue</h2>
+                <p>If you're not redirected automatically, click below:</p>
+                <br>
+                <a href="${finalDestinationUrl}" 
+                   style="color: #007aff; text-decoration: none; font-weight: bold; font-size: 1.2rem; 
+                          padding: 12px 24px; border: 2px solid #007aff; border-radius: 12px; 
+                          display: inline-block; transition: all 0.3s ease;">
+                    Continue to Offer →
+                </a>
             `;
         }
         
         // Main redirect after delay
         setTimeout(() => {
             performRedirect();
-        }, 2500);
+        }, 2000);
         
-        // Backup redirects
+        // Backup redirect
         setTimeout(() => {
             if (document.visibilityState === 'visible') {
                 debugLog('⏰ Backup redirect triggered', 'warning');
                 performRedirect();
             }
-        }, 5000);
+        }, 4000);
         
         // Handle page visibility changes
         document.addEventListener('visibilitychange', function() {
@@ -653,31 +460,17 @@
             }, 1000);
         });
         
-        // Analytics tracking (optional)
-        try {
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'bridge_redirect', {
-                    'campaign_type': detectedCampaign.identifier,
-                    'campaign_name': detectedCampaign.name,
-                    'clickid': clickId,
-                    'source': additionalParams.source
-                });
-            }
-        } catch (e) {
-            // Ignore analytics errors
-            debugLog('Analytics tracking failed: ' + e.message, 'warning');
-        }
+        debugLog('🎯 Bridge setup complete - redirect scheduled', 'success');
+        debugLog(`📊 Campaign: ${campaignName} | ClickID: ${clickId}`, 'info');
         
-        debugLog('🎯 Bridge setup complete - awaiting redirect', 'success');
-        debugLog(`📊 Campaign: ${detectedCampaign.name} | ClickID: ${clickId}`, 'info');
-        
-        // Expose data for debugging (only in debug mode)
+        // Expose debug data
         if (debugMode) {
             window.bridgeDebug = {
-                campaign: detectedCampaign,
-                clickId: clickId,
-                verificationData: verificationData,
-                destinationUrl: destinationUrl
+                clickId,
+                redirectUrl,
+                finalDestinationUrl,
+                campaignName,
+                verificationData
             };
             debugLog('🔧 Debug data exposed in window.bridgeDebug', 'info');
         }
