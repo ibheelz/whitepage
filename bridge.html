@@ -197,7 +197,7 @@
         debugLog('🚀 Dynamic Bridge v3.0 Initialized', 'success');
         debugLog('Full URL: ' + window.location.href);
         
-        // Campaign Detection Engine
+        // Campaign Detection Engine with Dynamic URL Resolution
         class CampaignDetector {
             constructor() {
                 this.campaigns = {
@@ -209,7 +209,12 @@
                             /pin-up/i
                         ],
                         parameterNames: ['subid', 'clickid', 'sub1', 'cid'],
-                        defaultUrl: 'https://toptdspup.com/ftwsP3C2/?subid=',
+                        urlTemplates: {
+                            'abiola': 'https://toptdspup.com/ftwsP3C2/?subid=',
+                            'james': 'https://toptdspup.com/ftwsP3C2/?subid=',
+                            'maria': 'https://toptdspup.com/ftwsP3C2/?subid=',
+                            'default': 'https://toptdspup.com/ftwsP3C2/?subid='
+                        },
                         badge: 'badge-pinup',
                         identifier: 'PINUP'
                     },
@@ -221,7 +226,13 @@
                             /betsson/i
                         ],
                         parameterNames: ['payload', 'clickid', 'subid', 'cid'],
-                        defaultUrl: 'https://record.betsson.com/_5BnvWPFDzu0dxNX0OZ70QmNd7ZgqdRLk/17/?payload=',
+                        urlTemplates: {
+                            'abiola': 'https://record.betsson.com/_5BnvWPFDzu0dxNX0OZ70QmNd7ZgqdRLk/17/?payload=',
+                            'james': 'https://record.betsson.com/_JAMES_LINK_HERE/?payload=',
+                            'maria': 'https://record.betsson.com/_MARIA_LINK_HERE/?payload=',
+                            'samuel': 'https://record.betsson.com/_SAMUEL_LINK_HERE/?payload=',
+                            'default': 'https://record.betsson.com/_5BnvWPFDzu0dxNX0OZ70QmNd7ZgqdRLk/17/?payload='
+                        },
                         badge: 'badge-betsson',
                         identifier: 'BETSSON'
                     },
@@ -234,14 +245,145 @@
                             /wows/i
                         ],
                         parameterNames: ['pub_id', 'clickid', 'subid', 'cid'],
-                        defaultUrl: 'https://redir.wargaming.net/iddu5g4d/?pub_id=',
+                        urlTemplates: {
+                            'abiola': 'https://redir.wargaming.net/iddu5g4d/?pub_id=',
+                            'james': 'https://redir.wargaming.net/JAMES_ID/?pub_id=',
+                            'maria': 'https://redir.wargaming.net/MARIA_ID/?pub_id=',
+                            'default': 'https://redir.wargaming.net/iddu5g4d/?pub_id='
+                        },
                         badge: 'badge-wows',
                         identifier: 'WOWS'
                     }
                 };
+                
+                // Dynamic campaign URL mapping (can be loaded from external source)
+                this.campaignUrlMap = this.loadCampaignUrls();
             }
             
-            detectCampaign() {
+            // Load campaign URLs from URL parameters, localStorage, or external config
+            loadCampaignUrls() {
+                let urlMap = {};
+                
+                // Method 1: Check URL parameters for campaign-specific URLs
+                const campaignUrl = urlParams.get('campaign_url') || urlParams.get('offer_url');
+                const campaignName = urlParams.get('campaign_name') || urlParams.get('camp_name') || 'dynamic';
+                
+                if (campaignUrl) {
+                    debugLog(`Custom campaign URL found: ${campaignUrl}`, 'success');
+                    urlMap[campaignName] = campaignUrl;
+                }
+                
+                // Method 2: Check localStorage for saved campaign URLs
+                try {
+                    const savedUrls = localStorage.getItem('campaign_urls');
+                    if (savedUrls) {
+                        const parsed = JSON.parse(savedUrls);
+                        urlMap = { ...urlMap, ...parsed };
+                        debugLog(`Loaded ${Object.keys(parsed).length} saved campaign URLs`, 'info');
+                    }
+                } catch (e) {
+                    debugLog('Failed to load saved campaign URLs: ' + e.message, 'warning');
+                }
+                
+                // Method 3: Check for external config (you can implement this)
+                // urlMap = { ...urlMap, ...this.loadExternalConfig() };
+                
+                return urlMap;
+            }
+            
+            
+            getOfferUrl(campaign, campaignName, clickId) {
+                debugLog(`Resolving offer URL for campaign: ${campaignName}`, 'info');
+                
+                // Method 1: Check for redirect parameter (PRIMARY METHOD)
+                const redirectUrl = urlParams.get('redirect') || 
+                                  urlParams.get('redirect_url') || 
+                                  urlParams.get('offer_url') || 
+                                  urlParams.get('destination');
+                
+                if (redirectUrl) {
+                    debugLog(`Found redirect parameter: ${redirectUrl}`, 'success');
+                    
+                    // Handle clickid replacement in redirect URL
+                    let finalUrl = redirectUrl;
+                    
+                    // Replace {clickid} placeholder with actual clickid
+                    if (finalUrl.includes('{clickid}')) {
+                        finalUrl = finalUrl.replace(/\{clickid\}/g, encodeURIComponent(clickId));
+                        debugLog(`Replaced {clickid} placeholder in redirect URL`, 'success');
+                    }
+                    
+                    // If URL doesn't end with = and doesn't have clickid, append it
+                    if (!finalUrl.includes('{clickid}') && !finalUrl.endsWith('=')) {
+                        const separator = finalUrl.includes('?') ? '&' : '?';
+                        const paramName = this.getClickIdParamName(finalUrl);
+                        finalUrl = `${finalUrl}${separator}${paramName}=${encodeURIComponent(clickId)}`;
+                        debugLog(`Appended clickid parameter: ${paramName}`, 'info');
+                    }
+                    
+                    return finalUrl;
+                }
+                
+                // Method 2: Check dynamic campaign URL mapping
+                if (this.campaignUrlMap[campaignName]) {
+                    debugLog(`Using dynamic URL for ${campaignName}`, 'success');
+                    return this.campaignUrlMap[campaignName];
+                }
+                
+                // Method 3: Check campaign's URL templates
+                if (campaign.urlTemplates) {
+                    if (campaign.urlTemplates[campaignName]) {
+                        debugLog(`Using template URL for ${campaignName}`, 'success');
+                        return campaign.urlTemplates[campaignName];
+                    }
+                    
+                    // Fallback to default template
+                    debugLog(`Using default template URL for ${campaignName}`, 'warning');
+                    return campaign.urlTemplates.default || campaign.urlTemplates[Object.keys(campaign.urlTemplates)[0]];
+                }
+                
+                // Method 4: Construct URL from base parameters
+                const baseUrl = urlParams.get('base_url');
+                const offerParam = urlParams.get('offer_param') || 'clickid';
+                if (baseUrl) {
+                    const separator = baseUrl.includes('?') ? '&' : '?';
+                    const constructedUrl = `${baseUrl}${separator}${offerParam}=`;
+                    debugLog(`Constructed URL from parameters: ${constructedUrl}`, 'info');
+                    return constructedUrl;
+                }
+                
+                // Final fallback - this shouldn't happen with proper setup
+                debugLog('No URL found, using emergency fallback', 'error');
+                return 'https://example.com/?id=';
+            }
+            
+            // Determine the correct clickid parameter name based on URL
+            getClickIdParamName(url) {
+                const lowerUrl = url.toLowerCase();
+                
+                if (lowerUrl.includes('betsson') || lowerUrl.includes('record.')) {
+                    return 'payload';
+                } else if (lowerUrl.includes('wargaming') || lowerUrl.includes('warships')) {
+                    return 'pub_id';
+                } else if (lowerUrl.includes('pinup') || lowerUrl.includes('toptdspup')) {
+                    return 'subid';
+                } else {
+                    // Default fallback
+                    return 'clickid';
+                }
+            }
+            
+            // Save new campaign URL for future use
+            saveCampaignUrl(campaignName, url) {
+                try {
+                    const existing = JSON.parse(localStorage.getItem('campaign_urls') || '{}');
+                    existing[campaignName] = url;
+                    localStorage.setItem('campaign_urls', JSON.stringify(existing));
+                    debugLog(`Saved campaign URL for ${campaignName}`, 'success');
+                } catch (e) {
+                    debugLog('Failed to save campaign URL: ' + e.message, 'error');
+                }
+            }
                 const currentUrl = window.location.href.toLowerCase();
                 const referrer = document.referrer.toLowerCase();
                 
@@ -292,6 +434,16 @@
         const detector = new CampaignDetector();
         const detectedCampaign = detector.detectCampaign();
         const clickId = detector.extractClickId(detectedCampaign);
+        
+        // Extract campaign name for URL resolution
+        const campaignName = urlParams.get('campaign') || 
+                            urlParams.get('camp') || 
+                            urlParams.get('aff') || 
+                            urlParams.get('affiliate') ||
+                            'abiola'; // default campaign name
+        
+        debugLog(`Campaign Name Detected: ${campaignName}`, 'info');
+        debugLog(`All URL Parameters: ${window.location.search}`, 'info');
         
         // Update UI with detected campaign
         const badgeElement = document.getElementById('campaign-badge');
@@ -416,9 +568,14 @@
         debugLog(`Data storage completed: ${storageSuccess}/3 methods successful`, 
                 storageSuccess > 0 ? 'success' : 'error');
         
-        // Build destination URL
-        const destinationUrl = detectedCampaign.defaultUrl + encodeURIComponent(clickId);
-        debugLog('Destination URL: ' + destinationUrl, 'info');
+        // Build destination URL using dynamic resolution
+        const destinationUrl = detector.getOfferUrl(detectedCampaign, campaignName, clickId);
+        
+        debugLog('Campaign Resolution Results:', 'info');
+        debugLog(`- Campaign Name: ${campaignName}`, 'info');
+        debugLog(`- Campaign Type: ${detectedCampaign.name}`, 'info');
+        debugLog(`- ClickID: ${clickId}`, 'info');
+        debugLog(`- Final Destination: ${destinationUrl}`, 'success');
         
         // Enhanced redirect function with error handling
         function performRedirect() {
