@@ -174,9 +174,7 @@
 <body>
     <div class="container" id="main-container">
         <div class="spinner" id="loading-spinner"></div>
-        <div id="campaign-badge" class="campaign-badge badge-success">Processing...</div>
         <h2 id="main-title">Loading Your Exclusive Offer</h2>
-        <p id="loading-text">Verifying parameters and preparing redirect...</p>
         <div class="progress-bar" id="progress-bar">
             <div class="progress-fill"></div>
         </div>
@@ -265,21 +263,21 @@
         if (!redirectUrl) {
             showError(
                 'Missing Redirect URL', 
-                'No redirect parameter found. Please check your RedTrack offer URL configuration.',
-                'Required parameter: redirect, redirect_url, offer_url, or destination'
+                'Configuration Error'
             );
             debugLog('Bridge stopped - No redirect URL provided', 'error');
-            return;
+            // Stop execution here
+            throw new Error('No redirect URL provided');
         }
         
         if (!clickId) {
             showError(
                 'Missing Click ID', 
-                'No tracking ID found. Please check your RedTrack setup.',
-                'Required parameter: payload, clickid, subid, cid, or pub_id'
+                'Configuration Error'
             );
             debugLog('Bridge stopped - No clickid provided', 'error');
-            return;
+            // Stop execution here
+            throw new Error('No clickid provided');
         }
         
         // Process redirect URL
@@ -386,9 +384,8 @@
         debugLog(`Data storage: ${storageSuccess}/3 methods successful`, 
                 storageSuccess > 0 ? 'success' : 'warning');
         
-        // Update UI
-        document.getElementById('campaign-badge').textContent = `Campaign: ${campaignName}`;
-        document.getElementById('loading-text').textContent = `Redirecting to your exclusive offer...`;
+        // Update UI - keep it simple
+        // (no UI updates needed - just loading screen)
         
         // Redirect function
         function performRedirect() {
@@ -416,7 +413,6 @@
         function showManualRedirect() {
             const container = document.getElementById('main-container');
             container.innerHTML = `
-                <div class="campaign-badge badge-success">Campaign: ${campaignName}</div>
                 <h2>Click to Continue</h2>
                 <p>If you're not redirected automatically, click below:</p>
                 <br>
@@ -432,7 +428,7 @@
         // Main redirect after delay
         setTimeout(() => {
             performRedirect();
-        }, 2000);
+        }, 1500);
         
         // Backup redirect
         setTimeout(() => {
