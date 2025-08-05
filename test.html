@@ -193,10 +193,13 @@
             // Store verification data instantly (no try-catch delays)
             const timestamp = Date.now().toString();
             const verificationData = {
+                // Giveaway page expects these exact keys
                 verified_clickid: clickId,
-                campaign_name: campaignName,
-                traffic_source: source,
+                campaign_source: campaignName,
                 user_timestamp: timestamp,
+                
+                // Additional data for tracking
+                traffic_source: source,
                 session_id: `BRIDGE_${timestamp}`,
                 redirect_url: redirectUrl,
                 final_url: finalDestinationUrl,
@@ -207,19 +210,29 @@
             
             // Complete data storage (instant but comprehensive)
             try { 
-                // LocalStorage - All verification data
+                // Store with giveaway page expected keys
+                localStorage.setItem('verified_clickid', clickId);
+                localStorage.setItem('campaign_source', campaignName);
+                localStorage.setItem('user_timestamp', timestamp);
+                localStorage.setItem('traffic_source', source);
+                localStorage.setItem('is_verified', 'true');
+                
+                // Store all verification data with vc_ prefix
                 Object.keys(verificationData).forEach(key => {
                     localStorage.setItem(`vc_${key}`, verificationData[key]);
                 });
                 localStorage.setItem('vc_all_data', JSON.stringify(verificationData));
                 
                 // SessionStorage - All verification data
+                sessionStorage.setItem('verified_clickid', clickId);
+                sessionStorage.setItem('campaign_source', campaignName);
+                sessionStorage.setItem('user_timestamp', timestamp);
                 Object.keys(verificationData).forEach(key => {
                     sessionStorage.setItem(`vc_${key}`, verificationData[key]);
                 });
                 sessionStorage.setItem('vc_all_data', JSON.stringify(verificationData));
                 
-                debugLog('Complete data stored in localStorage & sessionStorage', 'success');
+                debugLog('Complete data stored with giveaway-compatible keys', 'success');
             } catch(e) { debugLog('Storage error: ' + e.message, 'warning'); }
             
             // Comprehensive cookies
@@ -227,13 +240,19 @@
                 const exp = new Date(Date.now() + 30*24*60*60*1000).toUTCString();
                 const cookieOptions = `; expires=${exp}; path=/; SameSite=Lax`;
                 
+                // Giveaway page compatible cookies
+                document.cookie = `verified_clickid=${clickId}${cookieOptions}`;
+                document.cookie = `campaign_source=${campaignName}${cookieOptions}`;
+                document.cookie = `user_timestamp=${timestamp}${cookieOptions}`;
+                
+                // Legacy vc_ cookies
                 document.cookie = `vc_clickid=${clickId}${cookieOptions}`;
                 document.cookie = `vc_campaign=${campaignName}${cookieOptions}`;
                 document.cookie = `vc_timestamp=${timestamp}${cookieOptions}`;
                 document.cookie = `vc_verified=true${cookieOptions}`;
                 document.cookie = `vc_source=${source}${cookieOptions}`;
                 
-                debugLog('Complete cookie data stored', 'success');
+                debugLog('Complete cookie data stored with compatible keys', 'success');
             } catch(e) { debugLog('Cookie error: ' + e.message, 'warning'); }
             
             debugLog(`Final URL: ${finalDestinationUrl}`, 'success');
