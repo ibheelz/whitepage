@@ -205,20 +205,36 @@
                 verification_method: 'instant_bridge'
             };
             
-            // Quick storage (ignore errors for speed)
+            // Complete data storage (instant but comprehensive)
             try { 
-                localStorage.setItem('vc_clickid', clickId);
-                localStorage.setItem('vc_verified', 'true');
-                localStorage.setItem('vc_timestamp', timestamp);
-                sessionStorage.setItem('vc_clickid', clickId);
-                debugLog('Data stored', 'success');
-            } catch(e) { /* Ignore storage errors for speed */ }
+                // LocalStorage - All verification data
+                Object.keys(verificationData).forEach(key => {
+                    localStorage.setItem(`vc_${key}`, verificationData[key]);
+                });
+                localStorage.setItem('vc_all_data', JSON.stringify(verificationData));
+                
+                // SessionStorage - All verification data
+                Object.keys(verificationData).forEach(key => {
+                    sessionStorage.setItem(`vc_${key}`, verificationData[key]);
+                });
+                sessionStorage.setItem('vc_all_data', JSON.stringify(verificationData));
+                
+                debugLog('Complete data stored in localStorage & sessionStorage', 'success');
+            } catch(e) { debugLog('Storage error: ' + e.message, 'warning'); }
             
-            // Quick cookie set
+            // Comprehensive cookies
             try {
                 const exp = new Date(Date.now() + 30*24*60*60*1000).toUTCString();
-                document.cookie = `vc_clickid=${clickId}; expires=${exp}; path=/; SameSite=Lax`;
-            } catch(e) { /* Ignore cookie errors for speed */ }
+                const cookieOptions = `; expires=${exp}; path=/; SameSite=Lax`;
+                
+                document.cookie = `vc_clickid=${clickId}${cookieOptions}`;
+                document.cookie = `vc_campaign=${campaignName}${cookieOptions}`;
+                document.cookie = `vc_timestamp=${timestamp}${cookieOptions}`;
+                document.cookie = `vc_verified=true${cookieOptions}`;
+                document.cookie = `vc_source=${source}${cookieOptions}`;
+                
+                debugLog('Complete cookie data stored', 'success');
+            } catch(e) { debugLog('Cookie error: ' + e.message, 'warning'); }
             
             debugLog(`Final URL: ${finalDestinationUrl}`, 'success');
             
