@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting…</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #1a1a1a;
+      color: #f5f5f7;
+      text-align: center; 
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .error-container {
+      max-width: 400px;
+      padding: 30px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .error-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #ff4757;
+    }
+    .error-message {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .debug-panel {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.95);
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 11px;
+      max-width: 350px;
+      max-height: 80vh;
+      overflow-y: auto;
+      display: none;
+      z-index: 1000;
+      border: 1px solid #333;
+    }
+    .debug-panel.show { display: block; }
+    .debug-header {
+      color: #ffff00;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '708344385151781');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=708344385151781&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+  <div id="debug-panel" class="debug-panel">
+    <div class="debug-header">⚡ INSTANT BRIDGE DEBUG</div>
+    <div id="debug-content"></div>
+  </div>
+
+  <script>
+  (function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugMode = urlParams.get('debug')==='1'
+                   || window.location.hostname==='localhost'
+                   || window.location.search.includes('debug');
+    function debugLog(msg,type='info'){
+      const ts=(new Date()).toLocaleTimeString();
+      const prefix = type==='error'? '❌' : type==='success'? '✅' : '🔍';
+      console.log(`${prefix} [${ts}]`,msg);
+      if(debugMode){
+        const c = document.getElementById('debug-content');
+        const color = type==='error'? '#ff4757' : '#2ed573';
+        c.innerHTML+=`<div style="color:${color}">[${ts}] ${prefix} ${msg}</div>`;
+        c.scrollTop = c.scrollHeight;
+      }
+    }
+    if(debugMode) document.getElementById('debug-panel').classList.add('show');
+
+    debugLog('Starting Instant Bridge', 'success');
+
+    // pull core params
+    const clickId = urlParams.get('payload')
+                  || urlParams.get('clickid')
+                  || urlParams.get('subid')
+                  || urlParams.get('cid')
+                  || 'no-clickid';
+    const redirectUrl = urlParams.get('redirect')
+                      || urlParams.get('redirect_url')
+                      || urlParams.get('offer_url')
+                      || urlParams.get('destination');
+    if(!redirectUrl){ 
+      document.body.innerHTML = `<div class="error-container">
+        <div class="error-title">Missing Redirect URL</div>
+        <div class="error-message">No redirect URL provided</div>
+      </div>`;
+      return;
+    }
+    debugLog(`ClickID: ${clickId}`, 'info');
+
+    // build initial final URL
+    let finalDestinationUrl = redirectUrl;
+    if(finalDestinationUrl.includes('{clickid}')){
+      finalDestinationUrl = finalDestinationUrl.replace(/\{clickid\}/g, encodeURIComponent(clickId));
+      debugLog('Replaced {clickid}', 'success');
+    } else {
+      const sep = finalDestinationUrl.includes('?')? '&' : '?';
+      finalDestinationUrl += `${sep}clickid=${encodeURIComponent(clickId)}`;
+      debugLog('Appended clickid param', 'success');
+    }
+
+    // capture fbclid, fbp, fbc
+    function getCookie(n){
+      const m = document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');
+      return m? m.pop() : '';
+    }
+    const fbclid = urlParams.get('fbclid');
+    const fbp   = getCookie('_fbp');
+    let   fbc   = getCookie('_fbc');
+    if(!fbc && fbclid){
+      const t = Math.floor(Date.now()/1000);
+      fbc = `fb.1.${t}.${fbclid}`;
+    }
+    if(fbclid) finalDestinationUrl += `&fbclid=${encodeURIComponent(fbclid)}`;
+    if(fbc)     finalDestinationUrl += `&fbc=${encodeURIComponent(fbc)}`;
+    if(fbp)     finalDestinationUrl += `&fbp=${encodeURIComponent(fbp)}`;
+    debugLog(`fbclid/fbc/fbp → ${fbclid} / ${fbc} / ${fbp}`, 'success');
+
+    debugLog(`Final URL: ${finalDestinationUrl}`, 'success');
+    debugLog('Redirecting now', 'success');
+    window.location.href = finalDestinationUrl;
+
+  })();
+  </script>
+</body>
+</html>
