@@ -155,9 +155,12 @@
     if(fbp)     finalDestinationUrl += `&fbp=${encodeURIComponent(fbp)}`;
     debugLog(`fbclid/fbc/fbp → ${fbclid} / ${fbc} / ${fbp}`, 'success');
 
-    debugLog(`Final URL: ${finalDestinationUrl}`, 'success');
-    debugLog('Redirecting now', 'success');
-    window.location.href = finalDestinationUrl;
+    debugLog('Waiting 200ms for Pixel to write _fbp cookie…', 'info');
+    setTimeout(() => {
+      debugLog('🚀 Now redirecting', 'success');
+      window.location.href = finalDestinationUrl;
+    }, 200);
+
 
   })();
   </script>
