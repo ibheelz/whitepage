@@ -62,16 +62,18 @@
       margin-bottom: 10px;
     }
   </style>
-  <!-- Meta Pixel Code -->
+
+  <!-- Meta Pixel Base Code -->
   <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return; n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+      n.queue=[]; t=b.createElement(e); t.async=!0;
+      t.src=v; s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s);
+    }(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '708344385151781');
     fbq('track', 'PageView');
   </script>
@@ -90,78 +92,63 @@
   <script>
   (function(){
     const urlParams = new URLSearchParams(window.location.search);
-    const debugMode = urlParams.get('debug')==='1'
-                   || window.location.hostname==='localhost'
-                   || window.location.search.includes('debug');
+    const debugMode = urlParams.get('debug')==='1'||window.location.hostname==='localhost';
     function debugLog(msg,type='info'){
       const ts=(new Date()).toLocaleTimeString();
-      const prefix = type==='error'? '❌' : type==='success'? '✅' : '🔍';
+      const prefix= type==='error'?'❌':type==='success'?'✅':'🔍';
       console.log(`${prefix} [${ts}]`,msg);
       if(debugMode){
-        const c = document.getElementById('debug-content');
-        const color = type==='error'? '#ff4757' : '#2ed573';
+        const c=document.getElementById('debug-content');
+        const color= type==='error'?'#ff4757':'#2ed573';
         c.innerHTML+=`<div style="color:${color}">[${ts}] ${prefix} ${msg}</div>`;
-        c.scrollTop = c.scrollHeight;
+        c.scrollTop=c.scrollHeight;
       }
     }
     if(debugMode) document.getElementById('debug-panel').classList.add('show');
+    debugLog('⚡ Instant Bridge v6 - start','success');
 
-    debugLog('Starting Instant Bridge', 'success');
-
-    // pull core params
-    const clickId = urlParams.get('payload')
-                  || urlParams.get('clickid')
-                  || urlParams.get('subid')
-                  || urlParams.get('cid')
-                  || 'no-clickid';
-    const redirectUrl = urlParams.get('redirect')
-                      || urlParams.get('redirect_url')
-                      || urlParams.get('offer_url')
-                      || urlParams.get('destination');
-    if(!redirectUrl){ 
-      document.body.innerHTML = `<div class="error-container">
-        <div class="error-title">Missing Redirect URL</div>
-        <div class="error-message">No redirect URL provided</div>
+    // Extract core params
+    const clickId=urlParams.get('payload')||urlParams.get('clickid')||urlParams.get('subid')||urlParams.get('cid')||'';
+    const redirect=urlParams.get('redirect')||urlParams.get('redirect_url')||'';
+    if(!clickId||!redirect){
+      document.body.innerHTML=`<div class="error-container">
+        <div class="error-title">Missing clickId or redirect</div>
+        <div class="error-message">Check payload and redirect params</div>
       </div>`;
+      debugLog('Bridge Error: missing clickId or redirect','error');
       return;
     }
-    debugLog(`ClickID: ${clickId}`, 'info');
+    debugLog(`ClickID: ${clickId}`,'info');
 
-    // build initial final URL
-    let finalDestinationUrl = redirectUrl;
-    if(finalDestinationUrl.includes('{clickid}')){
-      finalDestinationUrl = finalDestinationUrl.replace(/\{clickid\}/g, encodeURIComponent(clickId));
-      debugLog('Replaced {clickid}', 'success');
-    } else {
-      const sep = finalDestinationUrl.includes('?')? '&' : '?';
-      finalDestinationUrl += `${sep}clickid=${encodeURIComponent(clickId)}`;
-      debugLog('Appended clickid param', 'success');
-    }
+    // Build base final URL
+    let final=redirect.includes('{clickid}')
+      ? redirect.replace(/\{clickid\}/g,encodeURIComponent(clickId))
+      : redirect + (redirect.includes('?')?'&':'?') + 'clickid=' + encodeURIComponent(clickId);
+    debugLog('Base final URL built','success');
 
-    // capture fbclid, fbp, fbc
-    function getCookie(n){
-      const m = document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');
-      return m? m.pop() : '';
-    }
-    const fbclid = urlParams.get('fbclid');
-    const fbp   = getCookie('_fbp');
-    let   fbc   = getCookie('_fbc');
-    if(!fbc && fbclid){
-      const t = Math.floor(Date.now()/1000);
-      fbc = `fb.1.${t}.${fbclid}`;
-    }
-    if(fbclid) finalDestinationUrl += `&fbclid=${encodeURIComponent(fbclid)}`;
-    if(fbc)     finalDestinationUrl += `&fbc=${encodeURIComponent(fbc)}`;
-    if(fbp)     finalDestinationUrl += `&fbp=${encodeURIComponent(fbp)}`;
-    debugLog(`fbclid/fbc/fbp → ${fbclid} / ${fbc} / ${fbp}`, 'success');
+    // Capture fbclid, fbp, fbc
+    function getCookie(n){ const m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
+    const fbclid=urlParams.get('fbclid');
+    let fbp=getCookie('_fbp');
+    let fbc=getCookie('_fbc');
+    if(fbclid&&!fbc){ const ts=Math.floor(Date.now()/1000); fbc=`fb.1.${ts}.${fbclid}`; }
+    if(fbclid) final+='&fbclid='+encodeURIComponent(fbclid);
+    if(fbc)     final+='&fbc='+encodeURIComponent(fbc);
+    if(fbp)     final+='&fbp='+encodeURIComponent(fbp);
+    debugLog(`fbclid/fbc/fbp → ${fbclid} / ${fbc} / ${fbp}`,'success');
 
-    debugLog('Waiting 200ms for Pixel to write _fbp cookie…', 'info');
-    setTimeout(() => {
-      debugLog('🚀 Now redirecting', 'success');
-      window.location.href = finalDestinationUrl;
-    }, 200);
+    // Preserve any additional tracking params
+    ['campaign','source','ad','campaign.id','ad.id','adset.id','placement','site_source_name','external_id'].forEach(k=>{
+      const v=urlParams.get(k);
+      if(v) final+=`&${k}=${encodeURIComponent(v)}`;
+    });
 
-
+    debugLog(`Final URL: ${final}`,'success');
+    debugLog('Waiting 500ms for Pixel to drop cookies...','info');
+    setTimeout(()=>{
+      debugLog('🚀 Redirecting now','success');
+      window.location.href=final;
+    },500);
   })();
   </script>
 </body>
