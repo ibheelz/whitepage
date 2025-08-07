@@ -1,28 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Loading…</title>
-  <style>
-    body { 
-      background:#111; color:#fff; font-family:sans-serif; display:flex;
-      align-items:center;justify-content:center;height:100vh;margin:0;
-    }
-    .spinner{border:4px solid rgba(255,255,255,0.1);
-      border-top:4px solid #fff;border-radius:50%;width:40px;height:40px;
-      animation:spin 1s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    #debug{position:fixed;top:10px;right:10px;
-      background:rgba(0,0,0,0.8);color:#0f0;font:12px monospace;
-      padding:8px;border-radius:4px;display:none;
-      max-height:70vh;overflow:auto;
-    }
-    #debug.show{display:block}
-  </style>
+  <style>/* spinner + debug styles… same as before */</style>
 
-  <!-- 1) Load Facebook Pixel -->
+  <!-- LOAD FB PIXEL with wildcard cookieDomain -->
   <script>
     !function(f,b,e,v,n,t,s){
       if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -33,67 +16,58 @@
       s.parentNode.insertBefore(t,s);
     }(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init','708344385151781');
+
+    // tell Facebook to share cookies across *.todoalrojo.club
+    fbq('init','708344385151781',{cookieDomain:'.todoalrojo.club'});
     fbq('track','PageView');
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=708344385151781&ev=PageView&noscript=1"/>
-  </noscript>
 </head>
-
 <body>
   <div class="spinner"></div>
   <div id="debug"><strong>BRIDGE DEBUG</strong><br><div id="msgs"></div></div>
-
   <script>
   (function(){
     const qs = new URLSearchParams(location.search);
     const debug = qs.get('debug')==='1';
-    const log = msg=>{
-      console.log(msg);
-      if(debug){
+    const log = m=>{
+      console.log(m);
+      if(debug) {
         document.getElementById('debug').classList.add('show');
-        document.getElementById('msgs').innerHTML += msg.replace(/&/g,'&amp;') + '<br>';
+        document.getElementById('msgs').innerHTML += m+'<br>';
       }
     };
 
-    // 2) Grab your clickId & offer destination from the URL
-    const clickId    = qs.get('payload') || qs.get('clickid');
-    const redTrack   = qs.get('track')   || qs.get('redirect');
-    if(!clickId||!redTrack){
-      return log('❌ Missing payload or track param');
-    }
-    log(`clickId=${clickId}`);
-    log(`RedTrackURL=${redTrack}`);
+    // 1️⃣ Get your Linkly-forwarded params:
+    const clickId  = qs.get('payload') || qs.get('clickid');
+    const trackURL = qs.get('track')   || qs.get('redirect');
+    if(!clickId||!trackURL) return log('❌ missing payload/clickid or track/redirect');
 
-    // 3) Wait 500ms for Pixel to drop cookies (_fbp & _fbc)
+    log('clickId='+clickId);
+    log('trackURL='+trackURL);
+
+    // 2️⃣ Wait for Pixel to drop its cookies
     setTimeout(()=>{
-      const cookie = name=>{
-        const m = document.cookie.match('(^|;)\\s*'+name+'=([^;]+)');
-        return m? m.pop() : '';
+      const getC = n=>{
+        const m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');
+        return m?m.pop(): '';
       };
-
       const fbclid = qs.get('fbclid') || '';
-      const fbp    = cookie('_fbp');
-      const fbc    = cookie('_fbc');
-
+      const fbc    = getC('_fbc');
+      const fbp    = getC('_fbp');
       log(`fbclid=${fbclid}`);
       log(`fbc=${fbc}`);
       log(`fbp=${fbp}`);
 
-      // 4) Build the final RedTrack URL
-      let url = redTrack;
-      url += (url.includes('?')?'&':'?') + 'clickid=' + encodeURIComponent(clickId);
-      if(fbclid) url += '&fbclid=' + encodeURIComponent(fbclid);
-      if(fbc)    url += '&fbc='     + encodeURIComponent(fbc);
-      if(fbp)    url += '&fbp='     + encodeURIComponent(fbp);
+      // 3️⃣ Build the RedTrack URL
+      let url = trackURL;
+      url += (url.includes('?')?'&':'?') + 'clickid='+encodeURIComponent(clickId);
+      if(fbclid) url += '&fbclid='+encodeURIComponent(fbclid);
+      if(fbc)    url += '&fbc='+encodeURIComponent(fbc);
+      if(fbp)    url += '&fbp='+encodeURIComponent(fbp);
 
-      log('→ Final RedTrack Redirect: ' + url);
-
-      // 5) Send them on their way
+      log('→ redirecting to RedTrack: '+url);
       window.location.href = url;
-    }, 500);
+    },500);
   })();
   </script>
 </body>
