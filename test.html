@@ -1,73 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Loading…</title>
-  <style>/* spinner + debug styles… same as before */</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Redirecting…</title>
+  <style>
+    /* Centered spinner */
+    .spinner {
+      width: 48px; height: 48px;
+      border: 5px solid rgba(0,0,0,0.1);
+      border-top-color: #555;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      position: absolute; top:50%; left:50%;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    body { margin:0; height:100vh; background:#fff; }
+  </style>
 
-  <!-- LOAD FB PIXEL with wildcard cookieDomain -->
+  <!-- Facebook Pixel -->
   <script>
-    !function(f,b,e,v,n,t,s){
+    !(function(f,b,e,v,n,t,s){
       if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
       if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
       n.queue=[];t=b.createElement(e);t.async=!0;
       t.src=v;s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s);
-    }(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
+    })(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
-    // tell Facebook to share cookies across *.todoalrojo.club
+    // initialize pixel for this domain
     fbq('init','708344385151781',{cookieDomain:'.todoalrojo.club'});
     fbq('track','PageView');
   </script>
 </head>
 <body>
   <div class="spinner"></div>
-  <div id="debug"><strong>BRIDGE DEBUG</strong><br><div id="msgs"></div></div>
+
   <script>
   (function(){
     const qs = new URLSearchParams(location.search);
-    const debug = qs.get('debug')==='1';
-    const log = m=>{
-      console.log(m);
-      if(debug) {
-        document.getElementById('debug').classList.add('show');
-        document.getElementById('msgs').innerHTML += m+'<br>';
-      }
-    };
 
-    // 1️⃣ Get your Linkly-forwarded params:
+    // required params
     const clickId  = qs.get('payload') || qs.get('clickid');
-    const trackURL = qs.get('track')   || qs.get('redirect');
-    if(!clickId||!trackURL) return log('❌ missing payload/clickid or track/redirect');
+    const trackURL = qs.get('redirect') || qs.get('track');
+    if (!clickId || !trackURL) {
+      // nothing to do
+      return;
+    }
 
-    log('clickId='+clickId);
-    log('trackURL='+trackURL);
-
-    // 2️⃣ Wait for Pixel to drop its cookies
+    // give FB Pixel 500ms to set its cookies
     setTimeout(()=>{
-      const getC = n=>{
-        const m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');
-        return m?m.pop(): '';
+      // helper to read cookies
+      const getCookie = name => {
+        const m = document.cookie.match('(^|;)\\s*'+name+'=([^;]+)');
+        return m ? m.pop() : '';
       };
+
       const fbclid = qs.get('fbclid') || '';
-      const fbc    = getC('_fbc');
-      const fbp    = getC('_fbp');
-      log(`fbclid=${fbclid}`);
-      log(`fbc=${fbc}`);
-      log(`fbp=${fbp}`);
+      const fbc    = getCookie('_fbc');
+      const fbp    = getCookie('_fbp');
 
-      // 3️⃣ Build the RedTrack URL
+      // build final URL
       let url = trackURL;
-      url += (url.includes('?')?'&':'?') + 'clickid='+encodeURIComponent(clickId);
-      if(fbclid) url += '&fbclid='+encodeURIComponent(fbclid);
-      if(fbc)    url += '&fbc='+encodeURIComponent(fbc);
-      if(fbp)    url += '&fbp='+encodeURIComponent(fbp);
+      // ensure we have the clickid param
+      url += (url.includes('?') ? '&' : '?') + 'clickid=' + encodeURIComponent(clickId);
+      if (fbclid) url += '&fbclid=' + encodeURIComponent(fbclid);
+      if (fbc)    url += '&fbc='    + encodeURIComponent(fbc);
+      if (fbp)    url += '&fbp='    + encodeURIComponent(fbp);
 
-      log('→ redirecting to RedTrack: '+url);
+      // go!
       window.location.href = url;
-    },500);
+    }, 500);
   })();
   </script>
 </body>
