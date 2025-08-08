@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🎉 VIP Giveaway — Exclusive Access</title>
+    <title>🎉 Sorteo VIP — Acceso Exclusivo</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -676,16 +676,47 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <h1 id="giveaway-title" class="hero-title">VIP Exclusive</h1>
-        <p id="giveaway-subtitle" class="hero-subtitle">Join our premium giveaway experience</p>
+        <h1 id="giveaway-title" class="hero-title">Sorteo VIP Exclusivo</h1>
+        <p id="giveaway-subtitle" class="hero-subtitle">¡Únete a nuestra experiencia premium de sorteos!</p>
         <div id="verification-badge" class="verification-badge" style="display: none;">
             <span>✓</span>
-            <span>Verified Member</span>
+            <span>Miembro Verificado</span>
         </div>
     </section>
 
     <!-- Main Container -->
     <div class="container">
+        <!-- Attractive Banner Section -->
+        <div id="attractive-banner" class="card slide-in" style="display: block; text-align: center; background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(255,149,0,0.1) 100%); border: 2px solid rgba(255,107,53,0.3);">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🎁</div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 12px; background: linear-gradient(45deg, #ff6b35, #ff9500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">¡Premios Increíbles Te Esperan!</h2>
+            <p style="font-size: 1.1rem; color: rgba(255,255,255,0.9); margin-bottom: 20px;">Completa el formulario y prueba tu suerte para ganar premios exclusivos</p>
+            
+            <!-- Prize Preview Grid -->
+            <div class="prize-preview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0;">
+                <div class="prize-preview-item" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">💰</div>
+                    <div style="font-size: 0.8rem; font-weight: 600;">Bonos $5K-$10K</div>
+                </div>
+                <div class="prize-preview-item" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">👕</div>
+                    <div style="font-size: 0.8rem; font-weight: 600;">Polera D. Jimache</div>
+                </div>
+                <div class="prize-preview-item" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">⚽</div>
+                    <div style="font-size: 0.8rem; font-weight: 600;">Garra Futbol</div>
+                </div>
+                <div class="prize-preview-item" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">🍀</div>
+                    <div style="font-size: 0.8rem; font-weight: 600;">Midia Suerte</div>
+                </div>
+            </div>
+            
+            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 16px;">
+                <strong>✨ 100% Aleatorio • 🎯 Oportunidad Garantizada • 🎁 Premios Reales</strong>
+            </div>
+        </div>
+
         <!-- Verification Status Card -->
         <div id="status-card" class="card status-card slide-in" style="display: none;">
             <div id="status-icon" class="status-icon"></div>
@@ -700,42 +731,242 @@
                 <!-- Progress Bar -->
                 <div class="progress-container">
                     <div id="progress-bar" class="progress-bar"></div>
-                    <div id="progress-text" class="progress-text">Complete the form to unlock your spin! (0/5)</div>
+                    <div id="progress-text" class="progress-text">¡Completa el formulario para desbloquear tu giro! (0/5)</div>
                 </div>
                 
                 <form id="auto-form">
                     <div class="form-group">
-                        <label class="form-label" for="v-email">Email Address</label>
-                        <input type="email" id="v-email" placeholder="Enter your email address" required>
+                        <label class="form-label" for="v-first-name">Nombre</label>
+                        <input type="text" id="v-first-name" placeholder="Tu nombre" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="v-phone">Phone Number</label>
-                        <input type="tel" id="v-phone" placeholder="Enter your phone number" required>
+                        <label class="form-label" for="v-last-name">Apellido</label>
+                        <input type="text" id="v-last-name" placeholder="Tu apellido" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="v-telegram">Telegram Username</label>
-                        <input type="text" id="v-telegram" placeholder="@username (optional)">
+                        <label class="form-label" for="v-email">Correo Electrónico</label>
+                        <input type="email" id="v-email" placeholder="Ingresa tu correo electrónico" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="v-username">Casino Username</label>
-                        <input type="text" id="v-username" placeholder="Your casino username" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Deposit Screenshot</label>
-                        <div class="file-input" id="v-file-input">
-                            <input type="file" id="v-screenshot" accept="image/*" required>
-                            <div class="file-input-icon">📸</div>
-                            <div class="file-input-text">Upload Deposit Screenshot</div>
-                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                        <label class="form-label" for="v-phone">Número de Teléfono</label>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="v-country-code" style="width: 120px; padding: 16px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #f5f5f7; font-size: 1rem; font-family: inherit;">
+                                <option value="">🌍 Select</option>
+                                <option value="+93">🇦🇫 Afghanistan +93</option>
+                                <option value="+355">🇦🇱 Albania +355</option>
+                                <option value="+213">🇩🇿 Algeria +213</option>
+                                <option value="+376">🇦🇩 Andorra +376</option>
+                                <option value="+244">🇦🇴 Angola +244</option>
+                                <option value="+1264">🇦🇮 Anguilla +1264</option>
+                                <option value="+1268">🇦🇬 Antigua +1268</option>
+                                <option value="+54">🇦🇷 Argentina +54</option>
+                                <option value="+374">🇦🇲 Armenia +374</option>
+                                <option value="+297">🇦🇼 Aruba +297</option>
+                                <option value="+61">🇦🇺 Australia +61</option>
+                                <option value="+43">🇦🇹 Austria +43</option>
+                                <option value="+994">🇦🇿 Azerbaijan +994</option>
+                                <option value="+1242">🇧🇸 Bahamas +1242</option>
+                                <option value="+973">🇧🇭 Bahrain +973</option>
+                                <option value="+880">🇧🇩 Bangladesh +880</option>
+                                <option value="+1246">🇧🇧 Barbados +1246</option>
+                                <option value="+375">🇧🇾 Belarus +375</option>
+                                <option value="+32">🇧🇪 Belgium +32</option>
+                                <option value="+501">🇧🇿 Belize +501</option>
+                                <option value="+229">🇧🇯 Benin +229</option>
+                                <option value="+1441">🇧🇲 Bermuda +1441</option>
+                                <option value="+975">🇧🇹 Bhutan +975</option>
+                                <option value="+591">🇧🇴 Bolivia +591</option>
+                                <option value="+387">🇧🇦 Bosnia +387</option>
+                                <option value="+267">🇧🇼 Botswana +267</option>
+                                <option value="+55">🇧🇷 Brazil +55</option>
+                                <option value="+673">🇧🇳 Brunei +673</option>
+                                <option value="+359">🇧🇬 Bulgaria +359</option>
+                                <option value="+226">🇧🇫 Burkina Faso +226</option>
+                                <option value="+257">🇧🇮 Burundi +257</option>
+                                <option value="+855">🇰🇭 Cambodia +855</option>
+                                <option value="+237">🇨🇲 Cameroon +237</option>
+                                <option value="+1">🇨🇦 Canada +1</option>
+                                <option value="+238">🇨🇻 Cape Verde +238</option>
+                                <option value="+1345">🇰🇾 Cayman Islands +1345</option>
+                                <option value="+236">🇨🇫 Central African Republic +236</option>
+                                <option value="+235">🇹🇩 Chad +235</option>
+                                <option value="+56">🇨🇱 Chile +56</option>
+                                <option value="+86">🇨🇳 China +86</option>
+                                <option value="+57">🇨🇴 Colombia +57</option>
+                                <option value="+269">🇰🇲 Comoros +269</option>
+                                <option value="+242">🇨🇬 Congo +242</option>
+                                <option value="+506">🇨🇷 Costa Rica +506</option>
+                                <option value="+385">🇭🇷 Croatia +385</option>
+                                <option value="+53">🇨🇺 Cuba +53</option>
+                                <option value="+357">🇨🇾 Cyprus +357</option>
+                                <option value="+420">🇨🇿 Czech Republic +420</option>
+                                <option value="+45">🇩🇰 Denmark +45</option>
+                                <option value="+253">🇩🇯 Djibouti +253</option>
+                                <option value="+1809">🇩🇲 Dominica +1809</option>
+                                <option value="+1809">🇩🇴 Dominican Republic +1809</option>
+                                <option value="+593">🇪🇨 Ecuador +593</option>
+                                <option value="+20">🇪🇬 Egypt +20</option>
+                                <option value="+503">🇸🇻 El Salvador +503</option>
+                                <option value="+240">🇬🇶 Equatorial Guinea +240</option>
+                                <option value="+291">🇪🇷 Eritrea +291</option>
+                                <option value="+372">🇪🇪 Estonia +372</option>
+                                <option value="+251">🇪🇹 Ethiopia +251</option>
+                                <option value="+679">🇫🇯 Fiji +679</option>
+                                <option value="+358">🇫🇮 Finland +358</option>
+                                <option value="+33">🇫🇷 France +33</option>
+                                <option value="+241">🇬🇦 Gabon +241</option>
+                                <option value="+220">🇬🇲 Gambia +220</option>
+                                <option value="+995">🇬🇪 Georgia +995</option>
+                                <option value="+49">🇩🇪 Germany +49</option>
+                                <option value="+233">🇬🇭 Ghana +233</option>
+                                <option value="+30">🇬🇷 Greece +30</option>
+                                <option value="+1473">🇬🇩 Grenada +1473</option>
+                                <option value="+502">🇬🇹 Guatemala +502</option>
+                                <option value="+224">🇬🇳 Guinea +224</option>
+                                <option value="+245">🇬🇼 Guinea-Bissau +245</option>
+                                <option value="+592">🇬🇾 Guyana +592</option>
+                                <option value="+509">🇭🇹 Haiti +509</option>
+                                <option value="+504">🇭🇳 Honduras +504</option>
+                                <option value="+852">🇭🇰 Hong Kong +852</option>
+                                <option value="+36">🇭🇺 Hungary +36</option>
+                                <option value="+354">🇮🇸 Iceland +354</option>
+                                <option value="+91">🇮🇳 India +91</option>
+                                <option value="+62">🇮🇩 Indonesia +62</option>
+                                <option value="+98">🇮🇷 Iran +98</option>
+                                <option value="+964">🇮🇶 Iraq +964</option>
+                                <option value="+353">🇮🇪 Ireland +353</option>
+                                <option value="+972">🇮🇱 Israel +972</option>
+                                <option value="+39">🇮🇹 Italy +39</option>
+                                <option value="+1876">🇯🇲 Jamaica +1876</option>
+                                <option value="+81">🇯🇵 Japan +81</option>
+                                <option value="+962">🇯🇴 Jordan +962</option>
+                                <option value="+7">🇰🇿 Kazakhstan +7</option>
+                                <option value="+254">🇰🇪 Kenya +254</option>
+                                <option value="+82">🇰🇷 Korea +82</option>
+                                <option value="+965">🇰🇼 Kuwait +965</option>
+                                <option value="+996">🇰🇬 Kyrgyzstan +996</option>
+                                <option value="+856">🇱🇦 Laos +856</option>
+                                <option value="+371">🇱🇻 Latvia +371</option>
+                                <option value="+961">🇱🇧 Lebanon +961</option>
+                                <option value="+266">🇱🇸 Lesotho +266</option>
+                                <option value="+231">🇱🇷 Liberia +231</option>
+                                <option value="+218">🇱🇾 Libya +218</option>
+                                <option value="+423">🇱🇮 Liechtenstein +423</option>
+                                <option value="+370">🇱🇹 Lithuania +370</option>
+                                <option value="+352">🇱🇺 Luxembourg +352</option>
+                                <option value="+853">🇲🇴 Macau +853</option>
+                                <option value="+389">🇲🇰 Macedonia +389</option>
+                                <option value="+261">🇲🇬 Madagascar +261</option>
+                                <option value="+265">🇲🇼 Malawi +265</option>
+                                <option value="+60">🇲🇾 Malaysia +60</option>
+                                <option value="+960">🇲🇻 Maldives +960</option>
+                                <option value="+223">🇲🇱 Mali +223</option>
+                                <option value="+356">🇲🇹 Malta +356</option>
+                                <option value="+692">🇲🇭 Marshall Islands +692</option>
+                                <option value="+222">🇲🇷 Mauritania +222</option>
+                                <option value="+230">🇲🇺 Mauritius +230</option>
+                                <option value="+52">🇲🇽 Mexico +52</option>
+                                <option value="+373">🇲🇩 Moldova +373</option>
+                                <option value="+377">🇲🇨 Monaco +377</option>
+                                <option value="+976">🇲🇳 Mongolia +976</option>
+                                <option value="+382">🇲🇪 Montenegro +382</option>
+                                <option value="+212">🇲🇦 Morocco +212</option>
+                                <option value="+258">🇲🇿 Mozambique +258</option>
+                                <option value="+95">🇲🇲 Myanmar +95</option>
+                                <option value="+264">🇳🇦 Namibia +264</option>
+                                <option value="+674">🇳🇷 Nauru +674</option>
+                                <option value="+977">🇳🇵 Nepal +977</option>
+                                <option value="+31">🇳🇱 Netherlands +31</option>
+                                <option value="+64">🇳🇿 New Zealand +64</option>
+                                <option value="+505">🇳🇮 Nicaragua +505</option>
+                                <option value="+227">🇳🇪 Niger +227</option>
+                                <option value="+234">🇳🇬 Nigeria +234</option>
+                                <option value="+47">🇳🇴 Norway +47</option>
+                                <option value="+968">🇴🇲 Oman +968</option>
+                                <option value="+92">🇵🇰 Pakistan +92</option>
+                                <option value="+680">🇵🇼 Palau +680</option>
+                                <option value="+507">🇵🇦 Panama +507</option>
+                                <option value="+675">🇵🇬 Papua New Guinea +675</option>
+                                <option value="+595">🇵🇾 Paraguay +595</option>
+                                <option value="+51">🇵🇪 Peru +51</option>
+                                <option value="+63">🇵🇭 Philippines +63</option>
+                                <option value="+48">🇵🇱 Poland +48</option>
+                                <option value="+351">🇵🇹 Portugal +351</option>
+                                <option value="+974">🇶🇦 Qatar +974</option>
+                                <option value="+40">🇷🇴 Romania +40</option>
+                                <option value="+7">🇷🇺 Russia +7</option>
+                                <option value="+250">🇷🇼 Rwanda +250</option>
+                                <option value="+966">🇸🇦 Saudi Arabia +966</option>
+                                <option value="+221">🇸🇳 Senegal +221</option>
+                                <option value="+381">🇷🇸 Serbia +381</option>
+                                <option value="+65">🇸🇬 Singapore +65</option>
+                                <option value="+421">🇸🇰 Slovakia +421</option>
+                                <option value="+386">🇸🇮 Slovenia +386</option>
+                                <option value="+27">🇿🇦 South Africa +27</option>
+                                <option value="+34">🇪🇸 Spain +34</option>
+                                <option value="+94">🇱🇰 Sri Lanka +94</option>
+                                <option value="+249">🇸🇩 Sudan +249</option>
+                                <option value="+597">🇸🇷 Suriname +597</option>
+                                <option value="+46">🇸🇪 Sweden +46</option>
+                                <option value="+41">🇨🇭 Switzerland +41</option>
+                                <option value="+963">🇸🇾 Syria +963</option>
+                                <option value="+886">🇹🇼 Taiwan +886</option>
+                                <option value="+992">🇹🇯 Tajikistan +992</option>
+                                <option value="+255">🇹🇿 Tanzania +255</option>
+                                <option value="+66">🇹🇭 Thailand +66</option>
+                                <option value="+228">🇹🇬 Togo +228</option>
+                                <option value="+216">🇹🇳 Tunisia +216</option>
+                                <option value="+90">🇹🇷 Turkey +90</option>
+                                <option value="+993">🇹🇲 Turkmenistan +993</option>
+                                <option value="+256">🇺🇬 Uganda +256</option>
+                                <option value="+380">🇺🇦 Ukraine +380</option>
+                                <option value="+971">🇦🇪 UAE +971</option>
+                                <option value="+44">🇬🇧 United Kingdom +44</option>
+                                <option value="+1">🇺🇸 United States +1</option>
+                                <option value="+598">🇺🇾 Uruguay +598</option>
+                                <option value="+998">🇺🇿 Uzbekistan +998</option>
+                                <option value="+58">🇻🇪 Venezuela +58</option>
+                                <option value="+84">🇻🇳 Vietnam +84</option>
+                                <option value="+967">🇾🇪 Yemen +967</option>
+                                <option value="+260">🇿🇲 Zambia +260</option>
+                                <option value="+263">🇿🇼 Zimbabwe +263</option>
+                            </select>
+                            <input type="tel" id="v-phone" placeholder="Número de teléfono" required style="flex: 1;">
                         </div>
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label" for="v-telegram">Usuario de Telegram</label>
+                        <input type="text" id="v-telegram" placeholder="@usuario (opcional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="v-promo-code">Código Promocional</label>
+                        <input type="text" id="v-promo-code" placeholder="Código promocional (opcional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Captura de Pantalla del Depósito</label>
+                        <div class="file-input" id="v-file-input">
+                            <input type="file" id="v-screenshot" accept="image/*" required>
+                            <div class="file-input-icon">📸</div>
+                            <div class="file-input-text">Subir Captura de Pantalla</div>
+                            <div class="file-input-subtext">PNG, JPG hasta 10MB</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="v-promotions" required style="width: auto; margin: 0;">
+                            <span>Al girar la ruleta, aceptas recibir emails con promociones y noticias sobre sorteos.</span>
+                        </label>
+                    </div>
+                    
                     <button type="button" id="v-spin-button" class="primary-button" disabled>
-                        🎰 CLAIM GIVEAWAY! 🎰
+                        🎰 ¡PRUEBA TU SUERTE! 🎰
                     </button>
                 </form>
             </div>
@@ -747,72 +978,247 @@
                 <!-- Progress Bar -->
                 <div class="progress-container">
                     <div id="progress-bar-manual" class="progress-bar"></div>
-                    <div id="progress-text-manual" class="progress-text">Complete the form to unlock your spin! (0/8)</div>
+                    <div id="progress-text-manual" class="progress-text">¡Completa el formulario para desbloquear tu giro! (0/8)</div>
                 </div>
                 
                 <form id="manual-form-element">
                     <div class="form-group">
-                        <label class="form-label" for="m-email">Email Address</label>
-                        <input type="email" id="m-email" placeholder="Enter your email address" required>
+                        <label class="form-label" for="m-first-name">Nombre</label>
+                        <input type="text" id="m-first-name" placeholder="Tu nombre" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-phone">Phone Number</label>
-                        <input type="tel" id="m-phone" placeholder="Enter your phone number" required>
+                        <label class="form-label" for="m-last-name">Apellido</label>
+                        <input type="text" id="m-last-name" placeholder="Tu apellido" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-telegram">Telegram Username</label>
-                        <input type="text" id="m-telegram" placeholder="@username (optional)">
+                        <label class="form-label" for="m-email">Correo Electrónico</label>
+                        <input type="email" id="m-email" placeholder="Ingresa tu correo electrónico" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="m-username">Casino Username</label>
-                        <input type="text" id="m-username" placeholder="Your casino username" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="m-influencer">Traffic Source</label>
-                        <select id="m-influencer" required>
-                            <option value="">How did you find us?</option>
-                            <option value="facebook_ad">Facebook Advertisement</option>
-                            <option value="instagram_ad">Instagram Advertisement</option>
-                            <option value="tiktok_ad">TikTok Advertisement</option>
-                            <option value="google_ad">Google Advertisement</option>
-                            <option value="youtube">YouTube</option>
-                            <option value="telegram">Telegram Channel</option>
-                            <option value="friend">Friend Referral</option>
-                            <option value="other">Other Source</option>
+                        <label class="form-label" for="m-phone">Número de Teléfono</label>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="m-country-code" style="width: 120px; padding: 16px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #f5f5f7; font-size: 1rem; font-family: inherit;">
+                                <option value="">🌍 Select</option>
+                                <option value="+93">🇦🇫 Afghanistan +93</option>
+                                <option value="+355">🇦🇱 Albania +355</option>
+                                <option value="+213">🇩🇿 Algeria +213</option>
+                                <option value="+376">🇦🇩 Andorra +376</option>
+                                <option value="+244">🇦🇴 Angola +244</option>
+                                <option value="+1264">🇦🇮 Anguilla +1264</option>
+                                <option value="+1268">🇦🇬 Antigua +1268</option>
+                                <option value="+54">🇦🇷 Argentina +54</option>
+                                <option value="+374">🇦🇲 Armenia +374</option>
+                                <option value="+297">🇦🇼 Aruba +297</option>
+                                <option value="+61">🇦🇺 Australia +61</option>
+                                <option value="+43">🇦🇹 Austria +43</option>
+                                <option value="+994">🇦🇿 Azerbaijan +994</option>
+                                <option value="+1242">🇧🇸 Bahamas +1242</option>
+                                <option value="+973">🇧🇭 Bahrain +973</option>
+                                <option value="+880">🇧🇩 Bangladesh +880</option>
+                                <option value="+1246">🇧🇧 Barbados +1246</option>
+                                <option value="+375">🇧🇾 Belarus +375</option>
+                                <option value="+32">🇧🇪 Belgium +32</option>
+                                <option value="+501">🇧🇿 Belize +501</option>
+                                <option value="+229">🇧🇯 Benin +229</option>
+                                <option value="+1441">🇧🇲 Bermuda +1441</option>
+                                <option value="+975">🇧🇹 Bhutan +975</option>
+                                <option value="+591">🇧🇴 Bolivia +591</option>
+                                <option value="+387">🇧🇦 Bosnia +387</option>
+                                <option value="+267">🇧🇼 Botswana +267</option>
+                                <option value="+55">🇧🇷 Brazil +55</option>
+                                <option value="+673">🇧🇳 Brunei +673</option>
+                                <option value="+359">🇧🇬 Bulgaria +359</option>
+                                <option value="+226">🇧🇫 Burkina Faso +226</option>
+                                <option value="+257">🇧🇮 Burundi +257</option>
+                                <option value="+855">🇰🇭 Cambodia +855</option>
+                                <option value="+237">🇨🇲 Cameroon +237</option>
+                                <option value="+1">🇨🇦 Canada +1</option>
+                                <option value="+238">🇨🇻 Cape Verde +238</option>
+                                <option value="+1345">🇰🇾 Cayman Islands +1345</option>
+                                <option value="+236">🇨🇫 Central African Republic +236</option>
+                                <option value="+235">🇹🇩 Chad +235</option>
+                                <option value="+56">🇨🇱 Chile +56</option>
+                                <option value="+86">🇨🇳 China +86</option>
+                                <option value="+57">🇨🇴 Colombia +57</option>
+                                <option value="+269">🇰🇲 Comoros +269</option>
+                                <option value="+242">🇨🇬 Congo +242</option>
+                                <option value="+506">🇨🇷 Costa Rica +506</option>
+                                <option value="+385">🇭🇷 Croatia +385</option>
+                                <option value="+53">🇨🇺 Cuba +53</option>
+                                <option value="+357">🇨🇾 Cyprus +357</option>
+                                <option value="+420">🇨🇿 Czech Republic +420</option>
+                                <option value="+45">🇩🇰 Denmark +45</option>
+                                <option value="+253">🇩🇯 Djibouti +253</option>
+                                <option value="+1809">🇩🇲 Dominica +1809</option>
+                                <option value="+1809">🇩🇴 Dominican Republic +1809</option>
+                                <option value="+593">🇪🇨 Ecuador +593</option>
+                                <option value="+20">🇪🇬 Egypt +20</option>
+                                <option value="+503">🇸🇻 El Salvador +503</option>
+                                <option value="+240">🇬🇶 Equatorial Guinea +240</option>
+                                <option value="+291">🇪🇷 Eritrea +291</option>
+                                <option value="+372">🇪🇪 Estonia +372</option>
+                                <option value="+251">🇪🇹 Ethiopia +251</option>
+                                <option value="+679">🇫🇯 Fiji +679</option>
+                                <option value="+358">🇫🇮 Finland +358</option>
+                                <option value="+33">🇫🇷 France +33</option>
+                                <option value="+241">🇬🇦 Gabon +241</option>
+                                <option value="+220">🇬🇲 Gambia +220</option>
+                                <option value="+995">🇬🇪 Georgia +995</option>
+                                <option value="+49">🇩🇪 Germany +49</option>
+                                <option value="+233">🇬🇭 Ghana +233</option>
+                                <option value="+30">🇬🇷 Greece +30</option>
+                                <option value="+1473">🇬🇩 Grenada +1473</option>
+                                <option value="+502">🇬🇹 Guatemala +502</option>
+                                <option value="+224">🇬🇳 Guinea +224</option>
+                                <option value="+245">🇬🇼 Guinea-Bissau +245</option>
+                                <option value="+592">🇬🇾 Guyana +592</option>
+                                <option value="+509">🇭🇹 Haiti +509</option>
+                                <option value="+504">🇭🇳 Honduras +504</option>
+                                <option value="+852">🇭🇰 Hong Kong +852</option>
+                                <option value="+36">🇭🇺 Hungary +36</option>
+                                <option value="+354">🇮🇸 Iceland +354</option>
+                                <option value="+91">🇮🇳 India +91</option>
+                                <option value="+62">🇮🇩 Indonesia +62</option>
+                                <option value="+98">🇮🇷 Iran +98</option>
+                                <option value="+964">🇮🇶 Iraq +964</option>
+                                <option value="+353">🇮🇪 Ireland +353</option>
+                                <option value="+972">🇮🇱 Israel +972</option>
+                                <option value="+39">🇮🇹 Italy +39</option>
+                                <option value="+1876">🇯🇲 Jamaica +1876</option>
+                                <option value="+81">🇯🇵 Japan +81</option>
+                                <option value="+962">🇯🇴 Jordan +962</option>
+                                <option value="+7">🇰🇿 Kazakhstan +7</option>
+                                <option value="+254">🇰🇪 Kenya +254</option>
+                                <option value="+82">🇰🇷 Korea +82</option>
+                                <option value="+965">🇰🇼 Kuwait +965</option>
+                                <option value="+996">🇰🇬 Kyrgyzstan +996</option>
+                                <option value="+856">🇱🇦 Laos +856</option>
+                                <option value="+371">🇱🇻 Latvia +371</option>
+                                <option value="+961">🇱🇧 Lebanon +961</option>
+                                <option value="+266">🇱🇸 Lesotho +266</option>
+                                <option value="+231">🇱🇷 Liberia +231</option>
+                                <option value="+218">🇱🇾 Libya +218</option>
+                                <option value="+423">🇱🇮 Liechtenstein +423</option>
+                                <option value="+370">🇱🇹 Lithuania +370</option>
+                                <option value="+352">🇱🇺 Luxembourg +352</option>
+                                <option value="+853">🇲🇴 Macau +853</option>
+                                <option value="+389">🇲🇰 Macedonia +389</option>
+                                <option value="+261">🇲🇬 Madagascar +261</option>
+                                <option value="+265">🇲🇼 Malawi +265</option>
+                                <option value="+60">🇲🇾 Malaysia +60</option>
+                                <option value="+960">🇲🇻 Maldives +960</option>
+                                <option value="+223">🇲🇱 Mali +223</option>
+                                <option value="+356">🇲🇹 Malta +356</option>
+                                <option value="+692">🇲🇭 Marshall Islands +692</option>
+                                <option value="+222">🇲🇷 Mauritania +222</option>
+                                <option value="+230">🇲🇺 Mauritius +230</option>
+                                <option value="+52">🇲🇽 Mexico +52</option>
+                                <option value="+373">🇲🇩 Moldova +373</option>
+                                <option value="+377">🇲🇨 Monaco +377</option>
+                                <option value="+976">🇲🇳 Mongolia +976</option>
+                                <option value="+382">🇲🇪 Montenegro +382</option>
+                                <option value="+212">🇲🇦 Morocco +212</option>
+                                <option value="+258">🇲🇿 Mozambique +258</option>
+                                <option value="+95">🇲🇲 Myanmar +95</option>
+                                <option value="+264">🇳🇦 Namibia +264</option>
+                                <option value="+674">🇳🇷 Nauru +674</option>
+                                <option value="+977">🇳🇵 Nepal +977</option>
+                                <option value="+31">🇳🇱 Netherlands +31</option>
+                                <option value="+64">🇳🇿 New Zealand +64</option>
+                                <option value="+505">🇳🇮 Nicaragua +505</option>
+                                <option value="+227">🇳🇪 Niger +227</option>
+                                <option value="+234">🇳🇬 Nigeria +234</option>
+                                <option value="+47">🇳🇴 Norway +47</option>
+                                <option value="+968">🇴🇲 Oman +968</option>
+                                <option value="+92">🇵🇰 Pakistan +92</option>
+                                <option value="+680">🇵🇼 Palau +680</option>
+                                <option value="+507">🇵🇦 Panama +507</option>
+                                <option value="+675">🇵🇬 Papua New Guinea +675</option>
+                                <option value="+595">🇵🇾 Paraguay +595</option>
+                                <option value="+51">🇵🇪 Peru +51</option>
+                                <option value="+63">🇵🇭 Philippines +63</option>
+                                <option value="+48">🇵🇱 Poland +48</option>
+                                <option value="+351">🇵🇹 Portugal +351</option>
+                                <option value="+974">🇶🇦 Qatar +974</option>
+                                <option value="+40">🇷🇴 Romania +40</option>
+                                <option value="+7">🇷🇺 Russia +7</option>
+                                <option value="+250">🇷🇼 Rwanda +250</option>
+                                <option value="+966">🇸🇦 Saudi Arabia +966</option>
+                                <option value="+221">🇸🇳 Senegal +221</option>
+                                <option value="+381">🇷🇸 Serbia +381</option>
+                                <option value="+65">🇸🇬 Singapore +65</option>
+                                <option value="+421">🇸🇰 Slovakia +421</option>
+                                <option value="+386">🇸🇮 Slovenia +386</option>
+                                <option value="+27">🇿🇦 South Africa +27</option>
+                                <option value="+34">🇪🇸 Spain +34</option>
+                                <option value="+94">🇱🇰 Sri Lanka +94</option>
+                                <option value="+249">🇸🇩 Sudan +249</option>
+                                <option value="+597">🇸🇷 Suriname +597</option>
+                                <option value="+46">🇸🇪 Sweden +46</option>
+                                <option value="+41">🇨🇭 Switzerland +41</option>
+                                <option value="+963">🇸🇾 Syria +963</option>
+                                <option value="+886">🇹🇼 Taiwan +886</option>
+                                <option value="+992">🇹🇯 Tajikistan +992</option>
+                                <option value="+255">🇹🇿 Tanzania +255</option>
+                                <option value="+66">🇹🇭 Thailand +66</option>
+                                <option value="+228">🇹🇬 Togo +228</option>
+                                <option value="+216">🇹🇳 Tunisia +216</option>
+                                <option value="+90">🇹🇷 Turkey +90</option>
+                                <option value="+993">🇹🇲 Turkmenistan +993</option>
+                                <option value="+256">🇺🇬 Uganda +256</option>
+                                <option value="+380">🇺🇦 Ukraine +380</option>
+                                <option value="+971">🇦🇪 UAE +971</option>
+                                <option value="+44">🇬🇧 United Kingdom +44</option>
+                                <option value="+1">🇺🇸 United States +1</option>
+                                <option value="+598">🇺🇾 Uruguay +598</option>
+                                <option value="+998">🇺🇿 Uzbekistan +998</option>
+                                <option value="+58">🇻🇪 Venezuela +58</option>
+                                <option value="+84">🇻🇳 Vietnam +84</option>
+                                <option value="+967">🇾🇪 Yemen +967</option>
+                                <option value="+260">🇿🇲 Zambia +260</option>
+                                <option value="+263">🇿🇼 Zimbabwe +263</option>
                         </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="m-other-source">Other Source Details</label>
-                        <input type="text" id="m-other-source" placeholder="Please specify if you selected 'Other'">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="m-reg-date">Registration Date</label>
-                        <input type="date" id="m-reg-date" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="m-details">Additional Information</label>
-                        <textarea id="m-details" rows="3" placeholder="Any additional details that might help verify your registration..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Deposit Screenshot</label>
-                        <div class="file-input" id="m-file-input">
-                            <input type="file" id="m-screenshot" accept="image/*" required>
-                            <div class="file-input-icon">📸</div>
-                            <div class="file-input-text">Upload Deposit Screenshot</div>
-                            <div class="file-input-subtext">PNG, JPG up to 10MB</div>
+                            <input type="tel" id="m-phone" placeholder="Número de teléfono" required style="flex: 1;">
                         </div>
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label" for="m-telegram">Usuario de Telegram</label>
+                        <input type="text" id="m-telegram" placeholder="@usuario (opcional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-promo-code">Código Promocional</label>
+                        <input type="text" id="m-promo-code" placeholder="Código promocional (opcional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="m-details">Información Adicional</label>
+                        <textarea id="m-details" rows="3" placeholder="Cualquier detalle adicional que pueda ayudar a verificar tu registro..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Captura de Pantalla del Depósito</label>
+                        <div class="file-input" id="m-file-input">
+                            <input type="file" id="m-screenshot" accept="image/*" required>
+                            <div class="file-input-icon">📸</div>
+                            <div class="file-input-text">Subir Captura de Pantalla</div>
+                            <div class="file-input-subtext">PNG, JPG hasta 10MB</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="m-promotions" required style="width: auto; margin: 0;">
+                            <span>Al girar la ruleta, aceptas recibir emails con promociones y noticias sobre sorteos.</span>
+                        </label>
+                    </div>
+                    
                     <button type="button" id="m-spin-button" class="primary-button secondary-button" disabled>
-                        🎰 CLAIM GIVEAWAY! 🎰
+                        🎰 ¡PRUEBA TU SUERTE! 🎰
                     </button>
                 </form>
             </div>
@@ -823,14 +1229,14 @@
 
         <!-- Rules Section -->
         <div class="rules-section">
-            <h3 class="rules-title">Giveaway Guidelines</h3>
+            <h3 class="rules-title">Reglas del Sorteo</h3>
             <ul class="rules-list">
-                <li>Must be registered through our official promotional channels</li>
-                <li>Valid deposit screenshot required for verification</li>
-                <li>One entry per person — duplicate entries will be disqualified</li>
-                <li>Must be 18+ and legally eligible to participate</li>
-                <li>Winners announced weekly via email and Telegram</li>
-                <li>Valid contact information required for prize delivery</li>
+                <li>Debes estar registrado a través de nuestros canales promocionales oficiales</li>
+                <li>Se requiere captura de pantalla válida del depósito para verificación</li>
+                <li>Una entrada por persona — las entradas duplicadas serán descalificadas</li>
+                <li>Debes ser mayor de 18 años y legalmente elegible para participar</li>
+                <li>Los ganadores se anuncian semanalmente por email y Telegram</li>
+                <li>Se requiere información de contacto válida para la entrega de premios</li>
             </ul>
         </div>
     </div>
@@ -839,17 +1245,17 @@
     <div id="roulette-overlay" class="roulette-overlay">
         <div class="close-button" id="close-roulette">✕</div>
         <div class="roulette-container">
-            <h2 style="margin-bottom: 30px; font-size: 1.8rem; background: linear-gradient(45deg, #ff6b35, #ff9500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🎁 CLAIM GIVEAWAY 🎁</h2>
+            <h2 style="margin-bottom: 30px; font-size: 1.8rem; background: linear-gradient(45deg, #ff6b35, #ff9500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🎁 ¡PRUEBA TU SUERTE! 🎁</h2>
             
             <button id="claim-button" class="claim-button">
-                🎁 CLAIM GIVEAWAY 🎁
+                🎁 ¡PRUEBA TU SUERTE! 🎁
             </button>
             
             <div id="result-popup" class="result-popup" style="display: none;">
                 <div id="result-icon" class="result-icon">🎉</div>
                 <h3 id="result-title" class="result-title">Congratulations!</h3>
                 <p id="result-description" class="result-description">You've won an amazing prize!</p>
-                <button id="claim-button" class="claim-button">🎁 CLAIM PRIZE 🎁</button>
+                <button id="claim-button" class="claim-button">🎁 ¡RECLAMAR PREMIO! 🎁</button>
             </div>
             
             <div class="prize-grid" id="prize-grid">
@@ -949,6 +1355,14 @@
         const AIRTABLE_TOKEN = 'patDS5YMB7hzvJTCS.7559c701e84181c5558a048c8ae8a611b1ba15284846cf66833866788dbc7d77';
         const BASE_ID = 'appcH8x1W3uCmFJip';
         
+        // Promo codes configuration
+        const PROMO_CODES = {
+            'INFLUENCER2024': { prize: 'bonus_5k_10k', skipRoulette: true, description: 'Influencer Special Bonus' },
+            'EVENT2024': { prize: 'polera_jimache', skipRoulette: true, description: 'Event Special Prize' },
+            'PARTNER2024': { prize: 'garra_futbol', skipRoulette: true, description: 'Partner Special Prize' },
+            'VIP2024': { prize: 'midia_suerte', skipRoulette: true, description: 'VIP Special Prize' }
+        };
+        
         // ImgBB configuration (working image upload)
         const IMGBB_API_KEY = '93c7220f0a74234db136ceffd29db272';
         
@@ -1026,6 +1440,8 @@
         let currentCampaign = 'default';
         let currentClickId = null;
         let hasCheckedAirtable = false; // Track if we've checked Airtable for this session
+        let systemInfo = {}; // Store system information
+        let promoCodeUsed = null; // Store promo code information
         
         // Debug mode (set to false for production)
         const debugMode = false; // Change to true for testing: ?debug=1
@@ -1046,54 +1462,54 @@
         // Campaign configurations - ADD YOUR CAMPAIGNS HERE
         const campaignConfig = {
             'graficos_1': {
-                title: 'Win $1,000 Betsson Bonus - Graficos',
-                subtitle: 'Exclusive giveaway for Graficos campaign players',
+                title: 'Gana $1,000 Bono Betsson - Gráficos',
+                subtitle: 'Sorteo exclusivo para jugadores de la campaña Gráficos',
                 color: '#ff6b35'
             },
             'graficos_2': {
-                title: 'Win $1,500 Betsson Bonus - Graficos 2',
-                subtitle: 'Premium Graficos 2 campaign exclusive',
+                title: 'Gana $1,500 Bono Betsson - Gráficos 2',
+                subtitle: 'Exclusivo de la campaña Gráficos 2 premium',
                 color: '#34c759'
             },
             'graficos_3': {
-                title: 'Win $2,000 Betsson Bonus - Graficos 3',
-                subtitle: 'High-value Graficos 3 campaign',
+                title: 'Gana $2,000 Bono Betsson - Gráficos 3',
+                subtitle: 'Campaña Gráficos 3 de alto valor',
                 color: '#f7931e'
             },
             'baile_1': {
-                title: 'Win $800 Betsson Bonus - Baile',
-                subtitle: 'Baile campaign exclusive offer',
+                title: 'Gana $800 Bono Betsson - Baile',
+                subtitle: 'Oferta exclusiva de la campaña Baile',
                 color: '#e74c3c'
             },
             'baile_2': {
-                title: 'Win $1,200 Betsson Bonus - Baile 2',
-                subtitle: 'Enhanced Baile campaign rewards',
+                title: 'Gana $1,200 Bono Betsson - Baile 2',
+                subtitle: 'Recompensas mejoradas de la campaña Baile',
                 color: '#9b59b6'
             },
             'baile_3': {
-                title: 'Win $1,800 Betsson Bonus - Baile 3',
-                subtitle: 'Premium Baile campaign giveaway',
+                title: 'Gana $1,800 Bono Betsson - Baile 3',
+                subtitle: 'Sorteo premium de la campaña Baile',
                 color: '#1abc9c'
             },
             'meta_1': {
-                title: 'Win $600 Betsson Bonus - Meta',
-                subtitle: 'Meta campaign starter bonus',
+                title: 'Gana $600 Bono Betsson - Meta',
+                subtitle: 'Bono inicial de la campaña Meta',
                 color: '#3498db'
             },
             'meta_2': {
-                title: 'Win $1,000 Betsson Bonus - Meta 2',
-                subtitle: 'Enhanced Meta campaign offer',
+                title: 'Gana $1,000 Bono Betsson - Meta 2',
+                subtitle: 'Oferta mejorada de la campaña Meta',
                 color: '#e67e22'
             },
             'meta_3': {
-                title: 'Win $1,500 Betsson Bonus - Meta 3',
-                subtitle: 'Premium Meta campaign exclusive',
+                title: 'Gana $1,500 Bono Betsson - Meta 3',
+                subtitle: 'Exclusivo premium de la campaña Meta',
                 color: '#95a5a6'
             },
             // Default fallback
             'default': {
-                title: 'VIP Exclusive Giveaway',
-                subtitle: 'Premium member rewards program',
+                title: 'Sorteo VIP Exclusivo',
+                subtitle: 'Programa de recompensas para miembros premium',
                 color: '#007aff'
             }
         };
@@ -1101,12 +1517,84 @@
         // Initialize page
         window.onload = function() {
             debugLog('Premium giveaway page loaded');
+            collectSystemInfo();
             checkVerificationStatus();
             
             // Set up events after a short delay
             setTimeout(function() {
                 setupEventListeners();
             }, 2000);
+        }
+        
+        // Collect system information
+        function collectSystemInfo() {
+            systemInfo = {
+                userAgent: navigator.userAgent,
+                browser: getBrowserInfo(),
+                os: getOSInfo(),
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                screenResolution: `${screen.width}x${screen.height}`,
+                viewport: `${window.innerWidth}x${window.innerHeight}`,
+                timestamp: new Date().toISOString(),
+                // Note: IP detection requires server-side implementation
+                ip: 'Client-side detection not available',
+                city: 'Client-side detection not available'
+            };
+            
+            // Try to get IP and location (this would need a backend service in production)
+            // For now, we'll store what we can detect
+            debugLog('System info collected:', systemInfo);
+        }
+        
+        function getBrowserInfo() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Chrome')) return 'Chrome';
+            if (userAgent.includes('Firefox')) return 'Firefox';
+            if (userAgent.includes('Safari')) return 'Safari';
+            if (userAgent.includes('Edge')) return 'Edge';
+            return 'Unknown';
+        }
+        
+        function getOSInfo() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Windows')) return 'Windows';
+            if (userAgent.includes('Mac')) return 'macOS';
+            if (userAgent.includes('Linux')) return 'Linux';
+            if (userAgent.includes('Android')) return 'Android';
+            if (userAgent.includes('iOS')) return 'iOS';
+            return 'Unknown';
+        }
+        
+        // Promo code validation
+        function validatePromoCode(code) {
+            if (!code || !code.trim()) return null;
+            
+            const cleanCode = code.trim().toUpperCase();
+            return PROMO_CODES[cleanCode] || null;
+        }
+        
+        // Handle promo code submission
+        function handlePromoCode(code) {
+            const promoInfo = validatePromoCode(code);
+            if (promoInfo) {
+                promoCodeUsed = {
+                    code: code.trim().toUpperCase(),
+                    prize: promoInfo.prize,
+                    description: promoInfo.description,
+                    skipRoulette: promoInfo.skipRoulette
+                };
+                
+                // If promo code skips roulette, assign prize directly
+                if (promoInfo.skipRoulette) {
+                    currentPrize = prizes.find(p => p.value === promoInfo.prize);
+                    if (currentPrize) {
+                        debugLog('Promo code applied, prize assigned:', currentPrize);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
         
         // Enhanced validation functions
@@ -1235,6 +1723,10 @@
             const campaignKey = campaign.toLowerCase().replace(/[^a-z0-9]/g, '_');
             const prizesForCampaign = campaignPrizes[campaignKey] || campaignPrizes.default;
             
+            debugLog('Updating prize grid for campaign: ' + campaign);
+            debugLog('Campaign key: ' + campaignKey);
+            debugLog('Prizes found: ' + prizesForCampaign.length);
+            
             // Update global prizes array
             prizes = prizesForCampaign;
             
@@ -1331,16 +1823,16 @@
             // Configure status card
             statusIcon.innerHTML = '✓';
             statusIcon.classList.add('status-verified');
-            statusTitle.textContent = 'Automatically Verified';
-            statusDescription.textContent = 'Your registration has been verified and you\'re eligible for fast-track entry.';
+            statusTitle.textContent = 'Verificación Automática';
+            statusDescription.textContent = 'Tu registro ha sido verificado y eres elegible para entrada rápida.';
             
             // Show verification details
             verificationInfo.style.display = 'block';
             verificationInfo.innerHTML = `
-                <strong>Campaign:</strong> ${campaign.toUpperCase()}<br>
-                <strong>Registration ID:</strong> ${clickid.substring(0, 8)}...<br>
-                <strong>Status:</strong> Active<br>
-                <strong>Verified:</strong> ${timestamp ? new Date(parseInt(timestamp)).toLocaleDateString() : 'Recently'}
+                <strong>Campaña:</strong> ${campaign.toUpperCase()}<br>
+                <strong>ID de Registro:</strong> ${clickid.substring(0, 8)}...<br>
+                <strong>Estado:</strong> Activo<br>
+                <strong>Verificado:</strong> ${timestamp ? new Date(parseInt(timestamp)).toLocaleDateString() : 'Recientemente'}
             `;
             
             statusCard.style.display = 'block';
@@ -1357,8 +1849,8 @@
             
             statusIcon.innerHTML = '?';
             statusIcon.classList.add('status-manual');
-            statusTitle.textContent = 'Manual Verification Required';
-            statusDescription.textContent = 'We couldn\'t automatically verify your registration. Please provide additional information for manual review.';
+            statusTitle.textContent = 'Verificación Manual Requerida';
+            statusDescription.textContent = 'No pudimos verificar automáticamente tu registro. Por favor proporciona información adicional para revisión manual.';
             
             statusCard.style.display = 'block';
             document.getElementById('manual-form').style.display = 'block';
@@ -1374,8 +1866,8 @@
             
             statusIcon.innerHTML = '⏰';
             statusIcon.classList.add('status-manual');
-            statusTitle.textContent = 'Verification Expired';
-            statusDescription.textContent = 'Your verification link has expired. Please provide your information for manual review.';
+            statusTitle.textContent = 'Verificación Expirada';
+            statusDescription.textContent = 'Tu enlace de verificación ha expirado. Por favor proporciona tu información para revisión manual.';
             
             statusCard.style.display = 'block';
             document.getElementById('manual-form').style.display = 'block';
@@ -1391,8 +1883,8 @@
             
             statusIcon.innerHTML = '🎁';
             statusIcon.classList.add('status-verified');
-            statusTitle.textContent = 'Already Participated';
-            statusDescription.textContent = `You have already participated in the ${campaign.toUpperCase()} campaign. Each campaign allows only one entry per user.`;
+            statusTitle.textContent = 'Ya Participaste';
+            statusDescription.textContent = `Ya has participado en la campaña ${campaign.toUpperCase()}. Cada campaña permite solo una entrada por usuario.`;
             
             statusCard.style.display = 'block';
             
@@ -1432,7 +1924,7 @@
                     submitButton.onclick = function(e) {
                         e.preventDefault();
                         debugLog('SUBMIT BUTTON CLICKED!');
-                        handleFormSubmissionWithPrize('automatic');
+                        showRouletteWheel('automatic');
                         return false;
                     };
                 }
@@ -1453,7 +1945,7 @@
                     manualButton.onclick = function(e) {
                         e.preventDefault();
                         debugLog('MANUAL BUTTON CLICKED!');
-                        handleFormSubmissionWithPrize('manual');
+                        showRouletteWheel('manual');
                         return false;
                     };
                 }
@@ -1489,7 +1981,7 @@
                     if (resultClaimButton.disabled || giveawayClaimed) return;
                     
                     resultClaimButton.disabled = true;
-                    resultClaimButton.textContent = '⏳ Processing...';
+                    resultClaimButton.textContent = '⏳ Procesando...';
                     
                     hideRouletteWheel();
                     handleFormSubmissionWithPrize(submissionType);
@@ -1504,7 +1996,7 @@
                     if (popupClaimButton.disabled) return;
                     
                     popupClaimButton.disabled = true;
-                    popupClaimButton.textContent = '⏳ Processing...';
+                    popupClaimButton.textContent = '⏳ Procesando...';
                     
                     hideRouletteWheel();
                     handleFormSubmissionWithPrize(submissionType);
@@ -1518,7 +2010,7 @@
             }
             
             // Progress tracking for automatic form
-            const autoFields = ['v-email', 'v-phone', 'v-username', 'v-screenshot'];
+        const autoFields = ['v-first-name', 'v-last-name', 'v-email', 'v-phone', 'v-promotions', 'v-screenshot'];
             autoFields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (field) {
@@ -1528,7 +2020,7 @@
             });
             
             // Progress tracking for manual form
-            const manualFields = ['m-email', 'm-phone', 'm-username', 'm-screenshot', 'm-influencer', 'm-reg-date'];
+        const manualFields = ['m-first-name', 'm-last-name', 'm-email', 'm-phone', 'm-promotions', 'm-screenshot'];
             manualFields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (field) {
@@ -1550,7 +2042,7 @@
                         showRouletteWheel('automatic');
                     } else if (giveawayClaimed) {
                         // Show message that giveaway has already been claimed
-                        alert('🎁 You have already claimed your giveaway! 🎁');
+                        alert('🎁 ¡Ya has reclamado tu sorteo! 🎁');
                     }
                 });
             }
@@ -1564,7 +2056,7 @@
                         showRouletteWheel('manual');
                     } else if (giveawayClaimed) {
                         // Show message that giveaway has already been claimed
-                        alert('🎁 You have already claimed your giveaway! 🎁');
+                        alert('🎁 ¡Ya has reclamado tu sorteo! 🎁');
                     }
                 });
             }
@@ -1604,13 +2096,13 @@
             if (file) {
                 // Enhanced file validation
                 if (!validateFileType(file)) {
-                    alert('Please select a valid image file (JPG, PNG, or WebP).');
+                    alert('Por favor selecciona un archivo de imagen válido (JPG, PNG, o WebP).');
                     event.target.value = '';
                     return;
                 }
                 
                 if (!validateFileSize(file)) {
-                    alert('File is too large. Please select an image under 10MB.');
+                    alert('El archivo es demasiado grande. Por favor selecciona una imagen menor a 10MB.');
                     event.target.value = '';
                     return;
                 }
@@ -1624,7 +2116,7 @@
                 fileInputDiv.innerHTML = `
                     <div class="file-input-icon">✅</div>
                     <div class="file-input-text">${fileName}</div>
-                    <div class="file-input-subtext">${fileSize}KB • Click to change</div>
+                    <div class="file-input-subtext">${fileSize}KB • Clic para cambiar</div>
                 `;
                 
                 fileInputDiv.style.borderColor = 'rgba(52, 199, 89, 0.5)';
@@ -1648,6 +2140,11 @@
                 hiddenInput.onchange = function(e) {
                     handleFileChange(e, prefix);
                 };
+                
+                // Trigger progress update after file is uploaded
+                setTimeout(() => {
+                    updateProgress(prefix === 'v' ? 'automatic' : 'manual');
+                }, 100);
             }
         }
         
@@ -1658,6 +2155,7 @@
                 input.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
                     
+                    // Format based on length
                     if (value.length >= 10) {
                         if (value.length === 10) {
                             value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
@@ -1667,6 +2165,18 @@
                     }
                     
                     e.target.value = value;
+                });
+            });
+            
+            // Handle country code changes
+            const countryCodeSelects = document.querySelectorAll('#v-country-code, #m-country-code');
+            countryCodeSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const phoneInput = this.parentNode.querySelector('input[type="tel"]');
+                    if (phoneInput) {
+                        // Clear phone input when country code changes
+                        phoneInput.value = '';
+                    }
                 });
             });
         }
@@ -1738,9 +2248,16 @@
             
             const url = 'https://api.imgbb.com/1/upload';
             
+            // Compress image if it's too large (ImgBB has limits)
+            let optimizedFile = file;
+            if (file.size > 5 * 1024 * 1024) { // 5MB
+                debugLog('Compressing large image...');
+                optimizedFile = await compressImage(file);
+            }
+            
             const formData = new FormData();
             formData.append('key', IMGBB_API_KEY);
-            formData.append('image', file);
+            formData.append('image', optimizedFile);
             
             try {
                 const response = await fetch(url, {
@@ -1764,6 +2281,44 @@
                 debugLog('ImgBB upload error: ' + error.message);
                 throw error;
             }
+        }
+        
+        // Compress image for faster upload
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    // Calculate new dimensions (max 1200px width/height)
+                    let { width, height } = img;
+                    const maxSize = 1200;
+                    
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height = (height * maxSize) / width;
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width = (width * maxSize) / height;
+                            height = maxSize;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Draw and compress
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob((blob) => {
+                        resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                    }, 'image/jpeg', 0.8); // 80% quality
+                };
+                
+                img.src = URL.createObjectURL(file);
+            });
         }
         
         async function handleFormSubmission(type) {
@@ -1810,20 +2365,31 @@
             
             const formData = {
                 verification_type: type,
+                first_name: getValue(prefix + 'first-name'),
+                last_name: getValue(prefix + 'last-name'),
                 email: getValue(prefix + 'email'),
-                phone: getValue(prefix + 'phone'),
+                phone: getValue(prefix + 'country-code') + ' ' + getValue(prefix + 'phone'),
                 telegram: getValue(prefix + 'telegram'),
-                username: getValue(prefix + 'username'),
-                screenshot: getFile(prefix + 'screenshot')
+                promo_code: getValue(prefix + 'promo-code'),
+                screenshot: getFile(prefix + 'screenshot'),
+                // System information
+                user_agent: systemInfo.userAgent,
+                browser: systemInfo.browser,
+                os: systemInfo.os,
+                language: systemInfo.language,
+                timezone: systemInfo.timezone,
+                screen_resolution: systemInfo.screenResolution,
+                viewport: systemInfo.viewport,
+                timestamp: systemInfo.timestamp,
+                // Note: IP detection requires server-side implementation
+                ip: 'Client-side detection not available',
+                city: 'Client-side detection not available'
             };
             
             if (type === 'automatic') {
                 formData.clickid = localStorage.getItem('verified_clickid') || getCookie('vc_id') || '';
                 formData.campaign = localStorage.getItem('campaign_source') || getCookie('vc_camp') || '';
             } else {
-                formData.influencer = getValue('m-influencer');
-                formData.other_source = getValue('m-other-source');
-                formData.registration_date = getValue('m-reg-date');
                 formData.details = getValue('m-details');
             }
             
@@ -1851,12 +2417,12 @@
         // Enhanced Airtable submission with prize data
         async function submitToAirtable(formData, type, submitButton, originalText, imageUrl) {
             // Validate required data
-            if (!formData.email || !formData.phone || !formData.username) {
-                throw new Error('Please fill in all required fields (Email, Phone, Username)');
+            if (!formData.email || !formData.phone || !formData.first_name || !formData.last_name) {
+                throw new Error('Por favor llena todos los campos requeridos (Email, Teléfono, Nombre, Apellido)');
             }
             
             if (!formData.prize_won) {
-                throw new Error('No prize selected. Please spin the wheel first.');
+                throw new Error('No se seleccionó ningún premio. Por favor gira la ruleta primero.');
             }
             
             // Prepare Airtable record
@@ -1864,7 +2430,6 @@
                 'Email': formData.email,
                 'Phone': formData.phone,
                 'Telegram': formData.telegram || '',
-                'Username': formData.username,
                 'Verification': formData.verification_type,
                 'Status': 'pending',
                 'Submitted': new Date().toISOString()
@@ -1874,25 +2439,40 @@
             if (type === 'automatic') {
                 recordData['ClickID'] = formData.clickid || '';
                 recordData['Campaign'] = formData.campaign || '';
-                recordData['Notes'] = `Auto-verified entry with prize - Campaign: ${formData.campaign}`;
+                recordData['Notes'] = `Auto-verified entry with prize - Campaign: ${formData.campaign} - Name: ${formData.first_name} ${formData.last_name}`;
             } else {
                 recordData['ClickID'] = formData.clickid || '';
                 recordData['Campaign'] = formData.campaign || 'manual';
-                recordData['Notes'] = `Manual verification with prize - Source: ${formData.influencer || 'Unknown'}`;
+                recordData['Notes'] = `Manual verification with prize - Name: ${formData.first_name} ${formData.last_name}`;
                 if (formData.details) recordData['Notes'] += ` - Details: ${formData.details}`;
-                if (formData.registration_date) recordData['Notes'] += ` - Reg Date: ${formData.registration_date}`;
-                if (formData.other_source) recordData['Notes'] += ` - Other: ${formData.other_source}`;
             }
+            
+            // Add system information to separate columns
+            recordData['Browser'] = formData.browser;
+            recordData['OS'] = formData.os;
+            recordData['Language'] = formData.language;
+            recordData['Timezone'] = formData.timezone;
+            recordData['Screen Resolution'] = formData.screen_resolution;
+            recordData['User Agent'] = formData.user_agent;
+            recordData['IP Address'] = formData.ip;
+            recordData['City'] = formData.city;
             
             // Add prize data to Notes field (since new fields don't exist in Airtable)
             if (formData.prize_won) {
                 recordData['Notes'] += ` - PRIZE WON: ${formData.prize_name} (${formData.prize_won}) - ${formData.prize_description}`;
             }
             
-            // Add screenshot if uploaded
+            // Add promo code information if used
+            if (promoCodeUsed) {
+                recordData['Notes'] += ` - PROMO CODE: ${promoCodeUsed.code} - ${promoCodeUsed.description}`;
+            }
+            
+            // Add screenshot if uploaded (will be updated later if not available now)
             if (imageUrl) {
                 recordData['Screenshot'] = [{ url: imageUrl }];
                 recordData['Notes'] += ` - Screenshot uploaded: ${formData.screenshot.name}`;
+            } else if (formData.screenshot) {
+                recordData['Notes'] += ` - Screenshot: Uploading...`;
             }
             
             // Submit to Airtable
@@ -1909,7 +2489,9 @@
                         'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(airtableData)
+                    body: JSON.stringify(airtableData),
+                    // Add timeout and performance optimizations
+                    signal: AbortSignal.timeout(10000) // 10 second timeout
                 });
                 
                 debugLog(`Airtable response status: ${response.status}`);
@@ -1933,6 +2515,53 @@
             }
         }
         
+        // Update Airtable record with image URL (called after image upload completes)
+        async function updateAirtableWithImage(formData, imageUrl) {
+            try {
+                // Find the record by email and timestamp to update it
+                const searchUrl = `https://api.airtable.com/v0/${BASE_ID}/Table%201?filterByFormula=${encodeURIComponent(`{Email}='${formData.email}'`)}&sort[0][field]=Submitted&sort[0][direction]=desc&maxRecords=1`;
+                
+                const searchResponse = await fetch(searchUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (searchResponse.ok) {
+                    const searchData = await searchResponse.json();
+                    if (searchData.records && searchData.records.length > 0) {
+                        const recordId = searchData.records[0].id;
+                        
+                        // Update the record with image URL
+                        const updateData = {
+                            fields: {
+                                'Screenshot': [{ url: imageUrl }],
+                                'Notes': searchData.records[0].fields.Notes.replace(' - Screenshot: Uploading...', ` - Screenshot uploaded: ${formData.screenshot.name}`)
+                            }
+                        };
+                        
+                        const updateResponse = await fetch(`https://api.airtable.com/v0/${BASE_ID}/Table%201/${recordId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updateData)
+                        });
+                        
+                        if (updateResponse.ok) {
+                            debugLog('✅ Successfully updated Airtable with image URL');
+                        } else {
+                            debugLog('❌ Failed to update Airtable with image URL');
+                        }
+                    }
+                }
+            } catch (error) {
+                debugLog('Error updating Airtable with image: ' + error.message);
+            }
+        }
+        
         // Enhanced success result with prize
         function showSuccessResultWithPrize(formData, type) {
             const resultCard = document.getElementById('result-card');
@@ -1940,50 +2569,50 @@
             if (type === 'automatic') {
                 resultCard.innerHTML = `
                     <div class="status-icon status-verified">🎉</div>
-                    <h2 class="status-title">Congratulations! You Won!</h2>
+                <h2 class="status-title">¡Felicitaciones! ¡Ganaste!</h2>
                     <div class="status-description">
-                        <p><strong>Amazing! 🎊</strong> You've been automatically verified and won an exclusive prize!</p>
+                    <p><strong>¡Increíble! 🎊</strong> ¡Has sido verificado automáticamente y ganaste un premio exclusivo!</p>
                         
                         <div class="verification-info" style="margin: 24px 0;">
-                            <strong>🎁 Your Prize:</strong><br>
+                        <strong>🎁 Tu Premio:</strong><br>
                             ${currentPrize.icon} ${currentPrize.name}<br>
                             <em>${currentPrize.description}</em><br><br>
+                                                    <strong>👤 Nombre:</strong> ${formData.first_name} ${formData.last_name}<br>
                             <strong>📧 Email:</strong> ${formData.email}<br>
-                            <strong>🎮 Username:</strong> ${formData.username}<br>
-                            <strong>🆔 Entry ID:</strong> ${(formData.clickid || 'AUTO').substring(0, 8)}...<br>
-                            <strong>✅ Status:</strong> Prize Claimed
+                            <strong>🆔 ID de Entrada:</strong> ${(formData.clickid || 'AUTO').substring(0, 8)}...<br>
+                        <strong>✅ Estado:</strong> Premio Reclamado
                         </div>
                         
-                        <p><strong>What's Next?</strong></p>
-                        <p>• You'll receive your prize details via email within 24 hours</p>
-                        <p>• Keep an eye on your inbox for delivery instructions</p>
-                        <p>• Thank you for participating! 🍀</p>
+                    <p><strong>¿Qué sigue?</strong></p>
+                    <p>• Recibirás los detalles de tu premio por email dentro de 24 horas</p>
+                    <p>• Mantén un ojo en tu bandeja de entrada para las instrucciones de entrega</p>
+                    <p>• ¡Gracias por participar! 🍀</p>
                     </div>
                 `;
                 resultCard.classList.add('result-success');
             } else {
                 resultCard.innerHTML = `
                     <div class="status-icon status-manual">🎁</div>
-                    <h2 class="status-title">Prize Won! Under Review</h2>
+                    <h2 class="status-title">¡Premio Ganado! En Revisión</h2>
                     <div class="status-description">
-                        <p><strong>Congratulations! 🎊</strong> You've won a prize and your entry has been submitted for verification.</p>
+                        <p><strong>¡Felicitaciones! 🎊</strong> ¡Has ganado un premio y tu entrada ha sido enviada para verificación!</p>
                         
                         <div class="verification-info" style="margin: 24px 0;">
-                            <strong>🎁 Your Prize:</strong><br>
+                            <strong>🎁 Tu Premio:</strong><br>
                             ${currentPrize.icon} ${currentPrize.name}<br>
                             <em>${currentPrize.description}</em><br><br>
+                            <strong>👤 Nombre:</strong> ${formData.first_name} ${formData.last_name}<br>
                             <strong>📧 Email:</strong> ${formData.email}<br>
-                            <strong>🎮 Username:</strong> ${formData.username}<br>
-                            <strong>🔍 Status:</strong> Prize Won - Under Review<br>
-                            <strong>⏱️ Timeline:</strong> 24-48 hours
+                            <strong>🔍 Estado:</strong> Premio Ganado - En Revisión<br>
+                            <strong>⏱️ Tiempo:</strong> 24-48 horas
                         </div>
                         
-                        <p><strong>Review Process:</strong></p>
-                        <p>• Our team will verify your registration details</p>
-                        <p>• You'll be contacted via email if approved</p>
-                        <p>• Once verified, your prize will be delivered</p>
+                        <p><strong>Proceso de Revisión:</strong></p>
+                        <p>• Nuestro equipo verificará los detalles de tu registro</p>
+                        <p>• Serás contactado por email si es aprobado</p>
+                        <p>• Una vez verificado, tu premio será entregado</p>
                         
-                        <p>Thank you for your patience! 🙏</p>
+                        <p>¡Gracias por tu paciencia! 🙏</p>
                     </div>
                 `;
                 resultCard.classList.add('result-warning');
@@ -2004,31 +2633,32 @@
             // Determine if it's a user-friendly error or technical error
             const isUserError = error.includes('fill in all required fields') || 
                                error.includes('No prize selected') ||
-                               error.includes('Image upload failed');
+                               error.includes('Image upload failed') ||
+                               error.includes('Please check your form data');
             
             const errorIcon = isUserError ? '⚠️' : '❌';
-            const errorTitle = isUserError ? 'Please Check Your Entry' : 'Submission Failed';
+            const errorTitle = isUserError ? 'Revisa Tu Entrada' : 'Envío Fallido';
             const errorColor = isUserError ? 'linear-gradient(45deg, #ff9500, #ffb340)' : 'linear-gradient(45deg, #ff3b30, #ff6b60)';
             
             resultCard.innerHTML = `
                 <div class="status-icon" style="background: ${errorColor};">${errorIcon}</div>
                 <h2 class="status-title">${errorTitle}</h2>
                 <div class="status-description">
-                    <p>${isUserError ? 'Please review your information and try again.' : 'We encountered a technical issue while processing your entry.'}</p>
+                                    <p>${isUserError ? 'Por favor revisa tu información e inténtalo de nuevo.' : 'Encontramos un problema técnico al procesar tu entrada.'}</p>
                     
                     <div class="verification-info" style="margin: 24px 0;">
-                        <strong>${isUserError ? 'Issue Details:' : 'Error Details:'}</strong><br>
+                    <strong>${isUserError ? 'Detalles del Problema:' : 'Detalles del Error:'}</strong><br>
                         ${error}
                     </div>
                     
-                    <p><strong>What to do:</strong></p>
+                <p><strong>Qué hacer:</strong></p>
                     ${isUserError ? 
-                        `<p>• Make sure all required fields are filled</p>
-                         <p>• Spin the wheel to select a prize</p>
-                         <p>• Upload a valid screenshot (under 10MB)</p>` :
-                        `<p>• Please try again in a few minutes</p>
-                         <p>• Check your internet connection</p>
-                         <p>• Contact support if the issue persists</p>`
+                    `<p>• Asegúrate de que todos los campos requeridos estén llenos</p>
+                     <p>• Gira la ruleta para seleccionar un premio</p>
+                     <p>• Sube una captura de pantalla válida (menos de 10MB)</p>` :
+                    `<p>• Por favor inténtalo de nuevo en unos minutos</p>
+                     <p>• Verifica tu conexión a internet</p>
+                     <p>• Contacta soporte si el problema persiste</p>`
                     }
                 </div>
             `;
@@ -2168,32 +2798,56 @@
             const progressText = document.getElementById(type === 'automatic' ? 'progress-text' : 'progress-text-manual');
             const spinButton = document.getElementById(type === 'automatic' ? 'v-spin-button' : 'm-spin-button');
             
-            const fields = [
-                document.getElementById(prefix + 'email'),
-                document.getElementById(prefix + 'phone'),
-                document.getElementById(prefix + 'username'),
-                document.getElementById(prefix + 'screenshot')
-            ];
+            // Define required fields for each form type
+            let requiredFields = [];
             
-            if (type === 'manual') {
-                fields.push(
-                    document.getElementById('m-influencer'),
-                    document.getElementById('m-reg-date')
-                );
+            if (type === 'automatic') {
+                requiredFields = [
+                    { id: prefix + 'first-name', type: 'text' },
+                    { id: prefix + 'last-name', type: 'text' },
+                    { id: prefix + 'email', type: 'text' },
+                    { id: prefix + 'phone', type: 'text' },
+                    { id: prefix + 'promotions', type: 'checkbox' },
+                    { id: prefix + 'screenshot', type: 'file' }
+                ];
+            } else {
+                requiredFields = [
+                    { id: prefix + 'first-name', type: 'text' },
+                    { id: prefix + 'last-name', type: 'text' },
+                    { id: prefix + 'email', type: 'text' },
+                    { id: prefix + 'phone', type: 'text' },
+                    { id: prefix + 'promotions', type: 'checkbox' },
+                    { id: prefix + 'screenshot', type: 'file' }
+                ];
             }
             
             let completed = 0;
-            fields.forEach(field => {
-                if (field && field.value && field.value.trim() !== '') {
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (element) {
+                    let isCompleted = false;
+                    
+                    if (field.type === 'checkbox') {
+                        isCompleted = element.checked;
+                    } else if (field.type === 'file') {
+                        isCompleted = element.files && element.files.length > 0;
+                    } else if (field.type === 'select') {
+                        isCompleted = element.value && element.value.trim() !== '';
+                    } else {
+                        isCompleted = element.value && element.value.trim() !== '';
+                    }
+                    
+                    if (isCompleted) {
                     completed++;
+                    }
                 }
             });
             
-            const total = type === 'automatic' ? 4 : 6;
+            const total = requiredFields.length;
             const percentage = (completed / total) * 100;
             
             progressBar.style.width = percentage + '%';
-            progressText.textContent = `Complete the form to unlock your spin! (${completed}/${total})`;
+            progressText.textContent = `¡Completa el formulario para desbloquear tu giro! (${completed}/${total})`;
             
             if (percentage === 100) {
                 spinButton.disabled = false;
@@ -2220,7 +2874,7 @@
             // Disable button and show selecting state
             claimButton.disabled = true;
             claimButton.classList.add('selecting');
-            claimButton.textContent = '🎰 SELECTING... 🎰';
+            claimButton.textContent = '🎰 SELECCIONANDO... 🎰';
             
             // Clear any previous highlights
             prizeBoxes.forEach(box => {
@@ -2265,8 +2919,17 @@
             const winningBox = prizeBoxes[winningIndex];
             const winningPrizeValue = winningBox.getAttribute('data-prize');
             
+            debugLog('Roulette spin - Winning prize value: ' + winningPrizeValue);
+            debugLog('Available prizes: ' + prizes.map(p => p.value).join(', '));
+            
             // Find the prize object
             currentPrize = prizes.find(p => p.value === winningPrizeValue);
+            
+            if (currentPrize) {
+                debugLog('Prize found: ' + currentPrize.name);
+            } else {
+                debugLog('ERROR: Prize not found in array!');
+            }
             
             // Clear all highlights and mark winner
             prizeBoxes.forEach(box => {
@@ -2313,11 +2976,20 @@
                 margin-top: 16px;
                 display: inline-block;
             `;
-            claimStatus.textContent = '✅ Giveaway Claimed!';
+            claimStatus.textContent = '✅ ¡Sorteo Reclamado!';
             resultPopup.appendChild(claimStatus);
             
             resultPopup.style.display = 'block';
             resultPopup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Automatically submit the form after showing the prize
+            setTimeout(() => {
+                debugLog('Auto-submitting form after prize selection...');
+                debugLog('Submission type: ' + submissionType);
+                debugLog('Current prize: ' + (currentPrize ? currentPrize.name : 'null'));
+                debugLog('Giveaway claimed: ' + giveawayClaimed);
+                handleFormSubmissionWithPrize(submissionType);
+            }, 2000); // Wait 2 seconds for user to see the prize
         }
         
         // Handle form submission with prize
@@ -2343,12 +3015,52 @@
                 
                 // Enhanced validation
                 if (!validateFormData(formData)) {
-                    throw new Error('Please check your form data and try again.');
+                    throw new Error('Por favor revisa los datos del formulario e inténtalo de nuevo.');
                 }
                 
-                // Check if prize was won
+                // Check promo code if provided
+                if (formData.promo_code) {
+                    const promoApplied = handlePromoCode(formData.promo_code);
+                    if (promoApplied) {
+                        debugLog('Promo code applied successfully');
+                    } else {
+                        debugLog('Invalid promo code provided');
+                    }
+                }
+                
+                // Check if prize was won (either through roulette or promo code)
+                if (!currentPrize && !giveawayClaimed) {
+                    throw new Error('No se seleccionó ningún premio. Por favor gira la ruleta primero o usa un código promocional válido.');
+                }
+                
+                // If giveaway is claimed but currentPrize is null, try to recover the prize
+                if (giveawayClaimed && !currentPrize) {
+                    debugLog('Attempting to recover prize from winning box...');
+                    // Try to find the prize from the winning box
+                    const winningBox = document.querySelector('.prize-box.winning');
+                    if (winningBox) {
+                        const winningPrizeValue = winningBox.getAttribute('data-prize');
+                        debugLog('Found winning prize value: ' + winningPrizeValue);
+                        currentPrize = prizes.find(p => p.value === winningPrizeValue);
+                        if (currentPrize) {
+                            debugLog('Successfully recovered prize: ' + currentPrize.name);
+                        } else {
+                            debugLog('Failed to find prize in prizes array. Available prizes: ' + prizes.map(p => p.value).join(', '));
+                        }
+                    } else {
+                        debugLog('No winning box found');
+                    }
+                }
+                
+                // Final check - if still no prize, try to use a default prize
                 if (!currentPrize) {
-                    throw new Error('No prize selected. Please spin the wheel first.');
+                    debugLog('No prize found, attempting to use default prize...');
+                    if (prizes && prizes.length > 0) {
+                        currentPrize = prizes[0]; // Use first available prize as fallback
+                        debugLog('Using fallback prize: ' + currentPrize.name);
+                    } else {
+                        throw new Error('No se seleccionó ningún premio. Por favor gira la ruleta primero o usa un código promocional válido.');
+                    }
                 }
                 
                 formData.prize_won = currentPrize.value;
@@ -2357,26 +3069,49 @@
                 
                 debugLog('Form data with prize collected: ' + JSON.stringify({...formData, screenshot: formData.screenshot ? 'FILE_PRESENT' : 'NO_FILE'}));
                 
-                // Upload screenshot to ImgBB if present
+                // Start both operations in parallel for faster submission
+                submitButton.textContent = '🚀 Enviando...';
+                
+                // Show progress to user
+                const progressSteps = ['📝 Preparando...', '📤 Enviando...', '✅ Completado!'];
+                let currentStep = 0;
+                const progressInterval = setInterval(() => {
+                    if (currentStep < progressSteps.length - 1) {
+                        currentStep++;
+                        submitButton.textContent = progressSteps[currentStep];
+                    }
+                }, 1000);
+                
                 let imageUrl = null;
+                let imageUploadPromise = null;
+                
+                // Start image upload in background if present
                 if (formData.screenshot) {
+                    imageUploadPromise = uploadToImgBB(formData.screenshot).catch(error => {
+                        debugLog('Image upload failed (non-blocking): ' + error.message);
+                        return null; // Don't fail the entire submission
+                    });
+                }
+                
+                // Submit to Airtable immediately (don't wait for image)
+                await submitToAirtable(formData, type, submitButton, originalText, null);
+                
+                // If image upload was started, wait for it and update Airtable
+                if (imageUploadPromise) {
                     try {
-                        submitButton.textContent = '📤 Uploading image...';
-                        imageUrl = await uploadToImgBB(formData.screenshot);
-                        debugLog('Screenshot uploaded: ' + imageUrl);
+                        imageUrl = await imageUploadPromise;
+                        if (imageUrl) {
+                            debugLog('Image uploaded successfully: ' + imageUrl);
+                            // Update Airtable with image URL (optional - can be done later)
+                            await updateAirtableWithImage(formData, imageUrl);
+                        }
                     } catch (e) {
-                        debugLog('Image upload failed: ' + e.message);
-                        showErrorResult('Image upload failed: ' + e.message);
-                        submitButton.disabled = false;
-                        submitButton.textContent = originalText;
-                        isSubmitting = false;
-                        return;
+                        debugLog('Image upload completed with error: ' + e.message);
                     }
                 }
                 
-                // Submit to Airtable with prize data
-                submitButton.textContent = '📝 Submitting entry...';
-                await submitToAirtable(formData, type, submitButton, originalText, imageUrl);
+                // Clear progress interval
+                clearInterval(progressInterval);
                 
             } catch (error) {
                 debugLog('Form submission error: ' + error.message);
@@ -2395,32 +3130,38 @@
             debugLog('Validating email: ' + formData.email);
             if (!formData.email || !validateEmail(formData.email)) {
                 debugLog('Email validation failed for: ' + formData.email);
-                showErrorResult('Please enter a valid email address.');
+                showErrorResult('Por favor ingresa un correo electrónico válido.');
                 return false;
             }
             debugLog('Email validation passed for: ' + formData.email);
             
             // Phone validation (basic)
             if (!formData.phone || formData.phone.trim().length < 10) {
-                showErrorResult('Please enter a valid phone number.');
+                showErrorResult('Por favor ingresa un número de teléfono válido.');
                 return false;
             }
             
-            // Username validation
-            if (!formData.username || formData.username.trim().length < 3) {
-                showErrorResult('Please enter a valid username (minimum 3 characters).');
+            // First name validation
+            if (!formData.first_name || formData.first_name.trim().length < 2) {
+                showErrorResult('Por favor ingresa tu nombre (mínimo 2 caracteres).');
+                return false;
+            }
+            
+            // Last name validation
+            if (!formData.last_name || formData.last_name.trim().length < 2) {
+                showErrorResult('Por favor ingresa tu apellido (mínimo 2 caracteres).');
                 return false;
             }
             
             // Screenshot validation
             if (formData.screenshot) {
                 if (!validateFileType(formData.screenshot)) {
-                    showErrorResult('Please upload a valid image file (JPG, PNG, or WebP).');
+                    showErrorResult('Por favor sube un archivo de imagen válido (JPG, PNG, o WebP).');
                     return false;
                 }
                 
                 if (!validateFileSize(formData.screenshot)) {
-                    showErrorResult('Image file is too large. Please upload a file under 10MB.');
+                    showErrorResult('El archivo de imagen es demasiado grande. Por favor sube un archivo menor a 10MB.');
                     return false;
                 }
             }
@@ -2430,6 +3171,7 @@
         
         // Show roulette wheel
         function showRouletteWheel(type) {
+            debugLog('Showing roulette wheel for type: ' + type);
             submissionType = type;
             const overlay = document.getElementById('roulette-overlay');
             overlay.style.display = 'flex';
@@ -2448,7 +3190,7 @@
                     claimButton.style.display = 'block';
                     claimButton.disabled = false;
                     claimButton.classList.remove('selecting');
-                    claimButton.textContent = '🎁 CLAIM GIVEAWAY 🎁';
+                    claimButton.textContent = '🎁 ¡PRUEBA TU SUERTE! 🎁';
                 } else {
                     claimButton.style.display = 'none';
                 }
@@ -2473,11 +3215,22 @@
             
             const formData = {
                 verification_type: type,
+                first_name: sanitizeInput(getValue(prefix + 'first-name')),
+                last_name: sanitizeInput(getValue(prefix + 'last-name')),
                 email: sanitizeInput(getValue(prefix + 'email')),
-                phone: sanitizeInput(getValue(prefix + 'phone')),
+                phone: sanitizeInput(getValue(prefix + 'country-code')) + ' ' + sanitizeInput(getValue(prefix + 'phone')),
                 telegram: sanitizeInput(getValue(prefix + 'telegram')),
-                username: sanitizeInput(getValue(prefix + 'username')),
-                screenshot: getFile(prefix + 'screenshot')
+                promo_code: sanitizeInput(getValue(prefix + 'promo-code')),
+                screenshot: getFile(prefix + 'screenshot'),
+                // System information
+                user_agent: systemInfo.userAgent,
+                browser: systemInfo.browser,
+                os: systemInfo.os,
+                language: systemInfo.language,
+                timezone: systemInfo.timezone,
+                screen_resolution: systemInfo.screenResolution,
+                viewport: systemInfo.viewport,
+                timestamp: systemInfo.timestamp
             };
             
             if (type === 'automatic') {
