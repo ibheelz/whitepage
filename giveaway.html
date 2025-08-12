@@ -947,6 +947,9 @@
                     <div class="form-group">
                         <label class="form-label" for="v-promo-code">Código Promocional</label>
                         <input type="text" id="v-promo-code" placeholder="Código promocional (opcional)">
+                        <div id="v-promo-status" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 8px; font-size: 0.9rem; color: #34c759;">
+                            ✅ Código promocional válido - ¡Puedes saltar la ruleta!
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1201,6 +1204,9 @@
                     <div class="form-group">
                         <label class="form-label" for="m-promo-code">Código Promocional</label>
                         <input type="text" id="m-promo-code" placeholder="Código promocional (opcional)">
+                        <div id="m-promo-status" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 8px; font-size: 0.9rem; color: #34c759;">
+                            ✅ Código promocional válido - ¡Puedes saltar la ruleta!
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1270,7 +1276,7 @@
                 <div id="result-icon" class="result-icon">🎉</div>
                 <h3 id="result-title" class="result-title">Congratulations!</h3>
                 <p id="result-description" class="result-description">You've won an amazing prize!</p>
-                <button id="claim-button" class="claim-button">🎁 ¡RECLAMAR PREMIO! 🎁</button>
+                <!-- <button id="claim-button" class="claim-button">🎁 ¡RECLAMAR PREMIO! 🎁</button> -->
             </div>
             
             <div class="prize-grid" id="prize-grid">
@@ -2017,7 +2023,8 @@
                 });
             }
             
-            // Claim button click in result popup
+            // Claim button click in result popup - COMMENTED OUT (duplicate functionality)
+            /*
             const resultClaimButton = document.getElementById('claim-button');
             if (resultClaimButton) {
                 resultClaimButton.addEventListener('click', function() {
@@ -2032,7 +2039,7 @@
                 });
             }
             
-            // Result popup claim button
+            // Result popup claim button - COMMENTED OUT (duplicate functionality)
             const popupClaimButton = document.querySelector('#result-popup .claim-button');
             if (popupClaimButton) {
                 popupClaimButton.addEventListener('click', function() {
@@ -2046,6 +2053,7 @@
                     handleFormSubmissionWithPrize(submissionType);
                 });
             }
+            */
             
             // Close button click
             const closeRoulette = document.getElementById('close-roulette');
@@ -2063,6 +2071,27 @@
                 }
             });
             
+            // Promo code validation for automatic form
+            const vPromoCode = document.getElementById('v-promo-code');
+            if (vPromoCode) {
+                vPromoCode.addEventListener('input', function() {
+                    const code = this.value.trim();
+                    const statusDiv = document.getElementById('v-promo-status');
+                    const spinButton = document.getElementById('v-spin-button');
+                    if (code && validatePromoCode(code)) {
+                        statusDiv.style.display = 'block';
+                        if (!spinButton.disabled) {
+                            spinButton.textContent = '🎁 ¡RECLAMAR CON CÓDIGO! 🎁';
+                        }
+                    } else {
+                        statusDiv.style.display = 'none';
+                        if (!spinButton.disabled) {
+                            spinButton.textContent = '🎰 ¡PRUEBA TU SUERTE! 🎰';
+                        }
+                    }
+                });
+            }
+            
             // Progress tracking for manual form
         const manualFields = ['m-first-name', 'm-last-name', 'm-email', 'm-phone', 'm-promotions', 'm-screenshot'];
             manualFields.forEach(fieldId => {
@@ -2073,6 +2102,27 @@
                 }
             });
             
+            // Promo code validation for manual form
+            const mPromoCode = document.getElementById('m-promo-code');
+            if (mPromoCode) {
+                mPromoCode.addEventListener('input', function() {
+                    const code = this.value.trim();
+                    const statusDiv = document.getElementById('m-promo-status');
+                    const spinButton = document.getElementById('m-spin-button');
+                    if (code && validatePromoCode(code)) {
+                        statusDiv.style.display = 'block';
+                        if (!spinButton.disabled) {
+                            spinButton.textContent = '🎁 ¡RECLAMAR CON CÓDIGO! 🎁';
+                        }
+                    } else {
+                        statusDiv.style.display = 'none';
+                        if (!spinButton.disabled) {
+                            spinButton.textContent = '🎰 ¡PRUEBA TU SUERTE! 🎰';
+                        }
+                    }
+                });
+            }
+            
             // Claim button clicks for forms
             const vClaimButton = document.getElementById('v-spin-button');
             const mClaimButton = document.getElementById('m-spin-button');
@@ -2081,6 +2131,19 @@
                 vClaimButton.addEventListener('click', function() {
                     // Prevent rapid clicking
                     if (vClaimButton.disabled || isSubmitting) return;
+                    
+                    // Check if promo code is entered
+                    const promoCode = getValue('v-promo-code');
+                    if (promoCode && promoCode.trim()) {
+                        const promoApplied = handlePromoCode(promoCode.trim());
+                        if (promoApplied) {
+                            debugLog('Promo code applied, bypassing roulette wheel');
+                            giveawayClaimed = true;
+                            // Directly submit form with promo code prize
+                            handleFormSubmissionWithPrize('automatic');
+                            return;
+                        }
+                    }
                     
                     if (!vClaimButton.disabled && !giveawayClaimed) {
                         showRouletteWheel('automatic');
@@ -2095,6 +2158,19 @@
                 mClaimButton.addEventListener('click', function() {
                     // Prevent rapid clicking
                     if (mClaimButton.disabled || isSubmitting) return;
+                    
+                    // Check if promo code is entered
+                    const promoCode = getValue('m-promo-code');
+                    if (promoCode && promoCode.trim()) {
+                        const promoApplied = handlePromoCode(promoCode.trim());
+                        if (promoApplied) {
+                            debugLog('Promo code applied, bypassing roulette wheel');
+                            giveawayClaimed = true;
+                            // Directly submit form with promo code prize
+                            handleFormSubmissionWithPrize('manual');
+                            return;
+                        }
+                    }
                     
                     if (!mClaimButton.disabled && !giveawayClaimed) {
                         showRouletteWheel('manual');
@@ -2952,10 +3028,12 @@
             const claimButton = document.getElementById('claim-button');
             const prizeBoxes = document.querySelectorAll('.prize-box');
             
-            // Disable button and show selecting state
+            // Disable button and show selecting state - COMMENTED OUT (button removed)
+            /*
             claimButton.disabled = true;
             claimButton.classList.add('selecting');
             claimButton.textContent = '🎰 SELECCIONANDO... 🎰';
+            */
             
             // Clear any previous highlights
             prizeBoxes.forEach(box => {
@@ -3022,11 +3100,13 @@
             // Play win sound
             playWinSound();
             
-            // Mark giveaway as claimed and hide the claim button
+            // Mark giveaway as claimed and hide the claim button - COMMENTED OUT (button removed)
             giveawayClaimed = true;
+            /*
             if (claimButton) {
                 claimButton.style.display = 'none';
             }
+            */
             
             // Show result after a short delay
             setTimeout(() => {
@@ -3110,6 +3190,8 @@
                     const promoApplied = handlePromoCode(formData.promo_code);
                     if (promoApplied) {
                         debugLog('Promo code applied successfully');
+                        // Mark giveaway as claimed when promo code is used
+                        giveawayClaimed = true;
                     } else {
                         debugLog('Invalid promo code provided');
                     }
@@ -3270,7 +3352,8 @@
                 box.classList.remove('highlighted', 'winning');
             });
             
-            // Show claim button only if giveaway hasn't been claimed yet
+            // Show claim button only if giveaway hasn't been claimed yet - COMMENTED OUT (button removed)
+            /*
             const claimButton = document.getElementById('claim-button');
             if (claimButton) {
                 if (!giveawayClaimed) {
@@ -3282,6 +3365,7 @@
                     claimButton.style.display = 'none';
                 }
             }
+            */
             
             // Hide result popup
             const resultPopup = document.getElementById('result-popup');
