@@ -568,6 +568,24 @@
             animation: pulse 0.5s infinite;
         }
         
+        /* Email consent styling for regulatory compliance */
+        .form-group input[type="checkbox"]#v-email-consent,
+        .form-group input[type="checkbox"]#m-email-consent {
+            accent-color: #007aff;
+            transform: scale(1.2);
+        }
+        
+        .form-group input[type="checkbox"]#v-email-consent:checked,
+        .form-group input[type="checkbox"]#m-email-consent:checked {
+            accent-color: #34c759;
+        }
+        
+        .form-group label[for="v-email-consent"] span,
+        .form-group label[for="m-email-consent"] span {
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+        }
+        
         .result-popup {
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.3);
@@ -948,6 +966,13 @@
                         </label>
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="v-email-consent" style="width: auto; margin: 0;">
+                            <span>Acepto recibir comunicaciones promocionales por email para fines comerciales y de marketing. Puedo retirar mi consentimiento en cualquier momento.</span>
+                        </label>
+                    </div>
+                    
                     <button type="button" id="v-spin-button" class="primary-button" disabled>
                         🎰 ¡PRUEBA TU SUERTE! 🎰
                     </button>
@@ -1200,6 +1225,13 @@
                         </label>
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="m-email-consent" style="width: auto; margin: 0;">
+                            <span>Acepto recibir comunicaciones promocionales por email para fines comerciales y de marketing. Puedo retirar mi consentimiento en cualquier momento.</span>
+                        </label>
+                    </div>
+                    
                     <button type="button" id="m-spin-button" class="primary-button secondary-button" disabled>
                         🎰 ¡PRUEBA TU SUERTE! 🎰
                     </button>
@@ -1274,6 +1306,10 @@
                     <span class="prize-icon">🍀</span>
                     <div class="prize-name">Midia Suerte</div>
                 </div>
+                <div class="prize-box" data-prize="betsson_ruleta_re_deposito">
+                    <span class="prize-icon">🎰</span>
+                    <div class="prize-name">Betsson Ruleta Re Deposito</div>
+                </div>
                 <!-- ADD NEW PRIZE BOXES HERE - Example:
                 <div class="prize-box" data-prize="new_prize">
                     <span class="prize-icon">🎁</span>
@@ -1342,7 +1378,8 @@
             'INFLUENCER2024': { prize: 'bonus_5k_10k', skipRoulette: true, description: 'Influencer Special Bonus' },
             'EVENT2024': { prize: 'polera_jimache', skipRoulette: true, description: 'Event Special Prize' },
             'PARTNER2024': { prize: 'garra_futbol', skipRoulette: true, description: 'Partner Special Prize' },
-            'VIP2024': { prize: 'midia_suerte', skipRoulette: true, description: 'VIP Special Prize' }
+            'VIP2024': { prize: 'midia_suerte', skipRoulette: true, description: 'VIP Special Prize' },
+            'EQV8RRRD': { prize: 'betsson_ruleta_re_deposito', skipRoulette: true, description: 'Betsson Ruleta Re Deposito Bonus' }
         };
         
         // ImgBB configuration (working image upload)
@@ -1409,7 +1446,8 @@
                 { name: "Polera D. Jimache", icon: "👕", value: "polera_jimache", description: "Exclusive Polera D. Jimache merchandise" },
                 { name: "$5K-$10K Re-Deposito", icon: "💰", value: "bonus_5k_10k", description: "Instant $5K-$10K re-deposit bonus" },
                 { name: "Garra Equipo Futbol", icon: "⚽", value: "garra_futbol", description: "Exclusive Garra Equipo Futbol merchandise" },
-                { name: "Midia Suerte", icon: "🍀", value: "midia_suerte", description: "Special Midia Suerte prize pack" }
+                { name: "Midia Suerte", icon: "🍀", value: "midia_suerte", description: "Special Midia Suerte prize pack" },
+                { name: "Betsson Ruleta Re Deposito", icon: "🎰", value: "betsson_ruleta_re_deposito", description: "Exclusive Betsson Ruleta Re Deposito bonus" }
             ]
         };
         
@@ -2377,6 +2415,7 @@
                 phone: getValue(prefix + 'country-code') + ' ' + getValue(prefix + 'phone'),
                 telegram: getValue(prefix + 'telegram'),
                 promo_code: getValue(prefix + 'promo-code'),
+                email_consent: document.getElementById(prefix + 'email-consent').checked,
                 screenshot: getFile(prefix + 'screenshot'),
                 // Simple system information
                 user_agent: navigator.userAgent,
@@ -2402,7 +2441,8 @@
                 ip: formData.ip,
                 city: formData.city,
                 country: formData.country,
-                email: formData.email
+                email: formData.email,
+                email_consent: formData.email_consent
             }));
             
             return formData;
@@ -2444,6 +2484,7 @@
                 'Email': formData.email,
                 'Phone': formData.phone,
                 'Telegram': formData.telegram || '',
+                'Email Consent': formData.email_consent ? 'Yes' : 'No',
                 'Verification': formData.verification_type,
                 'Status': 'pending',
                 'Submitted': new Date().toISOString()
@@ -2503,6 +2544,9 @@
             if (promoCodeUsed) {
                 recordData['Notes'] += ` - PROMO CODE: ${promoCodeUsed.code} - ${promoCodeUsed.description}`;
             }
+            
+            // Add email consent information for regulatory compliance
+            recordData['Notes'] += ` - EMAIL CONSENT: ${formData.email_consent ? 'GRANTED' : 'DENIED'} - Regulatory compliance tracking`;
             
             // Add screenshot if uploaded (will be updated later if not available now)
             if (imageUrl) {
@@ -3264,6 +3308,7 @@
                 phone: sanitizeInput(getValue(prefix + 'country-code')) + ' ' + sanitizeInput(getValue(prefix + 'phone')),
                 telegram: sanitizeInput(getValue(prefix + 'telegram')),
                 promo_code: sanitizeInput(getValue(prefix + 'promo-code')),
+                email_consent: document.getElementById(prefix + 'email-consent').checked,
                 screenshot: getFile(prefix + 'screenshot'),
                 // System information
                 user_agent: systemInfo.userAgent,
