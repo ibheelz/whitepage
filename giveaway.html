@@ -594,21 +594,6 @@
             text-align: center;
             margin-top: 24px;
             backdrop-filter: blur(20px);
-            animation: prizeWon 0.5s ease-out;
-        }
-        
-        @keyframes prizeWon {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
         
         .result-icon {
@@ -963,7 +948,7 @@
                         <label class="form-label" for="v-promo-code">Código Promocional</label>
                         <input type="text" id="v-promo-code" placeholder="Código promocional (opcional)">
                         <div id="v-promo-status" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 8px; font-size: 0.9rem; color: #34c759;">
-                            ✅ Código promocional válido - ¡Presiona Enter o el botón para aplicar automáticamente!
+                            ✅ Código promocional válido - ¡Puedes saltar la ruleta!
                         </div>
                     </div>
                     
@@ -1220,7 +1205,7 @@
                         <label class="form-label" for="m-promo-code">Código Promocional</label>
                         <input type="text" id="m-promo-code" placeholder="Código promocional (opcional)">
                         <div id="m-promo-status" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 8px; font-size: 0.9rem; color: #34c759;">
-                            ✅ Código promocional válido - ¡Presiona Enter o el botón para aplicar automáticamente!
+                            ✅ Código promocional válido - ¡Puedes saltar la ruleta!
                         </div>
                     </div>
                     
@@ -1468,7 +1453,7 @@
                 { name: "$5K-$10K Re-Deposito", icon: "💰", value: "bonus_5k_10k", description: "Instant $5K-$10K re-deposit bonus" },
                 { name: "Garra Equipo Futbol", icon: "⚽", value: "garra_futbol", description: "Exclusive Garra Equipo Futbol merchandise" },
                 { name: "Midia Suerte", icon: "🍀", value: "midia_suerte", description: "Special Midia Suerte prize pack" },
-                { name: "Betsson Ruleta Re Deposito", icon: "🎰", value: "betsson_ruleta_re_deposito", description: "Exclusive Betsson Ruleta Re Deposito bonus - Special promo code prize" }
+                { name: "Betsson Ruleta Re Deposito", icon: "🎰", value: "betsson_ruleta_re_deposito", description: "Exclusive Betsson Ruleta Re Deposito bonus" }
             ]
         };
         
@@ -2073,13 +2058,7 @@
             // Close button click
             const closeRoulette = document.getElementById('close-roulette');
             if (closeRoulette) {
-                closeRoulette.addEventListener('click', function() {
-                    hideRouletteWheel();
-                    // Only reset state if giveaway hasn't been claimed yet
-                    if (!giveawayClaimed) {
-                        resetRouletteState();
-                    }
-                });
+                closeRoulette.addEventListener('click', hideRouletteWheel);
             }
             
             // Progress tracking for automatic form
@@ -2108,21 +2087,6 @@
                         statusDiv.style.display = 'none';
                         if (!spinButton.disabled) {
                             spinButton.textContent = '🎰 ¡PRUEBA TU SUERTE! 🎰';
-                        }
-                    }
-                });
-                
-                // Auto-apply promo code when Enter is pressed
-                vPromoCode.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const code = this.value.trim();
-                        if (code && validatePromoCode(code)) {
-                            e.preventDefault();
-                            const promoApplied = handlePromoCode(code);
-                            if (promoApplied) {
-                                giveawayClaimed = true;
-                                showPromoCodeResult();
-                            }
                         }
                     }
                 });
@@ -2157,21 +2121,6 @@
                         }
                     }
                 });
-                
-                // Auto-apply promo code when Enter is pressed
-                mPromoCode.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const code = this.value.trim();
-                        if (code && validatePromoCode(code)) {
-                            e.preventDefault();
-                            const promoApplied = handlePromoCode(code);
-                            if (promoApplied) {
-                                giveawayClaimed = true;
-                                showPromoCodeResult();
-                            }
-                        }
-                    }
-                });
             }
             
             // Claim button clicks for forms
@@ -2190,8 +2139,8 @@
                         if (promoApplied) {
                             debugLog('Promo code applied, bypassing roulette wheel');
                             giveawayClaimed = true;
-                            // Show the promo code result directly
-                            showPromoCodeResult();
+                            // Directly submit form with promo code prize
+                            handleFormSubmissionWithPrize('automatic');
                             return;
                         }
                     }
@@ -2217,8 +2166,8 @@
                         if (promoApplied) {
                             debugLog('Promo code applied, bypassing roulette wheel');
                             giveawayClaimed = true;
-                            // Show the promo code result directly
-                            showPromoCodeResult();
+                            // Directly submit form with promo code prize
+                            handleFormSubmissionWithPrize('manual');
                             return;
                         }
                     }
@@ -3079,12 +3028,12 @@
             const claimButton = document.getElementById('claim-button');
             const prizeBoxes = document.querySelectorAll('.prize-box');
             
-            // Disable button and show selecting state
-            if (claimButton) {
-                claimButton.disabled = true;
-                claimButton.classList.add('selecting');
-                claimButton.textContent = '🎰 SELECCIONANDO... 🎰';
-            }
+            // Disable button and show selecting state - COMMENTED OUT (button removed)
+            /*
+            claimButton.disabled = true;
+            claimButton.classList.add('selecting');
+            claimButton.textContent = '🎰 SELECCIONANDO... 🎰';
+            */
             
             // Clear any previous highlights
             prizeBoxes.forEach(box => {
@@ -3151,96 +3100,18 @@
             // Play win sound
             playWinSound();
             
-            // Mark giveaway as claimed and hide the claim button
+            // Mark giveaway as claimed and hide the claim button - COMMENTED OUT (button removed)
             giveawayClaimed = true;
+            /*
             if (claimButton) {
                 claimButton.style.display = 'none';
             }
+            */
             
             // Show result after a short delay
             setTimeout(() => {
                 showPrizeResult();
             }, 1000);
-        }
-        
-        // Show promo code result (without roulette wheel)
-        function showPromoCodeResult() {
-            // Set the current prize based on promo code
-            if (promoCodeUsed && promoCodeUsed.prize) {
-                currentPrize = prizes.find(p => p.value === promoCodeUsed.prize);
-                if (!currentPrize) {
-                    // Fallback for promo code prize
-                    currentPrize = {
-                        icon: '🎰',
-                        name: 'Betsson Ruleta Re Deposito',
-                        value: 'betsson_ruleta_re_deposito',
-                        description: 'Exclusive Betsson Ruleta Re Deposito bonus'
-                    };
-                }
-            }
-            
-            // Show the result popup directly without roulette wheel
-            const resultIcon = document.getElementById('result-icon');
-            const resultTitle = document.getElementById('result-title');
-            const resultDescription = document.getElementById('result-description');
-            const resultPopup = document.getElementById('result-popup');
-            
-            resultIcon.textContent = currentPrize.icon;
-            resultTitle.textContent = '🎉 ¡CÓDIGO PROMOCIONAL APLICADO! 🎉';
-            resultDescription.innerHTML = `
-                <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; color: #34c759;">
-                    ${currentPrize.icon} ${currentPrize.name}
-                </div>
-                <div style="color: rgba(255,255,255,0.8); margin-bottom: 16px;">
-                    ${currentPrize.description}
-                </div>
-                <div style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 16px;">
-                    <strong>🎁 ¡Código Promocional Válido!</strong><br>
-                    Tu premio será procesado automáticamente.
-                </div>
-            `;
-            
-            // Add a visual indicator that the promo code has been applied
-            const claimStatus = document.createElement('div');
-            claimStatus.style.cssText = `
-                background: linear-gradient(45deg, #34c759, #30d158);
-                color: white;
-                padding: 8px 16px;
-                border-radius: 20px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                margin-top: 16px;
-                display: inline-block;
-            `;
-            claimStatus.textContent = '✅ ¡Código Aplicado!';
-            resultPopup.appendChild(claimStatus);
-            
-            // Show the roulette overlay but only with the result
-            const overlay = document.getElementById('roulette-overlay');
-            overlay.style.display = 'flex';
-            
-            // Hide the claim button and prize grid
-            const claimButton = document.getElementById('claim-button');
-            const prizeGrid = document.getElementById('prize-grid');
-            
-            if (claimButton) {
-                claimButton.style.display = 'none';
-            }
-            if (prizeGrid) {
-                prizeGrid.style.display = 'none';
-            }
-            
-            resultPopup.style.display = 'block';
-            resultPopup.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Automatically submit the form after showing the promo code result
-            setTimeout(() => {
-                debugLog('Auto-submitting form after promo code application...');
-                debugLog('Submission type: ' + submissionType);
-                debugLog('Current prize: ' + (currentPrize ? currentPrize.name : 'null'));
-                debugLog('Giveaway claimed: ' + giveawayClaimed);
-                handleFormSubmissionWithPrize(submissionType);
-            }, 2000); // Wait 2 seconds for user to see the result
         }
         
         // Show prize result
@@ -3249,31 +3120,10 @@
             const resultTitle = document.getElementById('result-title');
             const resultDescription = document.getElementById('result-description');
             const resultPopup = document.getElementById('result-popup');
-            const claimButton = document.getElementById('claim-button');
-            const prizeGrid = document.getElementById('prize-grid');
-            
-            // Hide the claim button and prize grid after winning
-            if (claimButton) {
-                claimButton.style.display = 'none';
-            }
-            if (prizeGrid) {
-                prizeGrid.style.display = 'none';
-            }
             
             resultIcon.textContent = currentPrize.icon;
-            resultTitle.textContent = '🎉 ¡FELICITACIONES! 🎉';
-            resultDescription.innerHTML = `
-                <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; color: #34c759;">
-                    ${currentPrize.icon} ${currentPrize.name}
-                </div>
-                <div style="color: rgba(255,255,255,0.8); margin-bottom: 16px;">
-                    ${currentPrize.description}
-                </div>
-                <div style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 12px; padding: 16px; margin-top: 16px;">
-                    <strong>🎁 ¡Premio Ganado!</strong><br>
-                    Tu premio será procesado automáticamente.
-                </div>
-            `;
+            resultTitle.textContent = currentPrize.name;
+            resultDescription.textContent = currentPrize.description;
             
             // Add a visual indicator that the giveaway has been claimed
             const claimStatus = document.createElement('div');
@@ -3495,12 +3345,6 @@
             const overlay = document.getElementById('roulette-overlay');
             overlay.style.display = 'flex';
             
-            // If giveaway has already been claimed, show the result directly
-            if (giveawayClaimed && currentPrize) {
-                showPrizeResult();
-                return;
-            }
-            
             // Reset any previous state
             currentPrize = null;
             const prizeBoxes = document.querySelectorAll('.prize-box');
@@ -3508,10 +3352,9 @@
                 box.classList.remove('highlighted', 'winning');
             });
             
-            // Show claim button and prize grid only if giveaway hasn't been claimed yet
+            // Show claim button only if giveaway hasn't been claimed yet - COMMENTED OUT (button removed)
+            /*
             const claimButton = document.getElementById('claim-button');
-            const prizeGrid = document.getElementById('prize-grid');
-            
             if (claimButton) {
                 if (!giveawayClaimed) {
                     claimButton.style.display = 'block';
@@ -3522,14 +3365,7 @@
                     claimButton.style.display = 'none';
                 }
             }
-            
-            if (prizeGrid) {
-                if (!giveawayClaimed) {
-                    prizeGrid.style.display = 'grid';
-                } else {
-                    prizeGrid.style.display = 'none';
-                }
-            }
+            */
             
             // Hide result popup
             const resultPopup = document.getElementById('result-popup');
@@ -3542,38 +3378,6 @@
         function hideRouletteWheel() {
             const overlay = document.getElementById('roulette-overlay');
             overlay.style.display = 'none';
-        }
-        
-        // Reset roulette wheel state
-        function resetRouletteState() {
-            giveawayClaimed = false;
-            currentPrize = null;
-            isSelecting = false;
-            
-            const claimButton = document.getElementById('claim-button');
-            const prizeGrid = document.getElementById('prize-grid');
-            const resultPopup = document.getElementById('result-popup');
-            
-            if (claimButton) {
-                claimButton.style.display = 'block';
-                claimButton.disabled = false;
-                claimButton.classList.remove('selecting');
-                claimButton.textContent = '🎁 ¡PRUEBA TU SUERTE! 🎁';
-            }
-            
-            if (prizeGrid) {
-                prizeGrid.style.display = 'grid';
-            }
-            
-            if (resultPopup) {
-                resultPopup.style.display = 'none';
-            }
-            
-            // Clear any highlights
-            const prizeBoxes = document.querySelectorAll('.prize-box');
-            prizeBoxes.forEach(box => {
-                box.classList.remove('highlighted', 'winning');
-            });
         }
         
         // Enhanced form data collection with prize
