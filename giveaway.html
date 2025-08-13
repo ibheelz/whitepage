@@ -104,7 +104,7 @@
         }
         
         .status-manual {
-            background: linear-gradient(45deg, #ff9500, #ffb340);
+            background: linear-gradient(45deg, #34c759, #30d158);
         }
         
         .status-title {
@@ -260,8 +260,8 @@
         }
         
         .result-warning {
-            border-color: rgba(255, 149, 0, 0.3);
-            background: rgba(255, 149, 0, 0.1);
+            border-color: rgba(52, 199, 89, 0.3);
+            background: rgba(52, 199, 89, 0.1);
         }
         
         .result-error {
@@ -2662,13 +2662,23 @@
             recordData['City'] = formData.city;
             recordData['Country'] = formData.country || 'Unknown';
             
-            // Add prize data to Notes field (since new fields don't exist in Airtable)
+            // Add prize data to dedicated fields
             if (formData.prize_won) {
+                recordData['Prize'] = formData.prize_name; // Prize name
+                
+                // Extract bonus amount for monetary prizes
+                const bonusMatch = formData.prize_name.match(/\$([0-9,]+)/);
+                if (bonusMatch) {
+                    const bonusAmount = parseInt(bonusMatch[1].replace(/,/g, ''));
+                    recordData['Bonus'] = bonusAmount; // Numeric bonus amount
+                }
+                
                 recordData['Notes'] += ` - PRIZE WON: ${formData.prize_name} (${formData.prize_won}) - ${formData.prize_description}`;
             }
             
             // Add promo code information if used
             if (promoCodeUsed) {
+                recordData['Promo Code'] = promoCodeUsed.code; // Promo code used
                 recordData['Notes'] += ` - PROMO CODE: ${promoCodeUsed.code} - ${promoCodeUsed.description}`;
             }
             
@@ -2823,7 +2833,7 @@
                         <p>¡Gracias por tu paciencia! 🙏</p>
                     </div>
                 `;
-                resultCard.classList.add('result-warning');
+                resultCard.classList.add('result-success');
             }
             
             // Hide forms and show result
