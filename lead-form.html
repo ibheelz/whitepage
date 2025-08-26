@@ -359,11 +359,17 @@
     </div>
 
     <script>
-        // Configuration
-        const AIRTABLE_BASE_ID = 'app2I0jOClbHteBNP';
-        const AIRTABLE_TABLE_NAME = 'Leads';
-        const AIRTABLE_API_KEY = 'pat7YyXZ7TbgKSIhS.874b4e45efabdc52c26c1ff1ce3759148eb74af8048f85decf64acdfe7ae4e71';
-        const REDIRECT_URL = 'https://mieladigital.com';
+    const CONFIG = {
+        AIRTABLE_BASE_ID: '{{ AIRTABLE_BASE_ID }}',
+        AIRTABLE_TABLE_NAME: '{{ AIRTABLE_TABLE_NAME }}', 
+        AIRTABLE_API_KEY: '{{ AIRTABLE_API_KEY }}',
+        REDIRECT_URL: 'https://mieladigital.com'
+    };
+    
+    // Use CONFIG instead of direct variables
+    const AIRTABLE_BASE_ID = CONFIG.AIRTABLE_BASE_ID;
+    const AIRTABLE_TABLE_NAME = CONFIG.AIRTABLE_TABLE_NAME;
+    const AIRTABLE_API_KEY = CONFIG.AIRTABLE_API_KEY;
 
         // Get URL parameters and geo data
         const urlParams = new URLSearchParams(window.location.search);
