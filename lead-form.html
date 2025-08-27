@@ -885,24 +885,33 @@
 
         // Update field UI based on validation
         function updateFieldUI(fieldName, isValid, message, messageType) {
-            const group = document.getElementById(fieldName + 'Group');
-            const messageEl = document.getElementById(fieldName.replace('fullName', 'name') + 'Message');
-            const messageText = document.getElementById(fieldName.replace('fullName', 'name') + 'MessageText');
-
-            // Remove existing states
+            const idMap = {
+                fullName: { group: 'nameGroup', message: 'nameMessage', text: 'nameMessageText' },
+                email: { group: 'emailGroup', message: 'emailMessage', text: 'emailMessageText' },
+                phone: { group: 'phoneGroup', message: 'phoneMessage', text: 'phoneMessageText' }
+            };
+        
+            const ids = idMap[fieldName];
+            const group = document.getElementById(ids.group);
+            const messageEl = document.getElementById(ids.message);
+            const messageText = document.getElementById(ids.text);
+        
+            if (!group || !messageEl || !messageText) {
+                console.warn(`Missing element for ${fieldName}`);
+                return;
+            }
+        
             group.classList.remove('success', 'error');
             messageEl.classList.remove('success', 'error', 'show');
-
+        
             if (message) {
-                // Add new state
                 group.classList.add(messageType);
                 messageEl.classList.add(messageType, 'show');
                 messageText.textContent = message;
-
-                // Update icon
+        
                 const iconPath = messageType === 'success' 
-                    ? 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z'
-                    : 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z';
+                    ? 'M12 2C6.48 2 ...' // success path
+                    : 'M12 2C6.48 2 ...'; // error path
                 messageEl.querySelector('svg path').setAttribute('d', iconPath);
             }
         }
