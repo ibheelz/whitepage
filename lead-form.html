@@ -632,7 +632,7 @@
         function initializeTracking() {
             const urlParams = new URLSearchParams(window.location.search);
         
-            // Capture RedTrack clickid
+            // Capture RedTrack clickid asap
             const clickid = urlParams.get('clickid') || urlParams.get('external_id') || '';
         
             state.trackingData = {
