@@ -922,54 +922,44 @@
         // Handle form submission
         async function handleSubmit(event) {
             event.preventDefault();
-            
             debugLog('📤 Form submission started');
-
-            if (state.isSubmitting) {
-                debugLog('⚠️ Already submitting, returning');
-                return;
-            }
-
-            // Validate all fields
+        
+            if (state.isSubmitting) return;
+        
+            // Validate fields
             const isNameValid = validateField('fullName');
             const isEmailValid = validateField('email');
             const isPhoneValid = validateField('phone');
-
-            debugLog('✅ Validation results:', { isNameValid, isEmailValid, isPhoneValid });
-
+        
             if (!isNameValid || !isEmailValid || !isPhoneValid) {
-                // Find first invalid field and focus
                 if (!isNameValid) document.getElementById('fullName').focus();
                 else if (!isEmailValid) document.getElementById('email').focus();
                 else document.getElementById('phone').focus();
                 return;
             }
-
+        
             state.isSubmitting = true;
-            showLoadingState();
-
+        
             // Collect form data
             state.formData = {
                 fullName: document.getElementById('fullName').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.replace(/\D/g, '')
             };
-
+        
             debugLog('📦 Form data collected:', state.formData);
-
+        
             try {
                 // Submit to Airtable
                 await submitToAirtable();
-                
                 debugLog('✅ Submission successful');
-                
-                // Show success
-                showSuccess();
+        
+                // 🚀 Redirect instantly
+                performRedirect();
             } catch (error) {
                 console.error('❌ Submission error:', error);
                 showError('Algo salió mal. Por favor intenta de nuevo.');
                 state.isSubmitting = false;
-                hideLoadingState();
             }
         }
 
@@ -1018,43 +1008,6 @@
             const result = await response.json();
             debugLog('✅ Airtable response:', result);
             return result;
-        }
-
-        // Show loading state
-        function showLoadingState() {
-            const btn = document.getElementById('submitBtn');
-            btn.classList.add('loading');
-            btn.disabled = true;
-            document.getElementById('loadingOverlay').classList.add('show');
-        }
-
-        // Hide loading state
-        function hideLoadingState() {
-            const btn = document.getElementById('submitBtn');
-            btn.classList.remove('loading');
-            btn.disabled = false;
-            document.getElementById('loadingOverlay').classList.remove('show');
-        }
-
-        // Show success message and redirect
-        function showSuccess() {
-            document.getElementById('loadingOverlay').classList.remove('show');
-            document.getElementById('formSection').style.display = 'none';
-            document.getElementById('successSection').classList.add('show');
-
-            // Countdown and redirect
-            let countdown = 3;
-            const countdownEl = document.getElementById('countdown');
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownEl.textContent = countdown;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    performRedirect();
-                }
-            }, 1000);
         }
 
         // Perform redirect with payload
