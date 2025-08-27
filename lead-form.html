@@ -631,8 +631,12 @@
     
         function initializeTracking() {
             const urlParams = new URLSearchParams(window.location.search);
+        
+            // Capture RedTrack clickid
+            const clickid = urlParams.get('clickid') || urlParams.get('external_id') || '';
+        
             state.trackingData = {
-                clickid: urlParams.get('clickid') || '',
+                clickid: clickid,
                 promo: urlParams.get('promo') || urlParams.get('influencer') || '',
                 source: urlParams.get('utm_source') || '',
                 medium: urlParams.get('utm_medium') || '',
@@ -924,6 +928,7 @@
             document.getElementById('loadingOverlay').classList.remove('show');
             document.getElementById('formSection').style.display = 'none';
             document.getElementById('successSection').classList.add('show');
+        
             let countdown = 3;
             const countdownEl = document.getElementById('countdown');
             const countdownInterval = setInterval(() => {
@@ -931,7 +936,13 @@
                 countdownEl.textContent = countdown;
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
-                    window.location.href = CONFIG.REDIRECT_URL;
+        
+                    // Redirect with clickid
+                    const redirectUrl = new URL(CONFIG.REDIRECT_URL);
+                    if (state.trackingData.clickid) {
+                        redirectUrl.searchParams.set('clickid', state.trackingData.clickid);
+                    }
+                    window.location.href = redirectUrl.toString();
                 }
             }, 1000);
         }
