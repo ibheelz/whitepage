@@ -701,10 +701,7 @@
                 clickid: clickid,
                 payload: clickid, // Store as both for compatibility
                 promo: campaign, // Campaign is the influencer/promo
-                campaign: campaign,
                 redirectUrl: redirectUrl || CONFIG.REDIRECT_URL || 'https://mieladigital.com',
-                source: urlParams.get('source') || urlParams.get('utm_source') || '',
-                medium: urlParams.get('utm_medium') || '',
                 timestamp: new Date().toISOString(),
                 referrer: document.referrer || 'direct',
                 landingPage: window.location.href
@@ -986,9 +983,6 @@
                         "Phone Number": state.formData.phone,
                         "Click ID": state.trackingData.clickid || state.trackingData.payload || '',
                         "Promo/Influencer": state.trackingData.promo || state.trackingData.campaign || '',
-                        "UTM Source": state.trackingData.source,
-                        "UTM Medium": state.trackingData.medium,
-                        "UTM Campaign": state.trackingData.campaign,
                         "IP Address": state.geoData.ip,
                         "Country": state.geoData.country,
                         "City": state.geoData.city,
