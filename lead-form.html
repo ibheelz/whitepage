@@ -1,575 +1,1159 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Comienza Tu Viaje Hoy</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    :root{
-      --primary:#667eea;--secondary:#764ba2;--success:#48bb78;--error:#e53e3e;
-      --gray-100:#f7fafc;--gray-200:#edf2f7;--gray-300:#e2e8f0;--gray-400:#cbd5e0;
-      --gray-500:#a0aec0;--gray-600:#718096;--gray-700:#4a5568;--gray-800:#2d3748;--gray-900:#1a202c
-    }
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;background:linear-gradient(135deg,var(--primary),var(--secondary));min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow-x:hidden}
-    .bg-decoration{position:absolute;border-radius:50%;background:rgba(255,255,255,.1);animation:float 20s infinite ease-in-out}
-    .bg-decoration:nth-child(1){width:300px;height:300px;top:-150px;left:-150px}
-    .bg-decoration:nth-child(2){width:200px;height:200px;bottom:-100px;right:-100px;animation-delay:5s}
-    .bg-decoration:nth-child(3){width:150px;height:150px;top:50%;left:-75px;animation-delay:10s}
-    @keyframes float{0%,100%{transform:translateY(0) rotate(0)}33%{transform:translateY(-20px) rotate(120deg)}66%{transform:translateY(20px) rotate(240deg)}}
-    .container{background:rgba(255,255,255,.98);backdrop-filter:blur(10px);border-radius:24px;padding:32px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);width:min(500px,90vw);position:relative;z-index:1}
-    .progress-bar{position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-200);border-radius:24px 24px 0 0;overflow:hidden}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));width:0%;transition:width .3s ease}
-    .header{text-align:center;margin-bottom:24px}
-    .logo{width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06)}
-    .logo svg{width:32px;height:32px;fill:#fff}
-    .header h1{color:var(--gray-900);font-size:28px;font-weight:800;margin-bottom:8px;letter-spacing:-.5px}
-    .header p{color:var(--gray-600);font-size:15px;line-height:1.5}
-    .form-group{margin-bottom:18px}
-    label{display:block;color:var(--gray-700);font-weight:600;margin-bottom:8px;font-size:14px;display:flex;align-items:center;gap:8px}
-    label .required{color:var(--error)}
-    .input-wrapper{position:relative}
-    .input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;fill:var(--gray-500)}
-    input,select{width:100%;padding:14px 16px 14px 44px;border:2px solid var(--gray-300);border-radius:12px;font-size:16px;background:#fff;color:var(--gray-800);transition:.2s}
-    select{padding-left:16px;cursor:pointer}
-    input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.1)}
-    .phone-container{display:flex;gap:8px}
-    .phone-container select{flex:0 0 45%}.phone-container input{flex:1}
-    .form-group.success input,.form-group.success select{border-color:var(--success)}
-    .form-group.error input,.form-group.error select{border-color:var(--error)}
-    .validation-message{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;opacity:0;transform:translateY(-10px);transition:.2s}
-    .validation-message.show{opacity:1;transform:translateY(0)}
-    .submit-btn{width:100%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:16px 32px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-    .submit-btn.loading .spinner{display:block}.submit-btn.loading .btn-text{display:none}
-    .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .success-message{display:none;text-align:center;padding:40px}
-    .success-message.show{display:block}
-    .loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:9999}
-    .loading-overlay.show{display:flex}
-    @media (max-width:640px){.container{padding:24px 20px}.header h1{font-size:24px}.phone-container{flex-direction:column}.phone-container select{flex:1}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comienza Tu Viaje Hoy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --error: #e53e3e;
+            --gray-100: #f7fafc;
+            --gray-200: #edf2f7;
+            --gray-300: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-500: #a0aec0;
+            --gray-600: #718096;
+            --gray-700: #4a5568;
+            --gray-800: #2d3748;
+            --gray-900: #1a202c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-decoration:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .bg-decoration:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 5s;
+        }
+
+        .bg-decoration:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 50%;
+            left: -75px;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: min(500px, 90vw);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(40px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gray-200);
+            border-radius: 24px 24px 0 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        .header h1 {
+            color: var(--gray-900);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: var(--gray-600);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: var(--gray-700);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label .required {
+            color: var(--error);
+            font-size: 16px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: var(--gray-500);
+            transition: fill 0.2s ease;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            background: white;
+            color: var(--gray-800);
+        }
+
+        select {
+            cursor: pointer;
+            padding-left: 16px;
+        }
+
+        input::placeholder {
+            color: var(--gray-400);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        input:focus + .input-icon {
+            fill: var(--primary);
+        }
+
+        .phone-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .phone-container select {
+            flex: 0 0 45%;
+        }
+
+        .phone-container input {
+            flex: 1;
+        }
+
+        .form-group.success input,
+        .form-group.success select {
+            border-color: var(--success);
+        }
+
+        .form-group.success .input-icon {
+            fill: var(--success);
+        }
+
+        .form-group.error input,
+        .form-group.error select {
+            border-color: var(--error);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .form-group.error .input-icon {
+            fill: var(--error);
+        }
+
+        .validation-message {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: 13px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .validation-message svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .validation-message.error {
+            color: var(--error);
+        }
+
+        .validation-message.error svg {
+            fill: var(--error);
+        }
+
+        .validation-message.success {
+            color: var(--success);
+        }
+
+        .validation-message.success svg {
+            fill: var(--success);
+        }
+
+        .validation-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .submit-btn.loading .spinner {
+            display: block;
+        }
+
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+
+        .footer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success) 0%, #38a169 100%);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .phone-container {
+                flex-direction: column;
+            }
+
+            .phone-container select {
+                flex: 1;
+            }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+    </style>
 </head>
 <body>
-  <div class="bg-decoration"></div>
-  <div class="bg-decoration"></div>
-  <div class="bg-decoration"></div>
+    <!-- Background decorations -->
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
 
-  <div class="container">
-    <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
-
-    <div id="formSection">
-      <div class="header">
-        <div class="logo">
-          <svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
-        </div>
-        <h1>Comienza Tu Viaje</h1>
-        <p>Únete a más de 10,000 clientes satisfechos en todo el mundo</p>
-      </div>
-
-      <form id="leadForm" novalidate>
-        <div class="form-group" id="nameGroup">
-          <label for="fullName">Nombre Completo <span class="required">*</span></label>
-          <div class="input-wrapper">
-            <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4S8 5.79 8 8s1.79 4 4 4m0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg>
-            <input id="fullName" name="fullName" placeholder="Juan Pérez" required autocomplete="name" />
-          </div>
-          <div class="validation-message" id="nameMessage"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m1 15h-2v-2h2v2m0-4h-2V7h2v6Z"/></svg><span id="nameMessageText"></span></div>
+    <div class="container">
+        <!-- Progress bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
 
-        <div class="form-group" id="emailGroup">
-          <label for="email">Correo Electrónico <span class="required">*</span></label>
-          <div class="input-wrapper">
-            <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 4H4C2.89 4 2 4.89 2 6v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2m0 4-8 5L4 8V6l8 5 8-5v2Z"/></svg>
-            <input id="email" name="email" placeholder="juan@ejemplo.com" required autocomplete="email" />
-          </div>
-          <div class="validation-message" id="emailMessage"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m1 15h-2v-2h2v2m0-4h-2V7h2v6Z"/></svg><span id="emailMessageText"></span></div>
-        </div>
-
-        <div class="form-group" id="phoneGroup">
-          <label for="phone">Número de Teléfono <span class="required">*</span></label>
-          <div class="phone-container">
-            <select id="countryCode" name="countryCode" required>
-              <option value="">Seleccionar País</option>
-              <optgroup label="Populares">
-                <option value="+1">🇺🇸 EE.UU. (+1)</option>
-                <option value="+52">🇲🇽 México (+52)</option>
-                <option value="+34">🇪🇸 España (+34)</option>
-                <option value="+57">🇨🇴 Colombia (+57)</option>
-              </optgroup>
-              <optgroup label="América">
-                <option value="+54">🇦🇷 Argentina (+54)</option>
-                <option value="+56">🇨🇱 Chile (+56)</option>
-                <option value="+51">🇵🇪 Perú (+51)</option>
-                <option value="+593">🇪🇨 Ecuador (+593)</option>
-                <option value="+58">🇻🇪 Venezuela (+58)</option>
-                <option value="+591">🇧🇴 Bolivia (+591)</option>
-                <option value="+595">🇵🇾 Paraguay (+595)</option>
-                <option value="+598">🇺🇾 Uruguay (+598)</option>
-                <option value="+55">🇧🇷 Brasil (+55)</option>
-                <option value="+1">🇨🇦 Canadá (+1)</option>
-                <option value="+507">🇵🇦 Panamá (+507)</option>
-                <option value="+506">🇨🇷 Costa Rica (+506)</option>
-                <option value="+502">🇬🇹 Guatemala (+502)</option>
-                <option value="+503">🇸🇻 El Salvador (+503)</option>
-                <option value="+504">🇭🇳 Honduras (+504)</option>
-                <option value="+505">🇳🇮 Nicaragua (+505)</option>
-                <option value="+53">🇨🇺 Cuba (+53)</option>
-                <option value="+1">🇵🇷 Puerto Rico (+1)</option>
-                <option value="+1">🇩🇴 Rep. Dominicana (+1)</option>
-              </optgroup>
-              <optgroup label="Europa">
-                <option value="+33">🇫🇷 Francia (+33)</option>
-                <option value="+49">🇩🇪 Alemania (+49)</option>
-                <option value="+39">🇮🇹 Italia (+39)</option>
-                <option value="+44">🇬🇧 Reino Unido (+44)</option>
-                <option value="+31">🇳🇱 Países Bajos (+31)</option>
-                <option value="+351">🇵🇹 Portugal (+351)</option>
-              </optgroup>
-              <optgroup label="Otros">
-                <option value="+86">🇨🇳 China (+86)</option>
-                <option value="+81">🇯🇵 Japón (+81)</option>
-                <option value="+91">🇮🇳 India (+91)</option>
-                <option value="+234">🇳🇬 Nigeria (+234)</option>
-                <option value="+27">🇿🇦 Sudáfrica (+27)</option>
-                <option value="+61">🇦🇺 Australia (+61)</option>
-              </optgroup>
-            </select>
-
-            <div class="input-wrapper" style="flex:1">
-              <svg class="input-icon" viewBox="0 0 24 24"><path d="M6.62 10.79C8.06 13.62 10.38 15.94 13.21 17.38l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1v3.5c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1H7.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2Z"/></svg>
-              <input id="phone" name="phone" placeholder="123-456-7890" required autocomplete="tel" />
+        <!-- Main form -->
+        <div id="formSection">
+            <div class="header">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                        <path d="M2 17L12 22L22 17"/>
+                        <path d="M2 12L12 17L22 12"/>
+                    </svg>
+                </div>
+                <h1>Comienza Tu Viaje</h1>
+                <p>Únete a más de 10,000 clientes satisfechos en todo el mundo</p>
             </div>
-          </div>
 
-          <div class="validation-message" id="phoneMessage">
-            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m1 15h-2v-2h2v2m0-4h-2V7h2v6Z"/></svg>
-            <span id="phoneMessageText"></span>
-          </div>
+            <form id="leadForm" novalidate>
+                <div class="form-group" id="nameGroup">
+                    <label for="fullName">
+                        Nombre Completo <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24">
+                            <path d="M12 12C14.21 12 16 10.21 16 8S14.21 4 12 4 8 5.79 8 8 9.79 12 12 12M12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            placeholder="Juan Pérez"
+                            required
+                            autocomplete="name"
+                        >
+                    </div>
+                    <div class="validation-message" id="nameMessage">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z"/>
+                        </svg>
+                        <span id="nameMessageText"></span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="emailGroup">
+                    <label for="email">
+                        Correo Electrónico <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24">
+                            <path d="M20 4H4C2.89 4 2 4.89 2 6V18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4M20 8L12 13L4 8V6L12 11L20 6V8Z"/>
+                        </svg>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="juan@ejemplo.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                    <div class="validation-message" id="emailMessage">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z"/>
+                        </svg>
+                        <span id="emailMessageText"></span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="phoneGroup">
+                    <label for="phone">
+                        Número de Teléfono <span class="required">*</span>
+                    </label>
+                    <div class="phone-container">
+                        <select id="countryCode" name="countryCode" required>
+                            <option value="">Seleccionar País</option>
+                            <optgroup label="Populares">
+                                <option value="+1">🇺🇸 EE.UU. (+1)</option>
+                                <option value="+52">🇲🇽 México (+52)</option>
+                                <option value="+34">🇪🇸 España (+34)</option>
+                                <option value="+57">🇨🇴 Colombia (+57)</option>
+                            </optgroup>
+                            <optgroup label="América">
+                                <option value="+54">🇦🇷 Argentina (+54)</option>
+                                <option value="+56">🇨🇱 Chile (+56)</option>
+                                <option value="+51">🇵🇪 Perú (+51)</option>
+                                <option value="+593">🇪🇨 Ecuador (+593)</option>
+                                <option value="+58">🇻🇪 Venezuela (+58)</option>
+                                <option value="+55">🇧🇷 Brasil (+55)</option>
+                                <option value="+1">🇨🇦 Canadá (+1)</option>
+                            </optgroup>
+                            <optgroup label="Europa">
+                                <option value="+33">🇫🇷 Francia (+33)</option>
+                                <option value="+49">🇩🇪 Alemania (+49)</option>
+                                <option value="+39">🇮🇹 Italia (+39)</option>
+                                <option value="+44">🇬🇧 Reino Unido (+44)</option>
+                                <option value="+31">🇳🇱 Países Bajos (+31)</option>
+                                <option value="+351">🇵🇹 Portugal (+351)</option>
+                            </optgroup>
+                            <optgroup label="Otros">
+                                <option value="+86">🇨🇳 China (+86)</option>
+                                <option value="+81">🇯🇵 Japón (+81)</option>
+                                <option value="+91">🇮🇳 India (+91)</option>
+                                <option value="+234">🇳🇬 Nigeria (+234)</option>
+                                <option value="+27">🇿🇦 Sudáfrica (+27)</option>
+                                <option value="+61">🇦🇺 Australia (+61)</option>
+                            </optgroup>
+                        </select>
+                        <div class="input-wrapper" style="flex: 1;">
+                            <svg class="input-icon" viewBox="0 0 24 24">
+                                <path d="M6.62 10.79C8.06 13.62 10.38 15.94 13.21 17.38L15.41 15.18C15.69 14.9 16.08 14.82 16.43 14.93C17.55 15.3 18.75 15.5 20 15.5C20.55 15.5 21 15.95 21 16.5V20C21 20.55 20.55 21 20 21C10.61 21 3 13.39 3 4C3 3.45 3.45 3 4 3H7.5C8.05 3 8.5 3.45 8.5 4C8.5 5.25 8.7 6.45 9.07 7.57C9.18 7.92 9.1 8.31 8.82 8.59L6.62 10.79Z"/>
+                            </svg>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="123-456-7890"
+                                required
+                                autocomplete="tel"
+                            >
+                        </div>
+                    </div>
+                    <div class="validation-message" id="phoneMessage">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z"/>
+                        </svg>
+                        <span id="phoneMessageText"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Comenzar Ahora</span>
+                    <div class="spinner"></div>
+                </button>
+
+                <div class="footer">
+                    <p>
+                        Al hacer clic en "Comenzar Ahora", aceptas nuestros 
+                        <a href="#" onclick="event.preventDefault()">Términos de Servicio</a> y 
+                        <a href="#" onclick="event.preventDefault()">Política de Privacidad</a>.
+                        <br>
+                        Nunca compartiremos tu información sin tu permiso.
+                    </p>
+                </div>
+            </form>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">
-          <span class="btn-text">Comenzar Ahora</span>
-          <div class="spinner"></div>
-        </button>
-
-        <div class="footer">
-          <p>Al hacer clic en "Comenzar Ahora", aceptas nuestros
-            <a href="#" onclick="event.preventDefault()">Términos de Servicio</a> y
-            <a href="#" onclick="event.preventDefault()">Política de Privacidad</a>.
-            <br/>Nunca compartiremos tu información sin tu permiso.
-          </p>
+        <!-- Success message -->
+        <div class="success-message" id="successSection">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"/>
+                </svg>
+            </div>
+            <h2 style="color: var(--gray-900); margin-bottom: 12px;">¡Éxito! 🎉</h2>
+            <p style="color: var(--gray-600); margin-bottom: 24px;">
+                ¡Gracias por registrarte! Hemos recibido tu información y nos pondremos en contacto pronto.
+            </p>
+            <p style="color: var(--gray-500); font-size: 14px;">
+                Redirigiendo en <span id="countdown">3</span> segundos...
+            </p>
         </div>
-      </form>
     </div>
 
-    <div id="successSection" class="success-message">
-      <div style="width:80px;height:80px;background:linear-gradient(135deg,#48bb78,#38a169);border-radius:50%;margin:0 auto 24px;display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" width="40" height="40" fill="#fff"><path d="M9 16.17 4.83 12 3.41 13.41 9 19 21 7 19.59 5.59 9 16.17Z"/></svg>
-      </div>
-      <h2 style="color:var(--gray-900);margin-bottom:12px">¡Éxito! 🎉</h2>
-      <p style="color:var(--gray-600);margin-bottom:24px">¡Gracias por registrarte! Hemos recibido tu información.</p>
-      <p style="color:var(--gray-500);font-size:14px">Redirigiendo en <span id="countdown">3</span> segundos...</p>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center; color: white;">
+            <div style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+            <p>Procesando tu solicitud...</p>
+        </div>
     </div>
-  </div>
 
-  <div id="loadingOverlay" class="loading-overlay">
-    <div style="text-align:center;color:white">
-      <div style="width:60px;height:60px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;margin:0 auto 20px;animation:spin 1s linear infinite"></div>
-      <p>Procesando tu solicitud...</p>
-    </div>
-  </div>
-
-  <script>
-    // ======= CONFIG =======
-    const CONFIG = {
-      AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
-      AIRTABLE_TABLE_NAME: 'Leads',
-      AIRTABLE_API_KEY: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
-      REDIRECT_URL: 'https://mieladigital.com',
-      REDIRECT_DELAY: 3000,
-      DEBUG: true
-    };
-
-    // ======= DEBUG UTIL =======
-    const DBG = {
-      maskKey(k){ if(!k) return ''; return k.length<=10 ? '****' : k.slice(0,6)+'…'+k.slice(-4); },
-      log(...a){ CONFIG.DEBUG && console.log('[FORM]', ...a); },
-      group(name, fn){
-        if(!CONFIG.DEBUG){ fn(); return; }
-        console.groupCollapsed(`🔎 ${name}`); try{ fn(); } finally{ console.groupEnd(); }
-      },
-      table(obj){ CONFIG.DEBUG && console.table(obj); }
-    };
-
-    // ======= STATE =======
-    const state = {
-      formData: {},
-      geoData: {},
-      trackingData: {},
-      isSubmitting: false,
-      validationState: { fullName:false, email:false, phone:false }
-    };
-
-    const FIELD_MAP = {
-      fullName:{input:'fullName',group:'nameGroup',message:'nameMessage',text:'nameMessageText'},
-      email:{input:'email',group:'emailGroup',message:'emailMessage',text:'emailMessageText'},
-      phone:{input:'phone',group:'phoneGroup',message:'phoneMessage',text:'phoneMessageText'}
-    };
-
-    // ======= INIT =======
-    document.addEventListener('DOMContentLoaded', async () => {
-      DBG.group('Boot', () => {
-        DBG.log('🚀 FORM INITIALIZED');
-        DBG.log('Config:', {
-          base: CONFIG.AIRTABLE_BASE_ID,
-          table: CONFIG.AIRTABLE_TABLE_NAME,
-          apiKeyMasked: DBG.maskKey(CONFIG.AIRTABLE_API_KEY)
-        });
-      });
-
-      initializeTracking();
-      initializeValidation();
-      initializeForm();
-      await fetchGeoData();
-
-      DBG.log('🎯 Form ready for input!');
-    });
-
-    // ======= TRACKING =======
-    function readUrlParams(){
-      const urlParams = new URLSearchParams(window.location.search);
-      const params = {};
-      urlParams.forEach((v,k)=>params[k]=v);
-      return params;
-    }
-
-    function initializeTracking(){
-      const params = readUrlParams();
-      DBG.group('URL params', () => DBG.table(params));
-
-      // Try to capture clickid from common names
-      const urlClickId =
-        params['clickid'] ||
-        params['external_id'] ||
-        params['rtk_clickid'] || // just in case vendors rename it
-        '';
-
-      const storedClickId = localStorage.getItem('clickid') || localStorage.getItem('external_id') || '';
-
-      // Prefer URL value; fall back to storage
-      const clickid = urlClickId || storedClickId || '';
-
-      if(clickid){
-        // persist for later pages too
-        localStorage.setItem('clickid', clickid);
-        localStorage.setItem('external_id', clickid);
-      } else {
-        DBG.group('Click ID missing', () => {
-          DBG.log('No clickid/external_id found on URL or storage.');
-          DBG.log('Tip: test with ?external_id=TEST-123 or ?clickid=TEST-123 on the URL.');
-        });
-      }
-
-      state.trackingData = {
-        clickid,
-        promo: params['promo'] || params['influencer'] || '',
-        source: params['utm_source'] || '',
-        medium: params['utm_medium'] || '',
-        campaign: params['utm_campaign'] || '',
-        timestamp: new Date().toISOString(),
-        referrer: document.referrer || 'direct',
-        landingPage: window.location.href
-      };
-
-      DBG.group('Tracking init', () => DBG.table(state.trackingData));
-    }
-
-    // ======= GEO =======
-    async function fetchGeoData(){
-      const t0 = performance.now();
-      try{
-        const res = await fetch('https://ipapi.co/json/');
-        const ok = res.ok;
-        let data = {};
-        try { data = await res.json(); } catch {}
-        state.geoData = {
-          ip: data.ip || '',
-          country: data.country_name || '',
-          city: data.city || '',
-          region: data.region || '',
-          timezone: data.timezone || '',
-          userAgent: navigator.userAgent,
-          language: navigator.language || '',
-          platform: navigator.platform || ''
+    <script>
+        // Configuration - Replace these with your actual values
+        const CONFIG = {
+            AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
+            AIRTABLE_TABLE_NAME: 'Leads',
+            AIRTABLE_API_KEY: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
+            REDIRECT_DELAY: 3000,
+            DEBUG: true
         };
-        DBG.group('Geo fetch', () => {
-          DBG.log('status:', res.status, ok ? 'OK' : 'ERR', `(${Math.round(performance.now()-t0)}ms)`);
-          DBG.table(state.geoData);
+
+        // State management
+        const state = {
+            formData: {},
+            geoData: {},
+            trackingData: {},
+            isSubmitting: false,
+            validationState: {
+                fullName: false,
+                email: false,
+                phone: false
+            }
+        };
+
+        // Debug logging
+        function debugLog(...args) {
+            if (CONFIG.DEBUG) {
+                console.log('[FORM DEBUG]', ...args);
+            }
+        }
+
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('🚀 Form initialized');
+            initializeTracking();
+            initializeValidation();
+            initializeForm();
+            fetchGeoData();
         });
-      }catch(err){
-        DBG.group('Geo fetch ERROR', () => DBG.log(err));
-        state.geoData = { userAgent:navigator.userAgent, language:navigator.language||'', platform:navigator.platform||'' };
-      }
-    }
 
-    // ======= FORM / VALIDATION =======
-    function initializeForm(){
-      const form = document.getElementById('leadForm');
-      if(!form){ DBG.log('❌ Form not found'); return; }
-
-      form.addEventListener('submit', handleSubmit);
-
-      const inputs = form.querySelectorAll('input, select');
-      inputs.forEach((input) => {
-        input.addEventListener('change', updateProgress);
-        input.addEventListener('input', updateProgress);
-      });
-      DBG.log(`📝 Bound ${inputs.length} inputs`);
-    }
-
-    function updateProgress(){
-      const total = 4;
-      let done = 0;
-      if(document.getElementById('fullName').value.trim().length>=2) done++;
-      if(document.getElementById('email').value.trim() && isValidEmail(document.getElementById('email').value)) done++;
-      if(document.getElementById('countryCode').value) done++;
-      if(document.getElementById('phone').value.trim().length>=6) done++;
-      const pct = Math.round((done/total)*100);
-      document.getElementById('progressFill').style.width = pct+'%';
-    }
-
-    function initializeValidation(){
-      // full name
-      const nameInput = document.getElementById(FIELD_MAP.fullName.input);
-      nameInput.addEventListener('blur', () => validateField('fullName'));
-      nameInput.addEventListener('input', () => state.validationState.fullName && validateField('fullName'));
-
-      // email
-      const emailInput = document.getElementById(FIELD_MAP.email.input);
-      emailInput.addEventListener('blur', () => validateField('email'));
-      emailInput.addEventListener('input', () => state.validationState.email && validateField('email'));
-
-      // phone
-      const phoneInput = document.getElementById(FIELD_MAP.phone.input);
-      phoneInput.addEventListener('blur', () => validateField('phone'));
-      phoneInput.addEventListener('input', function(){
-        let v = this.value.replace(/\D/g,'');
-        if(v.length>0){
-          if(v.length<=3){ /* noop */ }
-          else if(v.length<=6){ v = v.slice(0,3)+'-'+v.slice(3); }
-          else { v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6,10); }
+        // Parse URL parameters and extract tracking data
+        function initializeTracking() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Extract parameters
+            const payload = urlParams.get('payload') || '';
+            const campaign = urlParams.get('campaign') || '';
+            const redirectUrl = urlParams.get('redirect') || '';
+            
+            // Store payload (clickid) in localStorage for persistence
+            if (payload) {
+                localStorage.setItem('clickid', payload);
+                localStorage.setItem('payload', payload);
+            }
+            
+            // Get stored clickid if not in URL
+            const clickid = payload || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
+            
+            state.trackingData = {
+                clickid: clickid,
+                payload: clickid, // Store as both for compatibility
+                promo: campaign, // Campaign is the influencer/promo
+                campaign: campaign,
+                redirectUrl: redirectUrl || CONFIG.REDIRECT_URL || 'https://mieladigital.com',
+                source: urlParams.get('source') || urlParams.get('utm_source') || '',
+                medium: urlParams.get('utm_medium') || '',
+                timestamp: new Date().toISOString(),
+                referrer: document.referrer || 'direct',
+                landingPage: window.location.href
+            };
+            
+            debugLog('📊 Tracking data:', state.trackingData);
+            
+            // Validate redirect URL
+            if (!state.trackingData.redirectUrl || state.trackingData.redirectUrl === 'null') {
+                state.trackingData.redirectUrl = 'https://mieladigital.com';
+                debugLog('⚠️ No redirect URL found, using default');
+            }
         }
-        this.value = v;
-        if(state.validationState.phone) validateField('phone');
-      });
 
-      document.getElementById('countryCode').addEventListener('change', () => {
-        if(document.getElementById('phone').value) validateField('phone');
-      });
-    }
-
-    function validateField(field){
-      let valid=false, msg='', type='error';
-      if(field==='fullName'){
-        const v = document.getElementById('fullName').value.trim();
-        if(!v) msg='El nombre completo es obligatorio';
-        else if(v.length<2) msg='El nombre debe tener al menos 2 caracteres';
-        else if(!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/.test(v)) msg='Por favor ingresa un nombre válido';
-        else { valid=true; msg='¡Perfecto!'; type='success'; }
-      }
-      if(field==='email'){
-        const v = document.getElementById('email').value.trim();
-        if(!v) msg='El correo electrónico es obligatorio';
-        else if(!isValidEmail(v)) msg='Por favor ingresa un correo válido';
-        else { valid=true; msg='¡Correo válido!'; type='success'; }
-      }
-      if(field==='phone'){
-        const phone = document.getElementById('phone').value.replace(/\D/g,'');
-        const cc = document.getElementById('countryCode').value;
-        if(!cc) msg='Por favor selecciona un país primero';
-        else if(!phone) msg='El número de teléfono es obligatorio';
-        else if(phone.length<6) msg='Número de teléfono muy corto';
-        else if(phone.length>15) msg='Número de teléfono muy largo';
-        else { valid=true; msg='¡Número válido!'; type='success'; }
-      }
-      state.validationState[field]=valid;
-      updateFieldUI(field, valid, msg, type);
-      return valid;
-    }
-
-    function updateFieldUI(field, isValid, message, messageType){
-      const map = FIELD_MAP[field];
-      const group = document.getElementById(map.group);
-      const messageEl = document.getElementById(map.message);
-      const messageText = document.getElementById(map.text);
-      group.classList.remove('success','error');
-      messageEl.classList.remove('success','error','show');
-      if(message){
-        group.classList.add(messageType);
-        messageEl.classList.add(messageType,'show');
-        messageText.textContent = message;
-      }
-    }
-
-    function isValidEmail(email){
-      return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-    }
-
-    // ======= SUBMIT =======
-    async function handleSubmit(e){
-      e.preventDefault();
-      if(state.isSubmitting) return;
-
-      const ok = validateField('fullName') & validateField('email') & validateField('phone');
-      if(!ok){ DBG.log('❌ Validation failed'); return; }
-
-      state.isSubmitting = true;
-      showLoadingState();
-
-      state.formData = {
-        fullName: document.getElementById('fullName').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.replace(/\D/g,'')
-      };
-
-      DBG.group('Submit → Collected Data', () => {
-        DBG.table({ ...state.formData, ...state.trackingData, ...state.geoData });
-      });
-
-      try{
-        const result = await submitToAirtable();
-        DBG.group('Airtable result', () => console.dir(result));
-        showSuccess();
-      }catch(err){
-        DBG.group('Airtable ERROR', () => console.error(err));
-        showError('Algo salió mal. Por favor intenta de nuevo.');
-        state.isSubmitting = false;
-        hideLoadingState();
-      }
-    }
-
-    function buildAirtablePayload(){
-      // Keep this list in sync with your actual columns to avoid 422s.
-      const fields = {
-        "Full Name": state.formData.fullName,
-        "Email": state.formData.email,
-        "Phone Number": state.formData.phone,
-        "Click ID": state.trackingData.clickid || localStorage.getItem('clickid') || localStorage.getItem('external_id') || '',
-        "Promo/Influencer": state.trackingData.promo,
-        "IP Address": state.geoData.ip,
-        "UTM Source": state.trackingData.source,
-        "UTM Medium": state.trackingData.medium,
-        "UTM Campaign": state.trackingData.campaign,
-        "Region": state.geoData.region,
-        "Country": state.geoData.country,
-        // Optional — only include if you have these columns:
-        // "City": state.geoData.city,
-        // "Language": state.geoData.language,
-        // "Referrer": state.trackingData.referrer,
-        // "Landing Page": state.trackingData.landingPage,
-        // "User Agent": state.geoData.userAgent,
-        // "Timestamp": state.trackingData.timestamp,
-        // DO NOT include "Country" unless the column exists (it caused 422 earlier)
-      };
-
-      // Remove empty-string fields to keep the payload clean
-      Object.keys(fields).forEach(k => (fields[k] === '' || fields[k] == null) && delete fields[k]);
-
-      const payload = { records:[{ fields }] };
-
-      DBG.group('Airtable payload (sanitized)', () => console.dir(payload));
-      return payload;
-    }
-
-    async function submitToAirtable(){
-      const url = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
-      const body = JSON.stringify(buildAirtablePayload());
-
-      const t0 = performance.now();
-      const res = await fetch(url, {
-        method:'POST',
-        headers:{
-          'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
-          'Content-Type':'application/json'
-        },
-        body
-      });
-
-      let json;
-      try{ json = await res.json(); }catch{ json = {}; }
-
-      DBG.group('Airtable fetch debug', () => {
-        DBG.log('→ URL:', url);
-        DBG.log('→ Method: POST');
-        DBG.log('→ Headers: { Authorization: "Bearer '+DBG.maskKey(CONFIG.AIRTABLE_API_KEY)+'", Content-Type: "application/json" }');
-        DBG.log('→ Duration:', Math.round(performance.now()-t0)+'ms');
-        DBG.log('← Status:', res.status, res.ok ? 'OK' : 'ERROR');
-        console.dir(json);
-      });
-
-      if(!res.ok) throw new Error(`HTTP ${res.status}: ${JSON.stringify(json)}`);
-      return json;
-    }
-
-    // ======= UX =======
-    function showLoadingState(){
-      const btn = document.getElementById('submitBtn');
-      btn.classList.add('loading'); btn.disabled = true;
-      document.getElementById('loadingOverlay').classList.add('show');
-    }
-    function hideLoadingState(){
-      const btn = document.getElementById('submitBtn');
-      btn.classList.remove('loading'); btn.disabled = false;
-      document.getElementById('loadingOverlay').classList.remove('show');
-    }
-
-    function showSuccess(){
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('formSection').style.display='none';
-      document.getElementById('successSection').classList.add('show');
-
-      let countdown = 3;
-      const el = document.getElementById('countdown');
-
-      const finish = () => {
-        const clickid = state.trackingData.clickid || localStorage.getItem('clickid') || localStorage.getItem('external_id') || '';
-        const redirectUrl = new URL(CONFIG.REDIRECT_URL);
-        if(clickid){
-          redirectUrl.searchParams.set('clickid', clickid);
-          redirectUrl.searchParams.set('external_id', clickid); // pass both to be safe
+        // Fetch geo data
+        async function fetchGeoData() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                if (response.ok) {
+                    const data = await response.json();
+                    state.geoData = {
+                        ip: data.ip || '',
+                        country: data.country_name || '',
+                        city: data.city || '',
+                        userAgent: navigator.userAgent,
+                        language: navigator.language || '',
+                        platform: navigator.platform || ''
+                    };
+                    debugLog('🌍 Geo data fetched:', state.geoData);
+                }
+            } catch (error) {
+                debugLog('❌ Geo data fetch failed:', error);
+                state.geoData = {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language || '',
+                    platform: navigator.platform || ''
+                };
+            }
         }
-        DBG.group('Redirect', () => DBG.log('→', redirectUrl.toString()));
-        window.location.href = redirectUrl.toString();
-      };
 
-      const timer = setInterval(() => {
-        countdown--; el.textContent = countdown;
-        if(countdown<=0){ clearInterval(timer); finish(); }
-      }, 1000);
-    }
+        // Initialize form
+        function initializeForm() {
+            const form = document.getElementById('leadForm');
+            form.addEventListener('submit', handleSubmit);
 
-    function showError(message){
-      const toast = document.createElement('div');
-      toast.style.cssText = `
-        position:fixed;bottom:20px;right:20px;background:var(--error);color:white;
-        padding:16px 24px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:10000;
-      `;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(()=>toast.remove(), 5000);
-    }
+            // Update progress bar
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', updateProgress);
+                input.addEventListener('input', updateProgress);
+            });
+        }
 
-    // ======= DEV HELPERS =======
-    window.debugSubmit = function(){
-      // quick test without typing
-      document.getElementById('fullName').value = 'Test User';
-      document.getElementById('email').value = 'test@example.com';
-      document.getElementById('countryCode').value = '+1';
-      document.getElementById('phone').value = '555-123-4567';
-      handleSubmit(new Event('submit'));
-    };
-    window.debugState = () => ({state, CONFIG});
-  </script>
+        // Update progress bar
+        function updateProgress() {
+            const totalFields = 4;
+            let completedFields = 0;
+            
+            if (document.getElementById('fullName').value.trim().length >= 2) completedFields++;
+            if (document.getElementById('email').value.trim() && isValidEmail(document.getElementById('email').value)) completedFields++;
+            if (document.getElementById('countryCode').value) completedFields++;
+            if (document.getElementById('phone').value.trim().length >= 6) completedFields++;
+            
+            const progress = (completedFields / totalFields) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Initialize validation
+        function initializeValidation() {
+            // Name validation
+            const nameInput = document.getElementById('fullName');
+            nameInput.addEventListener('blur', () => validateField('fullName'));
+            nameInput.addEventListener('input', () => {
+                if (state.validationState.fullName) {
+                    validateField('fullName');
+                }
+            });
+
+            // Email validation
+            const emailInput = document.getElementById('email');
+            emailInput.addEventListener('blur', () => validateField('email'));
+            emailInput.addEventListener('input', () => {
+                if (state.validationState.email) {
+                    validateField('email');
+                }
+            });
+
+            // Phone validation
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('blur', () => validateField('phone'));
+            phoneInput.addEventListener('input', function() {
+                // Auto-format phone number
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 0) {
+                    if (value.length <= 3) {
+                        value = value;
+                    } else if (value.length <= 6) {
+                        value = value.slice(0, 3) + '-' + value.slice(3);
+                    } else {
+                        value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10);
+                    }
+                }
+                this.value = value;
+                
+                if (state.validationState.phone) {
+                    validateField('phone');
+                }
+            });
+
+            // Country code validation
+            const countrySelect = document.getElementById('countryCode');
+            countrySelect.addEventListener('change', () => {
+                if (document.getElementById('phone').value) {
+                    validateField('phone');
+                }
+            });
+        }
+
+        // Validate individual field
+        function validateField(fieldName) {
+            let isValid = false;
+            let message = '';
+            let messageType = 'error';
+
+            switch(fieldName) {
+                case 'fullName':
+                    const name = document.getElementById('fullName').value.trim();
+                    if (!name) {
+                        message = 'El nombre completo es obligatorio';
+                    } else if (name.length < 2) {
+                        message = 'El nombre debe tener al menos 2 caracteres';
+                    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/.test(name)) {
+                        message = 'Por favor ingresa un nombre válido';
+                    } else {
+                        isValid = true;
+                        message = '¡Perfecto!';
+                        messageType = 'success';
+                    }
+                    break;
+
+                case 'email':
+                    const email = document.getElementById('email').value.trim();
+                    if (!email) {
+                        message = 'El correo electrónico es obligatorio';
+                    } else if (!isValidEmail(email)) {
+                        message = 'Por favor ingresa un correo válido';
+                    } else {
+                        isValid = true;
+                        message = '¡Correo válido!';
+                        messageType = 'success';
+                    }
+                    break;
+
+                case 'phone':
+                    const phone = document.getElementById('phone').value.replace(/\D/g, '');
+                    const countryCode = document.getElementById('countryCode').value;
+                    
+                    if (!countryCode) {
+                        message = 'Por favor selecciona un país primero';
+                    } else if (!phone) {
+                        message = 'El número de teléfono es obligatorio';
+                    } else if (phone.length < 6) {
+                        message = 'Número de teléfono muy corto';
+                    } else if (phone.length > 15) {
+                        message = 'Número de teléfono muy largo';
+                    } else {
+                        isValid = true;
+                        message = '¡Número válido!';
+                        messageType = 'success';
+                    }
+                    break;
+            }
+
+            state.validationState[fieldName] = isValid;
+            updateFieldUI(fieldName, isValid, message, messageType);
+            return isValid;
+        }
+
+        // Update field UI based on validation
+        function updateFieldUI(fieldName, isValid, message, messageType) {
+            const group = document.getElementById(fieldName + 'Group');
+            const messageEl = document.getElementById(fieldName.replace('fullName', 'name') + 'Message');
+            const messageText = document.getElementById(fieldName.replace('fullName', 'name') + 'MessageText');
+
+            // Remove existing states
+            group.classList.remove('success', 'error');
+            messageEl.classList.remove('success', 'error', 'show');
+
+            if (message) {
+                // Add new state
+                group.classList.add(messageType);
+                messageEl.classList.add(messageType, 'show');
+                messageText.textContent = message;
+
+                // Update icon
+                const iconPath = messageType === 'success' 
+                    ? 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z'
+                    : 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z';
+                messageEl.querySelector('svg path').setAttribute('d', iconPath);
+            }
+        }
+
+        // Email validation helper
+        function isValidEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(email);
+        }
+
+        // Handle form submission
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            debugLog('📤 Form submission started');
+
+            if (state.isSubmitting) {
+                debugLog('⚠️ Already submitting, returning');
+                return;
+            }
+
+            // Validate all fields
+            const isNameValid = validateField('fullName');
+            const isEmailValid = validateField('email');
+            const isPhoneValid = validateField('phone');
+
+            debugLog('✅ Validation results:', { isNameValid, isEmailValid, isPhoneValid });
+
+            if (!isNameValid || !isEmailValid || !isPhoneValid) {
+                // Find first invalid field and focus
+                if (!isNameValid) document.getElementById('fullName').focus();
+                else if (!isEmailValid) document.getElementById('email').focus();
+                else document.getElementById('phone').focus();
+                return;
+            }
+
+            state.isSubmitting = true;
+            showLoadingState();
+
+            // Collect form data
+            state.formData = {
+                fullName: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.replace(/\D/g, '')
+            };
+
+            debugLog('📦 Form data collected:', state.formData);
+
+            try {
+                // Submit to Airtable
+                await submitToAirtable();
+                
+                debugLog('✅ Submission successful');
+                
+                // Show success
+                showSuccess();
+            } catch (error) {
+                console.error('❌ Submission error:', error);
+                showError('Algo salió mal. Por favor intenta de nuevo.');
+                state.isSubmitting = false;
+                hideLoadingState();
+            }
+        }
+
+        // Submit to Airtable
+        async function submitToAirtable() {
+            const payload = {
+                records: [{
+                    fields: {
+                        "Full Name": state.formData.fullName,
+                        "Email": state.formData.email,
+                        "Phone Number": state.formData.phone,
+                        "Click ID": state.trackingData.clickid || state.trackingData.payload || '',
+                        "Promo/Influencer": state.trackingData.promo || state.trackingData.campaign || '',
+                        "UTM Source": state.trackingData.source,
+                        "UTM Medium": state.trackingData.medium,
+                        "UTM Campaign": state.trackingData.campaign,
+                        "IP Address": state.geoData.ip,
+                        "Country": state.geoData.country,
+                        "City": state.geoData.city,
+                        "User Agent": state.geoData.userAgent,
+                        "Language": state.geoData.language,
+                        "Referrer": state.trackingData.referrer,
+                        "Landing Page": state.trackingData.landingPage,
+                        "Timestamp": state.trackingData.timestamp
+                    }
+                }]
+            };
+
+            debugLog('📊 Airtable payload:', payload);
+
+            const response = await fetch(
+                `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${CONFIG.AIRTABLE_TABLE_NAME}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                debugLog('❌ Airtable error:', errorData);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            debugLog('✅ Airtable response:', result);
+            return result;
+        }
+
+        // Show loading state
+        function showLoadingState() {
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        // Hide loading state
+        function hideLoadingState() {
+            const btn = document.getElementById('submitBtn');
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // Show success message and redirect
+        function showSuccess() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('successSection').classList.add('show');
+
+            // Countdown and redirect
+            let countdown = 3;
+            const countdownEl = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    performRedirect();
+                }
+            }, 1000);
+        }
+
+        // Perform redirect with payload
+        function performRedirect() {
+            const clickid = state.trackingData.clickid || state.trackingData.payload || '';
+            let redirectUrl = state.trackingData.redirectUrl;
+            
+            // If redirect URL was provided in the URL parameter, use it
+            if (redirectUrl && redirectUrl !== 'null' && redirectUrl !== '') {
+                try {
+                    // Check if it's a valid URL
+                    const url = new URL(redirectUrl);
+                    
+                    // If payload exists, append it to the redirect URL
+                    if (clickid) {
+                        // Check if the URL already has a payload parameter
+                        if (!url.searchParams.has('payload')) {
+                            url.searchParams.set('payload', clickid);
+                        }
+                        
+                        // Also set clickid for compatibility
+                        if (!url.searchParams.has('clickid')) {
+                            url.searchParams.set('clickid', clickid);
+                        }
+                        
+                        // Set external_id for compatibility
+                        if (!url.searchParams.has('external_id')) {
+                            url.searchParams.set('external_id', clickid);
+                        }
+                    }
+                    
+                    redirectUrl = url.toString();
+                } catch (error) {
+                    debugLog('⚠️ Invalid redirect URL, using default');
+                    redirectUrl = 'https://mieladigital.com';
+                }
+            } else {
+                // Use default redirect
+                redirectUrl = 'https://mieladigital.com';
+            }
+            
+            debugLog('🔄 Redirecting to:', redirectUrl);
+            window.location.href = redirectUrl;
+        }
+
+        // Show error message
+        function showError(message) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--error);
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Debug helper for testing
+        window.debugSubmit = function() {
+            console.log('🔧 DEBUG SUBMIT TRIGGERED');
+            document.getElementById('fullName').value = 'Test User';
+            document.getElementById('email').value = 'test@example.com';
+            document.getElementById('countryCode').value = '+1';
+            document.getElementById('phone').value = '555-123-4567';
+            document.getElementById('leadForm').dispatchEvent(new Event('submit'));
+        };
+        
+        window.debugState = function() {
+            console.log('📊 Current State:', state);
+            console.log('🔗 Tracking Data:', state.trackingData);
+            console.log('🌍 Geo Data:', state.geoData);
+        };
+        
+        console.log('💡 TIP: Use debugSubmit() to test form submission');
+        console.log('💡 TIP: Use debugState() to view current state');
+    </script>
 </body>
 </html>
