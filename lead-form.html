@@ -81,94 +81,9 @@
             gap: 8px;
         }
 
-        .country-selector {
-            position: relative;
+        .phone-container select {
             flex: 0 0 140px;
-        }
-
-        .country-button {
-            width: 100%;
-            height: 54px;
-            padding: 0 12px;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .country-button:hover {
-            border-color: #cbd5e0;
-        }
-
-        .country-button.active {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .dropdown-arrow {
-            font-size: 10px;
-            color: #718096;
-            transition: transform 0.2s ease;
-        }
-
-        .country-button.active .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .country-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .country-dropdown.show {
-            display: block;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-bottom-color: #667eea;
-        }
-
-        .country-options {
-            max-height: 180px;
-            overflow-y: auto;
-        }
-
-        .country-option {
-            padding: 10px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background-color 0.2s;
-        }
-
-        .country-option:hover, .country-option.highlighted {
-            background-color: #f8fafc;
-        }
-
-        .country-option:last-child {
-            border-bottom: none;
         }
 
         .phone-container input[type="tel"] {
@@ -270,84 +185,75 @@
             <div class="form-group">
                 <label for="phone">Phone Number</label>
                 <div class="phone-container">
-                    <div class="country-selector">
-                        <button type="button" id="countryButton" class="country-button">
-                            <span id="selectedCountryText">Select</span>
-                            <span class="dropdown-arrow">▼</span>
-                        </button>
-                        <div id="countryDropdown" class="country-dropdown">
-                            <input type="text" id="countrySearch" placeholder="Search country..." class="search-input">
-                            <div class="country-options">
-                                <div class="country-option" data-code="+1">🇺🇸 United States (+1)</div>
-                                <div class="country-option" data-code="+1">🇨🇦 Canada (+1)</div>
-                                <div class="country-option" data-code="+44">🇬🇧 United Kingdom (+44)</div>
-                                <div class="country-option" data-code="+33">🇫🇷 France (+33)</div>
-                                <div class="country-option" data-code="+49">🇩🇪 Germany (+49)</div>
-                                <div class="country-option" data-code="+39">🇮🇹 Italy (+39)</div>
-                                <div class="country-option" data-code="+34">🇪🇸 Spain (+34)</div>
-                                <div class="country-option" data-code="+31">🇳🇱 Netherlands (+31)</div>
-                                <div class="country-option" data-code="+32">🇧🇪 Belgium (+32)</div>
-                                <div class="country-option" data-code="+41">🇨🇭 Switzerland (+41)</div>
-                                <div class="country-option" data-code="+43">🇦🇹 Austria (+43)</div>
-                                <div class="country-option" data-code="+45">🇩🇰 Denmark (+45)</div>
-                                <div class="country-option" data-code="+46">🇸🇪 Sweden (+46)</div>
-                                <div class="country-option" data-code="+47">🇳🇴 Norway (+47)</div>
-                                <div class="country-option" data-code="+358">🇫🇮 Finland (+358)</div>
-                                <div class="country-option" data-code="+7">🇷🇺 Russia (+7)</div>
-                                <div class="country-option" data-code="+86">🇨🇳 China (+86)</div>
-                                <div class="country-option" data-code="+81">🇯🇵 Japan (+81)</div>
-                                <div class="country-option" data-code="+82">🇰🇷 South Korea (+82)</div>
-                                <div class="country-option" data-code="+91">🇮🇳 India (+91)</div>
-                                <div class="country-option" data-code="+61">🇦🇺 Australia (+61)</div>
-                                <div class="country-option" data-code="+64">🇳🇿 New Zealand (+64)</div>
-                                <div class="country-option" data-code="+55">🇧🇷 Brazil (+55)</div>
-                                <div class="country-option" data-code="+52">🇲🇽 Mexico (+52)</div>
-                                <div class="country-option" data-code="+54">🇦🇷 Argentina (+54)</div>
-                                <div class="country-option" data-code="+56">🇨🇱 Chile (+56)</div>
-                                <div class="country-option" data-code="+57">🇨🇴 Colombia (+57)</div>
-                                <div class="country-option" data-code="+58">🇻🇪 Venezuela (+58)</div>
-                                <div class="country-option" data-code="+51">🇵🇪 Peru (+51)</div>
-                                <div class="country-option" data-code="+593">🇪🇨 Ecuador (+593)</div>
-                                <div class="country-option" data-code="+27">🇿🇦 South Africa (+27)</div>
-                                <div class="country-option" data-code="+234">🇳🇬 Nigeria (+234)</div>
-                                <div class="country-option" data-code="+254">🇰🇪 Kenya (+254)</div>
-                                <div class="country-option" data-code="+20">🇪🇬 Egypt (+20)</div>
-                                <div class="country-option" data-code="+212">🇲🇦 Morocco (+212)</div>
-                                <div class="country-option" data-code="+213">🇩🇿 Algeria (+213)</div>
-                                <div class="country-option" data-code="+216">🇹🇳 Tunisia (+216)</div>
-                                <div class="country-option" data-code="+218">🇱🇾 Libya (+218)</div>
-                                <div class="country-option" data-code="+966">🇸🇦 Saudi Arabia (+966)</div>
-                                <div class="country-option" data-code="+971">🇦🇪 UAE (+971)</div>
-                                <div class="country-option" data-code="+974">🇶🇦 Qatar (+974)</div>
-                                <div class="country-option" data-code="+965">🇰🇼 Kuwait (+965)</div>
-                                <div class="country-option" data-code="+973">🇧🇭 Bahrain (+973)</div>
-                                <div class="country-option" data-code="+968">🇴🇲 Oman (+968)</div>
-                                <div class="country-option" data-code="+962">🇯🇴 Jordan (+962)</div>
-                                <div class="country-option" data-code="+961">🇱🇧 Lebanon (+961)</div>
-                                <div class="country-option" data-code="+963">🇸🇾 Syria (+963)</div>
-                                <div class="country-option" data-code="+964">🇮🇶 Iraq (+964)</div>
-                                <div class="country-option" data-code="+98">🇮🇷 Iran (+98)</div>
-                                <div class="country-option" data-code="+90">🇹🇷 Turkey (+90)</div>
-                                <div class="country-option" data-code="+92">🇵🇰 Pakistan (+92)</div>
-                                <div class="country-option" data-code="+93">🇦🇫 Afghanistan (+93)</div>
-                                <div class="country-option" data-code="+880">🇧🇩 Bangladesh (+880)</div>
-                                <div class="country-option" data-code="+94">🇱🇰 Sri Lanka (+94)</div>
-                                <div class="country-option" data-code="+977">🇳🇵 Nepal (+977)</div>
-                                <div class="country-option" data-code="+95">🇲🇲 Myanmar (+95)</div>
-                                <div class="country-option" data-code="+66">🇹🇭 Thailand (+66)</div>
-                                <div class="country-option" data-code="+84">🇻🇳 Vietnam (+84)</div>
-                                <div class="country-option" data-code="+855">🇰🇭 Cambodia (+855)</div>
-                                <div class="country-option" data-code="+856">🇱🇦 Laos (+856)</div>
-                                <div class="country-option" data-code="+60">🇲🇾 Malaysia (+60)</div>
-                                <div class="country-option" data-code="+65">🇸🇬 Singapore (+65)</div>
-                                <div class="country-option" data-code="+63">🇵🇭 Philippines (+63)</div>
-                                <div class="country-option" data-code="+62">🇮🇩 Indonesia (+62)</div>
-                                <div class="country-option" data-code="+673">🇧🇳 Brunei (+673)</div>
-                            </div>
-                        </div>
-                    </div>
+                    <select id="countryCode" name="countryCode" required>
+                        <option value="">Country</option>
+                        <option value="+1">🇺🇸 United States (+1)</option>
+                        <option value="+1">🇨🇦 Canada (+1)</option>
+                        <option value="+44">🇬🇧 United Kingdom (+44)</option>
+                        <option value="+33">🇫🇷 France (+33)</option>
+                        <option value="+49">🇩🇪 Germany (+49)</option>
+                        <option value="+39">🇮🇹 Italy (+39)</option>
+                        <option value="+34">🇪🇸 Spain (+34)</option>
+                        <option value="+31">🇳🇱 Netherlands (+31)</option>
+                        <option value="+32">🇧🇪 Belgium (+32)</option>
+                        <option value="+41">🇨🇭 Switzerland (+41)</option>
+                        <option value="+43">🇦🇹 Austria (+43)</option>
+                        <option value="+45">🇩🇰 Denmark (+45)</option>
+                        <option value="+46">🇸🇪 Sweden (+46)</option>
+                        <option value="+47">🇳🇴 Norway (+47)</option>
+                        <option value="+358">🇫🇮 Finland (+358)</option>
+                        <option value="+7">🇷🇺 Russia (+7)</option>
+                        <option value="+86">🇨🇳 China (+86)</option>
+                        <option value="+81">🇯🇵 Japan (+81)</option>
+                        <option value="+82">🇰🇷 South Korea (+82)</option>
+                        <option value="+91">🇮🇳 India (+91)</option>
+                        <option value="+61">🇦🇺 Australia (+61)</option>
+                        <option value="+64">🇳🇿 New Zealand (+64)</option>
+                        <option value="+55">🇧🇷 Brazil (+55)</option>
+                        <option value="+52">🇲🇽 Mexico (+52)</option>
+                        <option value="+54">🇦🇷 Argentina (+54)</option>
+                        <option value="+56">🇨🇱 Chile (+56)</option>
+                        <option value="+57">🇨🇴 Colombia (+57)</option>
+                        <option value="+58">🇻🇪 Venezuela (+58)</option>
+                        <option value="+51">🇵🇪 Peru (+51)</option>
+                        <option value="+593">🇪🇨 Ecuador (+593)</option>
+                        <option value="+27">🇿🇦 South Africa (+27)</option>
+                        <option value="+234">🇳🇬 Nigeria (+234)</option>
+                        <option value="+254">🇰🇪 Kenya (+254)</option>
+                        <option value="+20">🇪🇬 Egypt (+20)</option>
+                        <option value="+212">🇲🇦 Morocco (+212)</option>
+                        <option value="+213">🇩🇿 Algeria (+213)</option>
+                        <option value="+216">🇹🇳 Tunisia (+216)</option>
+                        <option value="+218">🇱🇾 Libya (+218)</option>
+                        <option value="+966">🇸🇦 Saudi Arabia (+966)</option>
+                        <option value="+971">🇦🇪 UAE (+971)</option>
+                        <option value="+974">🇶🇦 Qatar (+974)</option>
+                        <option value="+965">🇰🇼 Kuwait (+965)</option>
+                        <option value="+973">🇧🇭 Bahrain (+973)</option>
+                        <option value="+968">🇴🇲 Oman (+968)</option>
+                        <option value="+962">🇯🇴 Jordan (+962)</option>
+                        <option value="+961">🇱🇧 Lebanon (+961)</option>
+                        <option value="+963">🇸🇾 Syria (+963)</option>
+                        <option value="+964">🇮🇶 Iraq (+964)</option>
+                        <option value="+98">🇮🇷 Iran (+98)</option>
+                        <option value="+90">🇹🇷 Turkey (+90)</option>
+                        <option value="+92">🇵🇰 Pakistan (+92)</option>
+                        <option value="+93">🇦🇫 Afghanistan (+93)</option>
+                        <option value="+880">🇧🇩 Bangladesh (+880)</option>
+                        <option value="+94">🇱🇰 Sri Lanka (+94)</option>
+                        <option value="+977">🇳🇵 Nepal (+977)</option>
+                        <option value="+95">🇲🇲 Myanmar (+95)</option>
+                        <option value="+66">🇹🇭 Thailand (+66)</option>
+                        <option value="+84">🇻🇳 Vietnam (+84)</option>
+                        <option value="+855">🇰🇭 Cambodia (+855)</option>
+                        <option value="+856">🇱🇦 Laos (+856)</option>
+                        <option value="+60">🇲🇾 Malaysia (+60)</option>
+                        <option value="+65">🇸🇬 Singapore (+65)</option>
+                        <option value="+63">🇵🇭 Philippines (+63)</option>
+                        <option value="+62">🇮🇩 Indonesia (+62)</option>
+                        <option value="+673">🇧🇳 Brunei (+673)</option>
+                    </select>
                     <input type="tel" id="phone" name="phone" placeholder="123456789" required>
-                    <input type="hidden" id="selectedCountryCode" name="countryCode" required>
                 </div>
                 <div class="error" id="phoneError">Please select country code and enter phone number</div>
             </div>
@@ -523,127 +429,126 @@
             return isValid;
         }
 
-        // Country search functionality
-        function setupCountrySearch() {
-            console.log("🔧 Setting up country search functionality");
+        // Form validation
+        function validateForm() {
+            console.log("Validating form...");
             
-            const countryButton = document.getElementById('countryButton');
-            const dropdown = document.getElementById('countryDropdown');
-            const searchInput = document.getElementById('countrySearch');
-            const selectedText = document.getElementById('selectedCountryText');
-            const hiddenInput = document.getElementById('selectedCountryCode');
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const countryCode = document.getElementById('countryCode').value;
+            const phone = document.getElementById('phone').value.trim();
+            
+            console.log("Form values:");
+            console.log("   - Name:", name);
+            console.log("   - Email:", email);
+            console.log("   - Country Code:", countryCode);
+            console.log("   - Phone:", phone);
+            
+            let isValid = true;
+
+            // Reset errors
+            document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+
+            // Name validation
+            if (!name || name.length < 2) {
+                console.log("Name validation failed");
+                document.getElementById('nameError').style.display = 'block';
+                document.getElementById('nameError').textContent = 'Full name is required (minimum 2 characters)';
+                isValid = false;
+            } else {
+                console.log("Name validation passed");
+            }
+
+            // Email validation
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!email) {
+                console.log("Email validation failed: Empty");
+                document.getElementById('emailError').style.display = 'block';
+                document.getElementById('emailError').textContent = 'Email address is required';
+                isValid = false;
+            } else if (!emailRegex.test(email)) {
+                console.log("Email validation failed: Invalid format");
+                document.getElementById('emailError').style.display = 'block';
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            } else {
+                console.log("Email validation passed");
+            }
+
+            // Phone validation
+            if (!countryCode) {
+                console.log("Phone validation failed: No country selected");
+                document.getElementById('phoneError').style.display = 'block';
+                document.getElementById('phoneError').textContent = 'Please select a country';
+                isValid = false;
+            } else if (!phone) {
+                console.log("Phone validation failed: Empty phone number");
+                document.getElementById('phoneError').style.display = 'block';
+                document.getElementById('phoneError').textContent = 'Please enter your phone number';
+                isValid = false;
+            } else if (phone.length < 6 || phone.length > 15) {
+                console.log("Phone validation failed: Invalid length");
+                document.getElementById('phoneError').style.display = 'block';
+                document.getElementById('phoneError').textContent = 'Phone number must be 6-15 digits';
+                isValid = false;
+            } else if (!/^\d+$/.test(phone)) {
+                console.log("Phone validation failed: Non-numeric characters");
+                document.getElementById('phoneError').style.display = 'block';
+                document.getElementById('phoneError').textContent = 'Phone number should contain only digits';
+                isValid = false;
+            } else {
+                console.log("Phone validation passed");
+            }
+
+            console.log("Overall validation result:", isValid ? "PASSED" : "FAILED");
+            return isValid;
+        }
+
+        // Simple real-time validation
+        function setupRealTimeValidation() {
+            console.log("Setting up real-time validation");
+            
+            const nameInput = document.getElementById('fullName');
+            const emailInput = document.getElementById('email');
             const phoneInput = document.getElementById('phone');
-            const options = dropdown.querySelectorAll('.country-option');
-            let highlightedIndex = -1;
+            const countrySelect = document.getElementById('countryCode');
 
-            countryButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                const isOpen = dropdown.classList.contains('show');
-                console.log("🔽 Country dropdown clicked, currently open:", isOpen);
-                
-                if (isOpen) {
-                    closeDropdown();
-                } else {
-                    openDropdown();
+            nameInput.addEventListener('input', function() {
+                if (this.value.trim().length >= 2) {
+                    document.getElementById('nameError').style.display = 'none';
                 }
             });
 
-            function openDropdown() {
-                console.log("🔽 Opening country dropdown");
-                dropdown.classList.add('show');
-                countryButton.classList.add('active');
-                searchInput.value = '';
-                filterOptions('');
-                searchInput.focus();
-                highlightedIndex = -1;
-            }
-
-            function closeDropdown() {
-                console.log("🔼 Closing country dropdown");
-                dropdown.classList.remove('show');
-                countryButton.classList.remove('active');
-            }
-
-            searchInput.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                console.log("🔍 Country search query:", query);
-                filterOptions(query);
-                highlightedIndex = -1;
-            });
-
-            searchInput.addEventListener('keydown', function(e) {
-                const visibleOptions = dropdown.querySelectorAll('.country-option:not([style*="display: none"])');
-                
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    highlightedIndex = Math.min(highlightedIndex + 1, visibleOptions.length - 1);
-                    updateHighlight(visibleOptions);
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    highlightedIndex = Math.max(highlightedIndex - 1, 0);
-                    updateHighlight(visibleOptions);
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
-                        selectCountry(visibleOptions[highlightedIndex]);
-                    }
-                } else if (e.key === 'Escape') {
-                    closeDropdown();
-                    countryButton.focus();
+            emailInput.addEventListener('input', function() {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (emailRegex.test(this.value.trim())) {
+                    document.getElementById('emailError').style.display = 'none';
                 }
             });
 
-            options.forEach(option => {
-                option.addEventListener('click', function() {
-                    selectCountry(this);
-                });
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!countryButton.contains(e.target) && !dropdown.contains(e.target)) {
-                    closeDropdown();
+            phoneInput.addEventListener('input', function() {
+                const oldValue = this.value;
+                this.value = this.value.replace(/\D/g, '');
+                
+                if (oldValue !== this.value) {
+                    console.log("Phone input cleaned:", oldValue, "->", this.value);
                 }
-            });
-
-            function filterOptions(query) {
-                let visibleCount = 0;
-                options.forEach(option => {
-                    const text = option.textContent.toLowerCase();
-                    if (text.includes(query)) {
-                        option.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-                console.log("🔍 Filtered countries, showing:", visibleCount);
-            }
-
-            function updateHighlight(visibleOptions) {
-                options.forEach(option => option.classList.remove('highlighted'));
-                if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
-                    visibleOptions[highlightedIndex].classList.add('highlighted');
-                    visibleOptions[highlightedIndex].scrollIntoView({ block: 'nearest' });
-                }
-            }
-
-            function selectCountry(option) {
-                const countryCode = option.dataset.code;
-                const countryText = option.textContent;
                 
-                console.log("🌍 Country selected:");
-                console.log("   - Code:", countryCode);
-                console.log("   - Full text:", countryText);
-                
-                selectedText.textContent = countryCode;
-                hiddenInput.value = countryCode;
-                closeDropdown();
-                phoneInput.focus();
-                
-                if (phoneInput.value.length >= 6) {
+                if (this.value.length >= 6 && countrySelect.value) {
                     document.getElementById('phoneError').style.display = 'none';
                 }
-            }
+            });
+
+            countrySelect.addEventListener('change', function() {
+                console.log("Country selected:", this.value);
+                if (this.value && phoneInput.value.length >= 6) {
+                    document.getElementById('phoneError').style.display = 'none';
+                }
+            });
+        }ComputedStyle(countryButton).display);
+            console.log("   - Button visibility:", window.getComputedStyle(countryButton).visibility);
+            console.log("   - Button pointer-events:", window.getComputedStyle(countryButton).pointerEvents);
+            console.log("   - Button z-index:", window.getComputedStyle(countryButton).zIndex);
         }
 
         // Real-time validation feedback
