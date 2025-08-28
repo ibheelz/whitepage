@@ -5,8 +5,8 @@
   const PinUpTheme = {
     config: {
       name: 'pinup',
-      logo: '/assets/pinup-logo.svg',
-      bgImage: '/assets/pinup-bg.jpg',
+      logo: '/assets/pinup-logo.png',
+      bgImage: '/assets/pinup-bg.png',
       colors: {
         primary: '#EE5A52',
         secondary: '#26D0CE',
