@@ -94,7 +94,7 @@
         container.className = 'relative z-10 w-full max-w-md mx-auto';
 
         const formCard = document.createElement('div');
-        formCard.className = 'bg-gradient-to-b from-pinup-dark-top to-pinup-dark-bottom border-2 rounded-2xl p-8 shadow-2xl backdrop-blur-sm bg-opacity-95';
+        formCard.className = 'bg-gradient-to-b from-pinup-dark-top to-pinup-dark-bottom border-[3px] rounded-[28px] p-8 shadow-2xl backdrop-blur-sm bg-opacity-95';
         formCard.style.borderColor = this.config.colors.borderColor; // ensure color even if TW missing
 
         while (container.firstChild) formCard.appendChild(container.firstChild);
@@ -104,7 +104,7 @@
       // Logo
       const logoContainer = document.querySelector('.logo');
       if (logoContainer) {
-        logoContainer.className = 'w-20 h-12 mx-auto mb-6';
+        logoContainer.className = 'w-32 h-12 mx-auto mb-6';
         logoContainer.innerHTML = `<img src="${this.config.logo}" alt="PIN-UP" class="w-full h-full object-contain" />`;
       }
 
@@ -167,8 +167,9 @@
       // Submit button
       const submitBtn = document.querySelector('.submit-btn');
       if (submitBtn) {
-        submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 rounded-lg transition-all transform uppercase shadow-lg';
-        submitBtn.style.backgroundColor = this.config.colors.secondary; // base
+        submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 rounded-full transition-all transform uppercase shadow-lg';
+        // override gradient from base CSS
+        submitBtn.style.background = this.config.colors.secondary; // base
         submitBtn.addEventListener('mouseenter', () => (submitBtn.style.filter = 'brightness(1.05)'));
         submitBtn.addEventListener('mouseleave', () => (submitBtn.style.filter = ''));
       }
