@@ -8,13 +8,13 @@
       logo: '/assets/pinup-logo.png',
       bgImage: '/assets/pinup-bg.png',
       colors: {
-        primary: '#EE5A52',
+        primary: '#ff2400',
         secondary: '#26D0CE',
         dark: '#1A1D26',
         darkGradientTop: '#2B3140',
         darkGradientBottom: '#1A1D26',
         inputBg: '#1F2937',
-        borderColor: '#EE5A52',
+        borderColor: '#ff2400',
       },
     },
 
@@ -81,6 +81,19 @@
       document.body.classList.add('font-montserrat', 'min-h-screen', 'flex', 'items-center', 'justify-center', 'p-5');
       document.body.style.background = `url('${this.config.bgImage}') no-repeat center center fixed`;
       document.body.style.backgroundSize = 'cover';
+      document.body.style.fontFamily = 'Montserrat, sans-serif';
+      if (!document.getElementById('pinup-compact')) {
+        const style = document.createElement('style');
+        style.id = 'pinup-compact';
+        style.textContent = `
+          .header{margin-bottom:12px!important}
+          .form-group{margin-bottom:12px!important}
+          label{margin-bottom:6px!important}
+          .footer{margin-top:12px!important;padding-top:12px!important}
+          .submit-btn{margin-top:12px!important}
+        `;
+        document.head.appendChild(style);
+      }
 
       // Hide original decorations and progress bar
       document.querySelectorAll('.bg-decoration').forEach((el) => (el.style.display = 'none'));
@@ -94,7 +107,8 @@
         container.className = 'relative z-10 w-full max-w-md mx-auto';
 
         const formCard = document.createElement('div');
-        formCard.className = 'bg-gradient-to-b from-pinup-dark-top to-pinup-dark-bottom border-[3px] rounded-[28px] p-8 shadow-2xl backdrop-blur-sm bg-opacity-95';
+        formCard.className = 'border-[3px] rounded-[40px] p-6 shadow-2xl backdrop-blur-sm';
+        formCard.style.background = 'linear-gradient(to bottom, #0b0c10, #2a303c)';
         formCard.style.borderColor = this.config.colors.borderColor; // ensure color even if TW missing
 
         while (container.firstChild) formCard.appendChild(container.firstChild);
@@ -164,12 +178,15 @@
         if (phoneInputWrapper) phoneInputWrapper.className = 'flex-1';
       }
 
+      // Default phone country: Chile +56
+      const cc = document.getElementById('countryCode');
+      if (cc && !cc.value) { cc.value = '+56'; cc.dispatchEvent(new Event('change', { bubbles: true })); }
+
       // Submit button
       const submitBtn = document.querySelector('.submit-btn');
       if (submitBtn) {
-        submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 rounded-full transition-all transform uppercase shadow-lg';
-        // override gradient from base CSS
-        submitBtn.style.background = this.config.colors.secondary; // base
+        submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 rounded-full transition-all transform uppercase shadow-lg tracking-wide';
+        submitBtn.style.background = 'linear-gradient(to bottom, #01d0a6, #0e8477)'; // base
         submitBtn.addEventListener('mouseenter', () => (submitBtn.style.filter = 'brightness(1.05)'));
         submitBtn.addEventListener('mouseleave', () => (submitBtn.style.filter = ''));
       }
