@@ -1,8 +1,8 @@
 // File: /themes/pinup.js
-// PIN-UP Theme Module (tailwind play cdn friendly, idempotent)
+// PIN-UP Theme (glassmorphism + consistent 2px borders, radius=20, fixed width 480px)
 
 (function () {
-  const RADIUS = 28; // consistent roundness everywhere
+  const RADIUS = 20; // consistent roundness everywhere
 
   const PinUpTheme = {
     config: {
@@ -11,13 +11,11 @@
       bgImage: '/assets/pinup-bg.png',
       colors: {
         primary: '#ff2400', // pin-up red
-        secondary: '#26D0CE', // legacy teal (not used for button gradient)
-        dark: '#1A1D26',
         darkGradientTop: '#2a303c', // lighter top
         darkGradientBottom: '#0b0c10', // darker bottom
         inputBg: '#1F2937',
       },
-      green: '#01d0a6', // success/brand green
+      green: '#01d0a6',
       greenDark: '#0e8477',
     },
 
@@ -42,9 +40,9 @@
               'pinup-red': '${this.config.colors.primary}',
               'pinup-green': '${this.config.green}',
               'pinup-green-dark': '${this.config.greenDark}',
-              'pinup-dark-top': '${this.config.darkGradientTop}',
-              'pinup-dark-bottom': '${this.config.darkGradientBottom}',
-              'pinup-input': '${this.config.inputBg}'
+              'pinup-dark-top': '${this.config.colors.darkGradientTop}',
+              'pinup-dark-bottom': '${this.config.colors.darkGradientBottom}',
+              'pinup-input': '${this.config.colors.inputBg}'
             }, fontFamily: { montserrat: ['Montserrat','sans-serif'] } } }
           };
         `;
@@ -72,17 +70,37 @@
       const progressBar = document.querySelector('.progress-bar');
       if (progressBar) progressBar.style.display = 'none';
 
-      // Container → Card
+      // Container → Card (fixed width 480px; not wider on large screens)
       const container = document.querySelector('.container');
       if (container && !container.dataset.pinupApplied) {
         container.dataset.pinupApplied = 'true';
-        container.className = 'relative z-10 w-full max-w-lg md:max-w-xl mx-auto';
+        container.className = 'relative z-10 w-full mx-auto';
+        container.style.maxWidth = '480px';
+        container.style.width = '100%';
 
         const formCard = document.createElement('div');
-        formCard.className = 'pinup-skin p-6 shadow-2xl backdrop-blur-sm';
-        formCard.style.background = `linear-gradient(to bottom, ${this.config.colors.darkGradientTop}, ${this.config.colors.darkGradientBottom})`;
-        formCard.style.border = `2px solid ${this.config.colors.primary}`; // thinner border
+        formCard.className = 'pinup-skin p-6';
+        formCard.style.position = 'relative';
+        formCard.style.overflow = 'hidden';
+        // liquid glass: frosted, saturated, subtle inner highlight + gradient (top lighter → bottom darker)
+        formCard.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.65), rgba(11,12,16,0.65))';
+        formCard.style.backdropFilter = 'blur(16px) saturate(140%)';
+        formCard.style.webkitBackdropFilter = 'blur(16px) saturate(140%)';
+        formCard.style.border = `2px solid ${this.config.colors.primary}`;
         formCard.style.borderRadius = RADIUS + 'px';
+        formCard.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.35)';
+
+        // top gloss highlight
+        const gloss = document.createElement('div');
+        gloss.style.position = 'absolute';
+        gloss.style.top = '0';
+        gloss.style.left = '0';
+        gloss.style.right = '0';
+        gloss.style.height = '64px';
+        gloss.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.18), rgba(255,255,255,0))';
+        gloss.style.pointerEvents = 'none';
+        gloss.style.borderTopLeftRadius = gloss.style.borderTopRightRadius = (RADIUS - 1) + 'px';
+        formCard.appendChild(gloss);
 
         while (container.firstChild) formCard.appendChild(container.firstChild);
         container.appendChild(formCard);
@@ -102,27 +120,24 @@
       if (headerP) headerP.className = 'text-gray-400 text-sm mb-4';
 
       // Labels & asterisks
-      document.querySelectorAll('label').forEach((label) => {
-        label.className = 'block text-white font-semibold mb-2 text-sm';
-      });
-      document.querySelectorAll('.required').forEach((req) => {
-        req.style.color = this.config.colors.primary;
-        req.classList.add('ml-1');
-      });
+      document.querySelectorAll('label').forEach((label) => { label.className = 'block text-white font-semibold mb-2 text-sm'; });
+      document.querySelectorAll('.required').forEach((req) => { req.style.color = this.config.colors.primary; req.classList.add('ml-1'); });
 
       // Inputs
       document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach((input) => {
-        input.className = 'w-full px-4 py-3 text-white placeholder-gray-500 transition-all';
-        input.style.backgroundColor = this.config.colors.inputBg;
-        input.style.border = '2px solid ' + this.config.colors.primary; // default red until valid
+        input.className = 'w-full px-4 py-3 text-white placeholder-gray-400 transition-all';
+        input.style.backgroundColor = 'rgba(31,41,55,0.55)';
+        input.style.backdropFilter = 'blur(6px)';
+        input.style.border = `2px solid ${this.config.colors.primary}`; // default red until valid
         input.style.borderRadius = RADIUS + 'px';
       });
 
       // Selects
       document.querySelectorAll('select').forEach((select) => {
         select.className = 'w-full px-4 py-3 text-white transition-all appearance-none cursor-pointer';
-        select.style.backgroundColor = this.config.colors.inputBg;
-        select.style.border = '2px solid ' + this.config.colors.primary; // default red until valid
+        select.style.backgroundColor = 'rgba(31,41,55,0.55)';
+        select.style.backdropFilter = 'blur(6px)';
+        select.style.border = `2px solid ${this.config.colors.primary}`; // default red until valid
         select.style.borderRadius = RADIUS + 'px';
         select.style.backgroundImage = "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")";
         select.style.backgroundPosition = 'right 0.75rem center';
@@ -143,8 +158,9 @@
         const phoneInputWrapper = phoneContainer.querySelector('.input-wrapper');
         if (phoneSelect) {
           phoneSelect.className = 'flex-shrink-0 w-36 px-3 py-3 text-white text-sm appearance-none cursor-pointer';
-          phoneSelect.style.backgroundColor = this.config.colors.inputBg;
-          phoneSelect.style.border = '2px solid ' + this.config.colors.primary;
+          phoneSelect.style.backgroundColor = 'rgba(31,41,55,0.55)';
+          phoneSelect.style.backdropFilter = 'blur(6px)';
+          phoneSelect.style.border = `2px solid ${this.config.colors.primary}`;
           phoneSelect.style.borderRadius = RADIUS + 'px';
         }
         if (phoneInputWrapper) phoneInputWrapper.className = 'flex-1';
@@ -154,12 +170,13 @@
       const cc = document.getElementById('countryCode');
       if (cc && !cc.value) { cc.value = '+56'; cc.dispatchEvent(new Event('change', { bubbles: true })); }
 
-      // Submit button (gradient, consistent radius)
+      // Submit button (gradient, consistent 2px border)
       const submitBtn = document.querySelector('.submit-btn');
       if (submitBtn) {
         submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 transition-all transform uppercase shadow-lg tracking-wide';
         submitBtn.style.background = `linear-gradient(to bottom, ${this.config.green}, ${this.config.greenDark})`;
         submitBtn.style.borderRadius = RADIUS + 'px';
+        submitBtn.style.border = '2px solid transparent'; // keep 2px thickness without a visible stroke
       }
 
       // Compact spacing
@@ -183,7 +200,6 @@
         const footerP = footer.querySelector('p');
         if (footerP) {
           footerP.className = 'text-gray-400 text-xs text-center';
-          // keep the two policy links on one line
           const links = footer.querySelectorAll('a');
           if (links.length >= 2) {
             const span = document.createElement('span');
@@ -192,14 +208,9 @@
             const a2 = links[1];
             const sep = document.createTextNode(' y ');
             a1.replaceWith(span);
-            span.appendChild(a1);
-            span.appendChild(sep);
-            span.appendChild(a2);
+            span.appendChild(a1); span.appendChild(sep); span.appendChild(a2);
           }
-          footer.querySelectorAll('a').forEach((a) => {
-            a.style.color = this.config.colors.primary;
-            a.classList.add('font-semibold');
-          });
+          footer.querySelectorAll('a').forEach((a) => { a.style.color = this.config.colors.primary; a.classList.add('font-semibold'); });
         }
       }
 
@@ -234,7 +245,7 @@
           .form-group.success input, .form-group.success select { border-color: ${this.config.green} !important; }
           .form-group.error input, .form-group.error select { border-color: ${this.config.colors.primary} !important; }
           .header h1 { color: #fff !important; }
-          .submit-btn { border-radius: ${RADIUS}px !important; }
+          .submit-btn { border-radius: ${RADIUS}px !important; border-width: 2px !important; }
         `;
         document.head.appendChild(style);
       }
