@@ -5,6 +5,7 @@
   const RADIUS = 20;
   const SUCCESS = '#48bb78'; // green
   const ERROR = '#e53e3e';   // red
+  const PLACEHOLDER = '#9aa0a6'; // muted grey
 
   const GlassDefaultTheme = {
     apply() {
@@ -125,11 +126,18 @@
       input.style.backdropFilter = 'blur(6px)';
       input.style.border = `2px solid ${neutralBorder}`;
       input.style.borderRadius = RADIUS + 'px';
+      input.style.paddingLeft = '44px'; // room for icon
     });
+    // Consistent placeholder tone
+    const placeholderCSS = document.createElement('style');
+    placeholderCSS.textContent = `input::placeholder{color:${PLACEHOLDER};}`;
+    document.head.appendChild(placeholderCSS);
 
     // Selects
     document.querySelectorAll('select').forEach((select) => {
-      select.className = 'w-full px-4 py-3 text-white transition-all appearance-none cursor-pointer';
+      const defaultVal = select.value; // treat current (Chile +56) as default sentinel
+      select.className = 'w-full px-4 py-3 transition-all appearance-none cursor-pointer';
+      select.style.color = PLACEHOLDER; // show like placeholder initially
       select.style.backgroundColor = 'rgba(255,255,255,0.06)';
       select.style.backdropFilter = 'blur(6px)';
       select.style.border = `2px solid ${neutralBorder}`;
@@ -139,11 +147,22 @@
       select.style.backgroundRepeat = 'no-repeat';
       select.style.backgroundSize = '1.25em 1.25em';
       select.style.paddingRight = '2.25rem';
+      select.addEventListener('change', () => {
+        // turn white when user chooses a value different from default sentinel
+        select.style.color = (select.value === defaultVal) ? PLACEHOLDER : '#ffffff';
+      });
+      // ensure initial tone based on current value
+      select.style.color = (select.value === defaultVal) ? PLACEHOLDER : '#ffffff';
     });
 
-    // Input icons hidden + padding fix
-    document.querySelectorAll('.input-icon').forEach((icon) => (icon.style.display = 'none'));
-    document.querySelectorAll('input').forEach((input) => { if (input.style.paddingLeft) input.style.paddingLeft = '1rem'; });
+    // Input icons: show and white
+    document.querySelectorAll('.input-icon').forEach((icon) => {
+      icon.style.display = 'block';
+      icon.style.fill = '#ffffff';
+      icon.style.opacity = '0.9';
+      // Ensure icons sit above background
+      icon.style.zIndex = '1';
+    });
 
     // Button: white background, black text
     const submitBtn = document.querySelector('.submit-btn');
