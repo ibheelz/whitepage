@@ -649,7 +649,18 @@
             REDIRECT_DELAY: 3000,
             DEBUG: true
         };
-
+        
+        // Theme loader configuration
+        const THEME_CONFIG = {
+            enabled: true,
+            themes: {
+                'pinup': '/themes/pinup.js',
+            }
+        };
+        
+        // State management  <- This already exists (around line 301)
+        const state = {
+            
         // State management
         const state = {
             formData: {},
@@ -669,14 +680,41 @@
                 console.log('[FORM DEBUG]', ...args);
             }
         }
+        
+        // Theme detection and loading
+        async function loadTheme() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const campaign = urlParams.get('campaign') || urlParams.get('promo') || '';
+            
+            if (campaign.toLowerCase() === 'pinup' && THEME_CONFIG.themes['pinup']) {
+                debugLog('🎨 Loading PIN-UP theme...');
+                
+                const script = document.createElement('script');
+                script.src = THEME_CONFIG.themes['pinup'];
+                script.onload = () => {
+                    if (window.PinUpTheme) {
+                        window.PinUpTheme.apply();
+                        debugLog('✅ PIN-UP theme applied');
+                    }
+                };
+                document.head.appendChild(script);
+            }
+        }
 
         // Initialize on DOM ready
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             debugLog('🚀 Form initialized');
-            initializeTracking();
-            initializeValidation();
-            initializeForm();
-            fetchGeoData();
+            
+            // Load theme FIRST before other initializations
+            await loadTheme();
+            
+            // Small delay to ensure theme is applied
+            setTimeout(() => {
+                initializeTracking();
+                initializeValidation();
+                initializeForm();
+                fetchGeoData();
+            }, 200);
         });
 
         // Parse URL parameters and extract tracking data
