@@ -702,7 +702,7 @@
                 payload: clickid, // Store as both for compatibility
                 promo: campaign, // Campaign is the influencer/promo
                 redirectUrl: redirectUrl || CONFIG.REDIRECT_URL || 'https://mieladigital.com',
-                timestamp: new Date().toISOString(),
+                timestamp: new Date().toLocaleString("es-CL", { timeZone: "America/Santiago" }),
                 referrer: document.referrer || 'direct',
                 landingPage: window.location.href
             };
