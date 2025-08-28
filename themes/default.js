@@ -1,8 +1,10 @@
 // File: /themes/default.js
-// Default Glass Theme (no brand colors, no logo). Neutral, glass-only UI.
+// Default Glass Theme (no brand logo). Neutral glass with subtle dark background elements.
 
 (function () {
   const RADIUS = 20;
+  const SUCCESS = '#48bb78'; // green
+  const ERROR = '#e53e3e';   // red
 
   const GlassDefaultTheme = {
     apply() {
@@ -21,16 +23,43 @@
   }
 
   function applyStyles() {
-    // Plain, neutral background
-    document.body.style.background = 'linear-gradient(180deg, #0d0f13, #0a0b0f)';
+    // Base background (dark) + subtle elements
     document.body.style.fontFamily = 'Montserrat, sans-serif';
+    document.body.style.background = 'linear-gradient(180deg, #0b0d11, #0a0b0f)';
+    document.body.style.position = 'relative';
 
-    // Hide decorations & progress bar
+    // Decorative subtle dark/light blobs + fine grid
+    if (!document.getElementById('glass-default-bg')) {
+      const layer = document.createElement('div');
+      layer.id = 'glass-default-bg';
+      layer.style.position = 'fixed';
+      layer.style.inset = '0';
+      layer.style.zIndex = '0';
+      layer.style.pointerEvents = 'none';
+      layer.style.background = [
+        'radial-gradient(600px 280px at 10% 8%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%)',
+        'radial-gradient(520px 240px at 90% 92%, rgba(255,255,255,0.04), rgba(0,0,0,0) 60%)',
+        'radial-gradient(700px 260px at 50% 120%, rgba(255,255,255,0.03), rgba(0,0,0,0) 70%)',
+      ].join(',');
+      document.body.appendChild(layer);
+
+      const grid = document.createElement('div');
+      grid.style.position = 'fixed';
+      grid.style.inset = '0';
+      grid.style.zIndex = '0';
+      grid.style.pointerEvents = 'none';
+      grid.style.opacity = '0.05';
+      grid.style.backgroundImage = 'repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 40px)';
+      grid.style.mixBlendMode = 'overlay';
+      document.body.appendChild(grid);
+    }
+
+    // Hide original decorations & progress bar
     document.querySelectorAll('.bg-decoration').forEach((el) => (el.style.display = 'none'));
     const progressBar = document.querySelector('.progress-bar');
     if (progressBar) progressBar.style.display = 'none';
 
-    // Container (fixed 480px) with glassmorphism card
+    // Container as glass card
     const container = document.querySelector('.container');
     if (container && !container.dataset.defaultGlassApplied) {
       container.dataset.defaultGlassApplied = 'true';
@@ -46,7 +75,7 @@
       card.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.03))';
       card.style.backdropFilter = 'blur(16px) saturate(140%)';
       card.style.webkitBackdropFilter = 'blur(16px) saturate(140%)';
-      card.style.border = '1px solid rgba(255,255,255,0.08)';
+      card.style.border = '1px solid rgba(255,255,255,0.1)';
       card.style.borderRadius = RADIUS + 'px';
       card.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
 
@@ -58,7 +87,7 @@
       gloss.style.pointerEvents = 'none';
       card.appendChild(gloss);
 
-      // Glass edge ring (neutral)
+      // Glass edge ring
       const edge = document.createElement('div');
       edge.style.position = 'absolute'; edge.style.inset = '0'; edge.style.borderRadius = RADIUS + 'px'; edge.style.pointerEvents = 'none';
       edge.style.setProperty('padding', '2px');
@@ -80,11 +109,12 @@
     const h1 = document.querySelector('.header h1');
     if (h1) { h1.className = 'text-2xl font-bold mb-2 tracking-tight'; h1.style.color = '#ffffff'; }
     const headerP = document.querySelector('.header p');
-    if (headerP) headerP.className = 'text-gray-300 text-sm mb-4';
+    if (headerP) { headerP.className = 'text-gray-300 text-sm mb-4'; headerP.style.color = '#cbd5e1'; }
 
-    // Labels
+    // Labels (textbox titles) -> white
     document.querySelectorAll('label').forEach((label) => {
-      label.className = 'block text-white font-semibold mb-2 text-sm';
+      label.className = 'block font-semibold mb-2 text-sm';
+      label.style.color = '#ffffff';
     });
 
     // Inputs
@@ -115,37 +145,37 @@
     document.querySelectorAll('.input-icon').forEach((icon) => (icon.style.display = 'none'));
     document.querySelectorAll('input').forEach((input) => { if (input.style.paddingLeft) input.style.paddingLeft = '1rem'; });
 
-    // Button: neutral glass
+    // Button: white background, black text
     const submitBtn = document.querySelector('.submit-btn');
     if (submitBtn) {
-      submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 transition-all transform uppercase shadow-lg tracking-wide';
-      submitBtn.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.22), rgba(255,255,255,0.10))';
+      submitBtn.className = 'submit-btn w-full font-bold py-4 px-6 transition-all transform uppercase shadow-lg tracking-wide';
+      submitBtn.style.background = 'linear-gradient(to bottom, #ffffff, #eaeaea)';
+      submitBtn.style.color = '#111827';
       submitBtn.style.borderRadius = RADIUS + 'px';
-      submitBtn.style.border = '2px solid rgba(255,255,255,0.18)';
-      submitBtn.addEventListener('mouseenter', () => (submitBtn.style.filter = 'brightness(1.06)'));
+      submitBtn.style.border = '2px solid rgba(255,255,255,0.35)';
+      submitBtn.style.boxShadow = '0 8px 18px rgba(0,0,0,0.35)';
+      submitBtn.addEventListener('mouseenter', () => (submitBtn.style.filter = 'brightness(1.03)'));
       submitBtn.addEventListener('mouseleave', () => (submitBtn.style.filter = ''));
     }
 
-    // Footer links: neutral
+    // Footer links
     const footer = document.querySelector('.footer');
     if (footer) {
       const p = footer.querySelector('p');
-      if (p) p.className = 'text-gray-300 text-xs text-center';
+      if (p) { p.className = 'text-xs text-center'; p.style.color = '#cbd5e1'; }
       footer.querySelectorAll('a').forEach((a) => { a.style.color = '#e5e7eb'; a.style.textDecorationColor = 'rgba(229,231,235,0.45)'; });
     }
 
-    // Validation: keep borders/messages neutral (no green/red)
-    if (!document.getElementById('glass-default-dynamic')) {
-      const st = document.createElement('style');
-      st.id = 'glass-default-dynamic';
-      st.textContent = `
-        .form-group.success input, .form-group.success select,
-        .form-group.error input, .form-group.error select { border-color: ${neutralBorder} !important; }
-        .validation-message { color: #cbd5e0 !important; }
-        .validation-message svg path { fill: #cbd5e0 !important; }
-      `;
-      document.head.appendChild(st);
-    }
+    // Validation: texts red/green (borders remain neutral glass)
+    const dynamicId = 'glass-default-dynamic';
+    let st = document.getElementById(dynamicId);
+    if (!st) { st = document.createElement('style'); st.id = dynamicId; document.head.appendChild(st); }
+    st.textContent = `
+      .validation-message.error { color: ${ERROR} !important; }
+      .validation-message.error svg path { fill: ${ERROR} !important; }
+      .validation-message.success { color: ${SUCCESS} !important; }
+      .validation-message.success svg path { fill: ${SUCCESS} !important; }
+    `;
   }
 
   if (typeof module !== 'undefined' && module.exports) {
