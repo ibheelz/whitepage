@@ -11,7 +11,7 @@ const CONFIG = {
   AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
   AIRTABLE_TABLE_NAME: 'Leads',
   // ⚠️ SECURITY: Do NOT ship real secrets to the browser. Use a proxy.
-  AIRTABLE_API_KEY: 'REPLACE_WITH_SERVER_PROXY_OR_ENV',
+  AIRTABLE_API_KEY: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
   REDIRECT_DELAY: 3000,
   DEFAULT_REDIRECT_URL: 'https://mieladigital.com',
   DEBUG: true,
