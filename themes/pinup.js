@@ -1,5 +1,5 @@
 // File: /themes/pinup.js
-// PIN-UP Theme (glassmorphism + consistent 2px borders, radius=20, fixed width 480px)
+// PIN-UP Theme (glassmorphism + 2px edges, radius=20, fixed width 480px, glass edge ring)
 
 (function () {
   const RADIUS = 20; // consistent roundness everywhere
@@ -7,10 +7,10 @@
   const PinUpTheme = {
     config: {
       name: 'pinup',
-      logo: '/assets/pinup-logo.png',
-      bgImage: '/assets/pinup-bg.png',
+      logo: '/assets/pinup-logo.svg',
+      bgImage: '/assets/pinup-bg.jpg',
       colors: {
-        primary: '#ff2400', // pin-up red
+        primary: '#ff2400', // pin-up red (for inputs on invalid)
         darkGradientTop: '#2a303c', // lighter top
         darkGradientBottom: '#0b0c10', // darker bottom
         inputBg: '#1F2937',
@@ -70,7 +70,28 @@
       const progressBar = document.querySelector('.progress-bar');
       if (progressBar) progressBar.style.display = 'none';
 
-      // Container → Card (fixed width 480px; not wider on large screens)
+      // One-off style blocks (glass edge ring + responsive padding)
+      if (!document.getElementById('pinup-glass-styles')) {
+        const s = document.createElement('style');
+        s.id = 'pinup-glass-styles';
+        s.textContent = `
+          .glass-edge { position:absolute; inset:0; border-radius:${RADIUS}px; pointer-events:none; }
+          .glass-edge::before { content:''; position:absolute; inset:0; padding:2px; border-radius:${RADIUS}px; 
+            background: linear-gradient(135deg, rgba(255,255,255,.35), rgba(255,255,255,.14), rgba(255,255,255,.08), rgba(255,255,255,.18));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; }
+          /* extra inner soft edge */
+          .glass-edge::after { content:''; position:absolute; inset:1px; border-radius:${RADIUS-1}px; 
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.25); }
+          /* wider x-padding on larger screens */
+          .pinup-skin { padding: 24px; }
+          @media (min-width: 640px) { .pinup-skin { padding-left: 32px; padding-right: 32px; } }
+          @media (min-width: 768px) { .pinup-skin { padding-left: 40px; padding-right: 40px; } }
+        `;
+        document.head.appendChild(s);
+      }
+
+      // Container → Card (fixed width 480px)
       const container = document.querySelector('.container');
       if (container && !container.dataset.pinupApplied) {
         container.dataset.pinupApplied = 'true';
@@ -79,28 +100,30 @@
         container.style.width = '100%';
 
         const formCard = document.createElement('div');
-        formCard.className = 'pinup-skin p-6';
+        formCard.className = 'pinup-skin';
         formCard.style.position = 'relative';
         formCard.style.overflow = 'hidden';
         // liquid glass: frosted, saturated, subtle inner highlight + gradient (top lighter → bottom darker)
         formCard.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.65), rgba(11,12,16,0.65))';
         formCard.style.backdropFilter = 'blur(16px) saturate(140%)';
         formCard.style.webkitBackdropFilter = 'blur(16px) saturate(140%)';
-        formCard.style.border = `2px solid ${this.config.colors.primary}`;
+        // base micro-strokes (no red border)
+        formCard.style.border = '1px solid rgba(255,255,255,0.08)';
         formCard.style.borderRadius = RADIUS + 'px';
-        formCard.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.35)';
+        formCard.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
 
         // top gloss highlight
         const gloss = document.createElement('div');
-        gloss.style.position = 'absolute';
-        gloss.style.top = '0';
-        gloss.style.left = '0';
-        gloss.style.right = '0';
-        gloss.style.height = '64px';
+        gloss.style.position = 'absolute'; gloss.style.top = '0'; gloss.style.left = '0'; gloss.style.right = '0'; gloss.style.height = '64px';
         gloss.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.18), rgba(255,255,255,0))';
         gloss.style.pointerEvents = 'none';
         gloss.style.borderTopLeftRadius = gloss.style.borderTopRightRadius = (RADIUS - 1) + 'px';
         formCard.appendChild(gloss);
+
+        // gradient ring edge (2px) – glass edge effect
+        const edge = document.createElement('div');
+        edge.className = 'glass-edge';
+        formCard.appendChild(edge);
 
         while (container.firstChild) formCard.appendChild(container.firstChild);
         container.appendChild(formCard);
@@ -123,7 +146,7 @@
       document.querySelectorAll('label').forEach((label) => { label.className = 'block text-white font-semibold mb-2 text-sm'; });
       document.querySelectorAll('.required').forEach((req) => { req.style.color = this.config.colors.primary; req.classList.add('ml-1'); });
 
-      // Inputs
+      // Inputs (2px edges)
       document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach((input) => {
         input.className = 'w-full px-4 py-3 text-white placeholder-gray-400 transition-all';
         input.style.backgroundColor = 'rgba(31,41,55,0.55)';
@@ -132,7 +155,7 @@
         input.style.borderRadius = RADIUS + 'px';
       });
 
-      // Selects
+      // Selects (2px edges)
       document.querySelectorAll('select').forEach((select) => {
         select.className = 'w-full px-4 py-3 text-white transition-all appearance-none cursor-pointer';
         select.style.backgroundColor = 'rgba(31,41,55,0.55)';
@@ -176,7 +199,7 @@
         submitBtn.className = 'submit-btn w-full text-white font-bold py-4 px-6 transition-all transform uppercase shadow-lg tracking-wide';
         submitBtn.style.background = `linear-gradient(to bottom, ${this.config.green}, ${this.config.greenDark})`;
         submitBtn.style.borderRadius = RADIUS + 'px';
-        submitBtn.style.border = '2px solid transparent'; // keep 2px thickness without a visible stroke
+        submitBtn.style.border = '2px solid transparent'; // preserve thickness w/o visible stroke
       }
 
       // Compact spacing
