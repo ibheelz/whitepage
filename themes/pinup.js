@@ -7,8 +7,8 @@
   const PinUpTheme = {
     config: {
       name: 'pinup',
-      logo: '/assets/pinup-logo.svg',
-      bgImage: '/assets/pinup-bg.jpg',
+      logo: '/assets/pinup-logo.png',
+      bgImage: '/assets/pinup-bg.png',
       colors: {
         primary: '#ff2400', // pin-up red (for inputs on invalid)
         darkGradientTop: '#2a303c', // lighter top
