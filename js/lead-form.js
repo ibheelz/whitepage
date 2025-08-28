@@ -12,18 +12,28 @@ const CONFIG = {
   AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
   AIRTABLE_TABLE_NAME: 'Leads',
   // ⚠️ Do NOT ship real secrets to the browser. Use CONFIG.PROXY_URL in prod.
-  AIRTABLE_API_KEY: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd', // put PAT here only for quick local testing
+  AIRTABLE_API_KEY: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd', // quick local testing only
   PROXY_URL: '', // e.g. '/api/airtable' (Netlify/Cloudflare/Next API)
   DEFAULT_REDIRECT_URL: 'https://mieladigital.com',
   REDIRECT_DELAY: 0, // 0 = immediate
   DEBUG: true,
 };
 
+/***********************************
+ *  Theme configuration (path-proof)
+ ***********************************/
+// Resolve theme base relative to this script file so it works from / or /public/
+const SCRIPT_SELF = (function () {
+  const s = document.currentScript || document.querySelector('script[src*="lead-form.js"]');
+  return s ? s.src : '';
+})();
+const THEME_BASE = SCRIPT_SELF ? new URL('../themes/', SCRIPT_SELF).href : (location.origin + '/themes/');
+
 const THEME_CONFIG = {
   enabled: true,
   themes: {
-    pinup: '/themes/pinup.js',
-    default: '/themes/default.js',
+    pinup: new URL('pinup.js', THEME_BASE).href,
+    default: new URL('default.js', THEME_BASE).href,
   },
 };
 
@@ -135,7 +145,7 @@ async function fetchGeoData() {
 }
 
 /***********************************
- *  Validation & progress
+ *  Validation & progress (progress bar optional)
  ***********************************/
 function updateProgress() {
   const total = 4; let done = 0;
@@ -307,4 +317,61 @@ function showError(message) {
   const toast = document.createElement('div');
   toast.style.cssText = `position:fixed;bottom:20px;right:20px;background:#e53e3e;color:#fff;padding:16px 24px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:10000;animation:slideInRight .3s ease;`;
   toast.textContent = message; document.body.appendChild(toast);
-  s
+  setTimeout(() => { toast.style.animation = 'slideOutRight .3s ease'; setTimeout(() => toast.remove(), 300); }, 5000);
+}
+
+/***********************************
+ *  Boot
+ ***********************************/
+document.addEventListener('DOMContentLoaded', async () => {
+  debugLog('🚀 Init');
+  // toast animations
+  const style = document.createElement('style');
+  style.textContent = `@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
+  document.head.appendChild(style);
+
+  await loadTheme();
+
+  // give theme a moment to apply before wiring events
+  setTimeout(() => {
+    initializeTracking();
+    initializeValidation();
+    initializeForm();
+    fetchGeoData();
+  }, 200);
+});
+
+function initializeForm() {
+  const form = qs('leadForm'); if (!form) return;
+  form.addEventListener('submit', handleSubmit);
+
+  // Prefer Chile +56 by default if nothing chosen
+  const cc = qs('countryCode'); if (cc && !cc.value) { cc.value = '+56'; cc.dispatchEvent(new Event('change', { bubbles: true })); }
+
+  form.querySelectorAll('input, select').forEach((el) => {
+    el.addEventListener('change', updateProgress);
+    el.addEventListener('input', updateProgress);
+  });
+  updateProgress();
+}
+
+/***********************************
+ *  Debug helpers (dev only)
+ ***********************************/
+window.debugSubmit = function () {
+  console.log('🔧 DEBUG SUBMIT');
+  qs('fullName').value = 'Test User';
+  qs('email').value = 'test@example.com';
+  qs('countryCode').value = '+56';
+  qs('phone').value = '555-123-4567';
+  qs('leadForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+};
+
+window.debugState = function () {
+  console.log('📊 State', state);
+  console.log('🔗 Tracking', state.trackingData);
+  console.log('🌍 Geo', state.geoData);
+};
+
+console.log('💡 TIP: Use debugSubmit() to test form submission');
+console.log('💡 TIP: Use debugState() to view current state');
