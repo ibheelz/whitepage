@@ -87,13 +87,17 @@ async function loadTheme() {
 
   await new Promise((resolve) => {
     const s = document.createElement('script');
-    s.src = src; s.async = true; s.onload = resolve; s.onerror = resolve; document.head.appendChild(s);
+    s.src = src; s.async = true; s.onload = resolve; s.onerror = resolve;
+    document.head.appendChild(s);
   });
 
   try {
     if (themeKey === 'pinup' && window.PinUpTheme?.apply) window.PinUpTheme.apply();
     else if (window.GlassDefaultTheme?.apply) window.GlassDefaultTheme.apply();
   } catch (e) { debugLog('⚠️ Theme apply failed', e); }
+
+  // 👇 Reveal after theme attempt so there’s no flash
+  document.documentElement.classList.add('theme-ready');
 }
 
 /***********************************
