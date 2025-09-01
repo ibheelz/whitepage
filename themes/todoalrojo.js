@@ -8,7 +8,7 @@
     config: {
       name: 'todoalrojo',
       // ⬇️ REPLACE THIS with your PNG path, e.g. '/assets/todoalrojo-bg.png'
-      bgImage: '/assets/todoalrojo.png',
+      bgImage: '/assets/todoalrojo-bg.png',
       colors: {
         black: '#121212',
         white: '#F5F5F5',
