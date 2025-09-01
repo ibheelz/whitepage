@@ -97,24 +97,38 @@ function encodeRedirectParamInLocation() {
 /***********************************
  *  Theme loader (pinup / todoalrojo / default)
  ***********************************/
+// --- Theme loader (pinup / todoalrojo / default) ---
 async function loadTheme() {
   const params = new URLSearchParams(location.search);
-  const rawCampaign = (params.get('campaign') || params.get('promo') || '').trim().toLowerCase();
+  const campaign = (params.get('campaign') || params.get('promo') || '').toLowerCase();
   if (!THEME_CONFIG.enabled) return;
 
-  const themeKey = THEME_CONFIG.themes[rawCampaign] ? rawCampaign : 'default';
+  const themeKey = THEME_CONFIG.themes[campaign] ? campaign : 'default';
   const src = THEME_CONFIG.themes[themeKey];
   if (!src) return;
 
-  // Load the theme script (fail-soft)
   await new Promise((resolve) => {
     const s = document.createElement('script');
     s.src = src;
     s.async = true;
     s.onload = resolve;
-    s.onerror = resolve;
+    s.onerror = resolve; // fail-soft
     document.head.appendChild(s);
   });
+
+  try {
+    if (themeKey === 'pinup') {
+      window.PinUpTheme?.apply?.();
+    } else if (themeKey === 'todoalrojo') {
+      (window.TodoAlRojoTheme?.apply || window.todoalrojoTheme?.apply)?.();
+    } else {
+      window.GlassDefaultTheme?.apply?.();
+    }
+    debugLog(`✅ Theme applied: ${themeKey}`);
+  } catch (e) {
+    debugLog('⚠️ Theme apply failed', e);
+  }
+}
 
   // Apply with robust fallbacks
   try {
