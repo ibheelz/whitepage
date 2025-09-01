@@ -1,6 +1,6 @@
 // File: /public/js/lead-form.js
 // Purpose: Lead form logic with hardened validation, safe redirect, loading UX,
-//          theme loader (pinup/default), and URL encoding for redirect param.
+//          theme loader (pinup/tojoalrojo/default), and URL encoding for redirect param.
 // NOTE: For production, prefer a serverless proxy for Airtable to avoid exposing PATs.
 
 'use strict';
@@ -11,9 +11,10 @@
 const CONFIG = {
   AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
   AIRTABLE_TABLE_NAME: 'Leads',
+  // ⚠️ Local/dev only. Use PROXY_URL in production to keep secrets server-side.
   AIRTABLE_API_KEY:
-    'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd', // local testing only
-  PROXY_URL: '',
+    'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
+  PROXY_URL: '', // e.g. '/api/airtable'
   DEFAULT_REDIRECT_URL: 'https://mieladigital.com',
   REDIRECT_DELAY: 0,
   DEBUG: true,
@@ -23,6 +24,7 @@ const THEME_CONFIG = {
   enabled: true,
   themes: {
     pinup: '/themes/pinup.js',
+    tojoalrojo: '/themes/tojoalrojo.js',
     default: '/themes/default.js',
   },
 };
@@ -94,7 +96,7 @@ function encodeRedirectParamInLocation() {
 }
 
 /***********************************
- *  Theme loader (pinup or default)
+ *  Theme loader (pinup / tojoalrojo / default)
  ***********************************/
 async function loadTheme() {
   const params = new URLSearchParams(location.search);
@@ -110,8 +112,13 @@ async function loadTheme() {
   });
 
   try {
-    if (themeKey === 'pinup' && window.PinUpTheme?.apply) window.PinUpTheme.apply();
-    else if (window.GlassDefaultTheme?.apply) window.GlassDefaultTheme.apply();
+    const applyMap = {
+      pinup: () => window.PinUpTheme && typeof window.PinUpTheme.apply === 'function' && window.PinUpTheme.apply(),
+      tojoalrojo: () => window.TojoAlRojoTheme && typeof window.TojoAlRojoTheme.apply === 'function' && window.TojoAlRojoTheme.apply(),
+      default: () => window.GlassDefaultTheme && typeof window.GlassDefaultTheme.apply === 'function' && window.GlassDefaultTheme.apply(),
+    };
+    (applyMap[themeKey] || applyMap.default)();
+    debugLog(`✅ Theme applied: ${themeKey}`);
   } catch (e) { debugLog('⚠️ Theme apply failed', e); }
 }
 
@@ -178,7 +185,7 @@ function initializeValidation() {
   const phoneEl = qs('phone');
   const countryEl = qs('countryCode');
 
-  // Ensure numeric-only UX and placeholder without dashes
+  // Numeric-only phone, no dashes
   if (phoneEl) {
     phoneEl.setAttribute('inputmode', 'numeric');
     phoneEl.setAttribute('pattern', '[0-9]*');
@@ -191,10 +198,9 @@ function initializeValidation() {
   emailEl.addEventListener('blur', () => validateField('email'));
   emailEl.addEventListener('input', () => { if (state.validationState.email) validateField('email'); updateProgress(); });
 
-  // Digits-only, no auto-format
   phoneEl.addEventListener('blur', () => validateField('phone'));
   phoneEl.addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, ''); // keep only digits
+    this.value = this.value.replace(/\D/g, '');
     if (state.validationState.phone) validateField('phone');
     updateProgress();
   });
