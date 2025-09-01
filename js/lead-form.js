@@ -1,6 +1,6 @@
 // File: /public/js/lead-form.js
 // Purpose: Lead form logic with hardened validation, safe redirect, loading UX,
-//          theme loader (pinup/tojoalrojo/default), and URL encoding for redirect param.
+//          theme loader (pinup/todoalrojo/default), and URL encoding for redirect param.
 // NOTE: For production, prefer a serverless proxy for Airtable to avoid exposing PATs.
 
 'use strict';
@@ -24,7 +24,7 @@ const THEME_CONFIG = {
   enabled: true,
   themes: {
     pinup: '/themes/pinup.js',
-    tojoalrojo: '/themes/tojoalrojo.js',
+    todoalrojo: '/themes/todoalrojo.js',
     default: '/themes/default.js',
   },
 };
@@ -96,7 +96,7 @@ function encodeRedirectParamInLocation() {
 }
 
 /***********************************
- *  Theme loader (pinup / tojoalrojo / default)
+ *  Theme loader (pinup / todoalrojo / default)
  ***********************************/
 async function loadTheme() {
   const params = new URLSearchParams(location.search);
@@ -114,7 +114,7 @@ async function loadTheme() {
   try {
     const applyMap = {
       pinup: () => window.PinUpTheme && typeof window.PinUpTheme.apply === 'function' && window.PinUpTheme.apply(),
-      tojoalrojo: () => window.TojoAlRojoTheme && typeof window.TojoAlRojoTheme.apply === 'function' && window.TojoAlRojoTheme.apply(),
+      todoalrojo: () => window.TodoAlRojoTheme && typeof window.TodoAlRojoTheme.apply === 'function' && window.todoalrojoTheme.apply(),
       default: () => window.GlassDefaultTheme && typeof window.GlassDefaultTheme.apply === 'function' && window.GlassDefaultTheme.apply(),
     };
     (applyMap[themeKey] || applyMap.default)();
