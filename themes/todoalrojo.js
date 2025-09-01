@@ -1,16 +1,16 @@
-// File: /themes/tojoalrojo.js
-// Campaign theme: "tojoalrojo"
+// File: /themes/todoalrojo.js
+// Campaign theme: "todoalrojo"
 // Style goals: Luxe dark base, soft white text, Oxford blue depth, red primary CTA.
 // Notes:
 // 1) Add this theme to your loader map and THEME_CONFIG in /public/js/lead-form.js:
-//    THEME_CONFIG.themes.tojoalrojo = '/themes/tojoalrojo.js';
-//    In loadTheme(), resolve constructor by key: { pinup:'PinUpTheme', tojoalrojo:'TojoAlRojoTheme', default:'GlassDefaultTheme' }
+//    THEME_CONFIG.themes.todoalrojo = '/themes/todoalrojo.js';
+//    In loadTheme(), resolve constructor by key: { pinup:'PinUpTheme', todoalrojo:'todoalrojoTheme', default:'GlassDefaultTheme' }
 // 2) This uses Tailwind-on-the-fly (same approach as pinup). Safe to no-op if already present.
 
 (function () {
-  const TojoAlRojoTheme = {
+  const todoalrojoTheme = {
     config: {
-      name: 'tojoalrojo',
+      name: 'todoalrojo',
       colors: {
         black: '#121212',      // Primary Black (luxury base)
         white: '#F5F5F5',      // Soft White (text/dividers)
@@ -214,6 +214,6 @@
     }
   };
 
-  if (typeof module !== 'undefined' && module.exports) module.exports = TojoAlRojoTheme;
-  else window.TojoAlRojoTheme = TojoAlRojoTheme;
+  if (typeof module !== 'undefined' && module.exports) module.exports = todoalrojoTheme;
+  else window.todoalrojoTheme = todoalrojoTheme;
 })();
