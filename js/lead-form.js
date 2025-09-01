@@ -1,4 +1,7 @@
-// /public/js/lead-form.js  ⬅️ full file (unchanged except THEME_CONFIG + loadTheme)
+// File: /public/js/lead-form.js
+// Purpose: Lead form logic with hardened validation, safe redirect, loading UX,
+//          theme loader (pinup/todoalrojo/default), and URL encoding for redirect param.
+
 'use strict';
 
 /***********************************
@@ -7,8 +10,10 @@
 const CONFIG = {
   AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
   AIRTABLE_TABLE_NAME: 'Leads',
-  AIRTABLE_API_KEY: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
-  PROXY_URL: '',
+  // ⚠️ Local/dev only. Use PROXY_URL in production to keep secrets server-side.
+  AIRTABLE_API_KEY:
+    'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
+  PROXY_URL: '', // e.g. '/api/airtable'
   DEFAULT_REDIRECT_URL: 'https://mieladigital.com',
   REDIRECT_DELAY: 0,
   DEBUG: true,
@@ -18,7 +23,7 @@ const THEME_CONFIG = {
   enabled: true,
   themes: {
     pinup: '/themes/pinup.js',
-    todoalrojo: '/themes/todoalrojo.js',   // ✅ make sure this path exists
+    todoalrojo: '/themes/todoalrojo.js',
     default: '/themes/default.js',
   },
 };
@@ -94,37 +99,40 @@ function encodeRedirectParamInLocation() {
  ***********************************/
 async function loadTheme() {
   const params = new URLSearchParams(location.search);
-  const campaign = (params.get('campaign') || params.get('promo') || '').toLowerCase();
+  const rawCampaign = (params.get('campaign') || params.get('promo') || '').trim().toLowerCase();
   if (!THEME_CONFIG.enabled) return;
 
-  const themeKey = Object.prototype.hasOwnProperty.call(THEME_CONFIG.themes, campaign)
-    ? campaign
-    : 'default';
-
+  const themeKey = THEME_CONFIG.themes[rawCampaign] ? rawCampaign : 'default';
   const src = THEME_CONFIG.themes[themeKey];
   if (!src) return;
 
-  // Cache-bust to avoid stale JS while you iterate
+  // Load the theme script (fail-soft)
   await new Promise((resolve) => {
     const s = document.createElement('script');
-    s.src = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
+    s.src = src;
     s.async = true;
     s.onload = resolve;
-    s.onerror = resolve; // fail-soft to default
+    s.onerror = resolve;
     document.head.appendChild(s);
   });
 
+  // Apply with robust fallbacks
   try {
-    if (themeKey === 'pinup') {
-      window.PinUpTheme?.apply?.();
+    let applied = false;
+    if (themeKey === 'pinup' && window.PinUpTheme?.apply) {
+      window.PinUpTheme.apply(); applied = true;
     } else if (themeKey === 'todoalrojo') {
-      (window.TodoAlRojoTheme?.apply?.() || window.todoalrojoTheme?.apply?.());
-    } else {
-      window.GlassDefaultTheme?.apply?.();
+      const applyFn = window.TodoAlRojoTheme?.apply || window.todoalrojoTheme?.apply;
+      if (applyFn) { applyFn.call(window.TodoAlRojoTheme || window.todoalrojoTheme); applied = true; }
     }
-    debugLog(`✅ Theme applied: ${themeKey}`);
+    if (!applied && window.GlassDefaultTheme?.apply) {
+      window.GlassDefaultTheme.apply(); applied = true;
+    }
+    debugLog(`✅ Theme applied: ${applied ? themeKey : 'default(fallback)'}`);
   } catch (e) {
     debugLog('⚠️ Theme apply failed', e);
+    // Last-chance fallback
+    try { window.GlassDefaultTheme?.apply?.(); } catch {}
   }
 }
 
@@ -356,8 +364,8 @@ window.debugSubmit = function () {
   console.log('🔧 DEBUG SUBMIT');
   qs('fullName').value = 'Test User';
   qs('email').value = 'test@example.com';
-  qs('countryCode').value = '+56';
-  qs('phone').value = '5551234567';
+  qs('countryCode').value = '+56'; // Chile
+  qs('phone').value = '5551234567'; // no dashes
   qs('leadForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 };
 
