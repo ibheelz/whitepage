@@ -1,20 +1,17 @@
-// File: /themes/todoalrojo.js
-// Campaign theme: "todoalrojo"
-// Luxe dark base, soft white labels, Oxford blue depth, red CTA, glass inputs.
-// ▶️ Put your PNG background URL in config.bgImage below (or pass ?bg=/path/img.png)
-
+<!-- /themes/todoalrojo.js -->
+<script>
 (function () {
   const todoalrojoTheme = {
     config: {
       name: 'todoalrojo',
-      // ⬇️ Replace with your PNG path (e.g. '/assets/todoalrojo-bg.png')
+      // ⬇️ Put your PNG here (or pass ?bg=/assets/your.png)
       bgImage: '/assets/todoalrojo.png',
       colors: {
-        black: '#121212',       // Primary Black
-        white: '#F5F5F5',       // Soft White
-        blue:  '#0B3C5D',       // Oxford Blue
-        red:   '#B71C1C',       // CTA Red
-        redHover: '#8E1212',    // CTA Red (hover)
+        black: '#121212',       // luxe dark
+        white: '#F5F5F5',       // soft white
+        blue:  '#0B3C5D',       // oxford blue depth
+        red:   '#B71C1C',       // CTA red
+        redHover: '#8E1212',
         inputBg: 'rgba(255,255,255,0.06)',
         border: 'rgba(255,255,255,0.22)'
       },
@@ -22,20 +19,20 @@
     },
 
     apply() {
-      // Tailwind (safe if already present)
+      // Tailwind (no-op if already present)
       if (!document.querySelector('script[src*="tailwindcss"]')) {
         const s = document.createElement('script');
         s.src = 'https://cdn.tailwindcss.com';
         document.head.appendChild(s);
       }
       // Font
-      if (!document.querySelector('link[href*="fonts.googleapis.com"]')) {
+      if (!document.querySelector('link[href*="fonts.googleapis.com"][href*="Montserrat"]')) {
         const font = document.createElement('link');
         font.rel = 'stylesheet';
-        font.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(this.config.font)}:wght@400;600;700;800&display=swap`;
+        font.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap';
         document.head.appendChild(font);
       }
-      // Tailwind extend (optional)
+      // Tailwind extend
       const tw = document.createElement('script');
       tw.textContent = `tailwind.config={theme:{extend:{colors:{'todo-black':'${this.config.colors.black}','todo-white':'${this.config.colors.white}','todo-blue':'${this.config.colors.blue}','todo-red':'${this.config.colors.red}'},fontFamily:{montserrat:['${this.config.font}','sans-serif']}}}}`;
       document.head.appendChild(tw);
@@ -50,13 +47,11 @@
 
       document.body.className = 'font-montserrat min-h-screen flex items-center justify-center p-5';
       if (bgUrl) {
-        // Image + dark overlay for contrast
         document.body.style.backgroundImage = `linear-gradient(180deg, rgba(18,18,18,.82), rgba(11,60,93,.82)), url('${bgUrl}')`;
         document.body.style.backgroundSize = 'cover, cover';
         document.body.style.backgroundPosition = 'center, center';
         document.body.style.backgroundAttachment = 'fixed, fixed';
       } else {
-        // Fallback gradient
         document.body.style.background = `linear-gradient(180deg, ${this.config.colors.black} 0%, ${this.config.colors.blue} 100%)`;
       }
       document.body.style.color = this.config.colors.white;
@@ -80,18 +75,13 @@
         container.appendChild(card);
       }
 
-      const logo = document.querySelector('.logo');
-      if (logo) logo.style.display = 'none';
-
-      const h1 = document.querySelector('.header h1');
-      if (h1) h1.className = 'text-todo-white text-2xl font-extrabold tracking-tight mb-2 text-center';
-      const headerP = document.querySelector('.header p');
-      if (headerP) headerP.className = 'text-todo-white/70 text-sm text-center mb-4';
+      // Header
+      const logo = document.querySelector('.logo'); if (logo) logo.style.display = 'none';
+      const h1 = document.querySelector('.header h1'); if (h1) h1.className = 'text-todo-white text-2xl font-extrabold tracking-tight mb-2 text-center';
+      const headerP = document.querySelector('.header p'); if (headerP) headerP.className = 'text-todo-white/70 text-sm text-center mb-4';
 
       // Labels
-      document.querySelectorAll('label').forEach((label) => {
-        label.className = 'block text-todo-white font-semibold mb-2 text-sm';
-      });
+      document.querySelectorAll('label').forEach((label) => { label.className = 'block text-todo-white font-semibold mb-2 text-sm'; });
       document.querySelectorAll('.required').forEach((r) => (r.style.color = this.config.colors.red));
 
       // Inputs (glass)
@@ -113,11 +103,8 @@
           input.style.boxShadow = 'none';
         });
       });
-      // Icons → white
-      document.querySelectorAll('.input-icon').forEach((icon) => {
-        icon.style.display = 'block';
-        icon.style.fill = this.config.colors.white;
-      });
+      // Icons white
+      document.querySelectorAll('.input-icon').forEach((icon) => { icon.style.display = 'block'; icon.style.fill = this.config.colors.white; });
 
       // Country select
       document.querySelectorAll('select').forEach((select) => {
@@ -126,14 +113,8 @@
         select.style.background = this.config.colors.inputBg;
         select.style.border = `2px solid ${this.config.colors.border}`;
         select.style.color = 'rgba(255,255,255,0.7)';
-        select.addEventListener('focus', () => {
-          select.style.borderColor = this.config.colors.red;
-          select.style.boxShadow = '0 0 0 3px rgba(183,28,28,0.25)';
-        });
-        select.addEventListener('blur', () => {
-          select.style.border = `2px solid ${this.config.colors.border}`;
-          select.style.boxShadow = 'none';
-        });
+        select.addEventListener('focus', () => { select.style.borderColor = this.config.colors.red; select.style.boxShadow = '0 0 0 3px rgba(183,28,28,0.25)'; });
+        select.addEventListener('blur', () => { select.style.border = `2px solid ${this.config.colors.border}`; select.style.boxShadow = 'none'; });
         select.style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`;
         select.style.backgroundRepeat = 'no-repeat';
         select.style.backgroundPosition = 'right 0.6rem center';
@@ -154,77 +135,30 @@
         if (spinner) { spinner.style.borderColor = 'rgba(255,255,255,0.35)'; spinner.style.borderTopColor = '#fff'; }
       }
 
-      // Footer
+      // Footer + Success + Overlay
       const footer = document.querySelector('.footer');
       if (footer) {
         footer.className = 'mt-5 pt-5';
-        const p = footer.querySelector('p');
-        if (p) p.className = 'text-todo-white/70 text-xs text-center';
+        const p = footer.querySelector('p'); if (p) p.className = 'text-todo-white/70 text-xs text-center';
         footer.querySelectorAll('a').forEach((a) => { a.style.color = this.config.colors.white; a.style.textDecoration = 'underline'; });
       }
-
-      // Success section
       const success = document.getElementById('successSection');
       if (success) {
         success.className = 'success-message text-center p-10';
-        const icon = success.querySelector('.success-icon');
-        if (icon) { icon.className = 'w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center'; icon.style.background = this.config.colors.red; }
+        const icon = success.querySelector('.success-icon'); if (icon) { icon.className = 'w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center'; icon.style.background = this.config.colors.red; }
         const h2 = success.querySelector('h2'); if (h2) h2.className = 'text-todo-white text-2xl font-bold mb-3';
         success.querySelectorAll('p').forEach((p) => (p.className = 'text-todo-white/70'));
       }
-
-      // Loading overlay
       const overlay = document.getElementById('loadingOverlay');
       if (overlay) overlay.className = 'loading-overlay fixed inset-0 bg-black/70 hidden items-center justify-center z-50 backdrop-blur-sm';
     }
   };
 
-  // Expose both names (robust against loader expectations)
+  // Expose both names so the loader can find either
   if (typeof module !== 'undefined' && module.exports) module.exports = todoalrojoTheme;
   else {
     window.todoalrojoTheme = todoalrojoTheme;
     window.TodoAlRojoTheme = todoalrojoTheme;
   }
 })();
-
-
-// -------------------------------------------------------------
-// File: /public/js/lead-form.js (loader section fixed for todoalrojo)
-// -------------------------------------------------------------
-// NOTE: Paste these updated parts into your existing file. The rest of your logic stays the same.
-
-// 1) THEME_CONFIG (ensure todoalrojo is present)
-const THEME_CONFIG = {
-  enabled: true,
-  themes: {
-    pinup: '/themes/pinup.js',
-    todoalrojo: '/themes/todoalrojo.js',
-    default: '/themes/default.js',
-  },
-};
-
-// 2) loadTheme() (normalized apply map and robust global names)
-async function loadTheme() {
-  const params = new URLSearchParams(location.search);
-  const campaign = (params.get('campaign') || params.get('promo') || '').toLowerCase();
-  if (!THEME_CONFIG.enabled) return;
-
-  const themeKey = THEME_CONFIG.themes[campaign] ? campaign : 'default';
-  const src = THEME_CONFIG.themes[themeKey];
-  if (!src) return;
-
-  await new Promise((resolve) => {
-    const s = document.createElement('script');
-    s.src = src; s.async = true; s.onload = resolve; s.onerror = resolve; document.head.appendChild(s);
-  });
-
-  try {
-    const applyMap = {
-      pinup: () => window.PinUpTheme?.apply?.(),
-      todoalrojo: () => (window.TodoAlRojoTheme?.apply?.() || window.todoalrojoTheme?.apply?.()),
-      default: () => window.GlassDefaultTheme?.apply?.(),
-    };
-    (applyMap[themeKey] || applyMap.default)();
-    debugLog(`✅ Theme applied: ${themeKey}`);
-  } catch (e) { debugLog('⚠️ Theme apply failed', e); }
-}
+</script>
