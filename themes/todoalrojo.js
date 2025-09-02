@@ -15,8 +15,8 @@
       green: '#01d0a6',
       buttonTop: '#ef4444',
       buttonBottom: '#b91c1c',
-      logoHeightDesktop: 150, // MUCH bigger
-      logoHeightMobile: 110,
+      logoHeightDesktop: 170, // bigger
+      logoHeightMobile: 120,
     },
     apply() {
       const cfg = this.config;
@@ -78,7 +78,7 @@
     card.className = 'tar-card';
     card.style.position = 'relative';
     card.style.overflow = 'hidden';
-    card.style.padding = '24px 24px 18px';
+    card.style.padding = '14px 24px 16px'; // tighter top/bottom to reduce spacing around logo
     card.style.borderRadius = RADIUS + 'px';
     card.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.58), rgba(11,12,16,0.58))';
     card.style.backdropFilter = 'blur(16px) saturate(140%)';
@@ -88,7 +88,7 @@
 
     const gloss = document.createElement('div');
     gloss.style.position = 'absolute'; gloss.style.left = '0'; gloss.style.right = '0'; gloss.style.top = '0';
-    gloss.style.height = '64px';
+    gloss.style.height = '40px'; // less gloss height to free vertical space
     gloss.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0))';
     gloss.style.pointerEvents = 'none';
     card.appendChild(gloss);
@@ -106,7 +106,7 @@
     holder.style.justifyContent = 'center';
     holder.style.width = '100%';
     holder.style.height = cfg.logoHeightDesktop + 'px';
-    holder.style.margin = '10px auto 12px';
+    holder.style.margin = '0 auto 6px'; // minimal spacing
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" loading="eager" />`;
 
     if (!document.getElementById('tar-logo-css')) {
@@ -114,7 +114,7 @@
       s.id = 'tar-logo-css';
       s.textContent = `
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:8px auto 10px; } }
+        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:0 auto 6px; } }
       `;
       document.head.appendChild(s);
     }
@@ -123,7 +123,8 @@
   function styleForm(cfg) {
     const header = document.querySelector('.header');
     if (header) {
-      header.className = 'header text-center mb-4';
+      header.className = 'header text-center';
+      header.style.marginBottom = '8px'; // less space under logo
       const h1 = header.querySelector('h1'); if (h1) { h1.style.color = '#ffffff'; h1.style.fontWeight = '800'; }
       const p = header.querySelector('p'); if (p) p.style.fontWeight = '500';
     }
