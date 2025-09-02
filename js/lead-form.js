@@ -1,9 +1,7 @@
-// File: /public/js/lead-form.js
-// Purpose: Lead form logic with hardened validation, safe redirect, loading UX,
-//          theme loader (pinup/default), and URL encoding for redirect param.
-// NOTE: For production, prefer a serverless proxy for Airtable to avoid exposing PATs.
-
 'use strict';
+
+// File: /public/js/lead-form.js
+// Why: Make themes pluggable—drop /themes/<slug>.js and use ?campaign=<slug> (or ?theme=, ?promo=).
 
 /***********************************
  *  Configuration (client-side)
@@ -19,13 +17,26 @@ const CONFIG = {
   DEBUG: true,
 };
 
+// Theme loader config: convention over configuration
 const THEME_CONFIG = {
   enabled: true,
-  themes: {
-    pinup: '/themes/pinup.js',
-    default: '/themes/default.js',
-  },
+  basePath: '/themes',
+  defaultKey: 'default',
+  urlParams: ['campaign', 'promo', 'theme'],
 };
+
+/***********************************
+ *  Theme Registry (global)
+ ***********************************/
+// Why: Decouple themes from this file—each theme registers itself here.
+window.ThemeRegistry = window.ThemeRegistry || (function () {
+  let themeObj = null; let themeKey = null;
+  return {
+    register(key, theme) { themeKey = String(key || '').toLowerCase(); themeObj = theme || null; },
+    get() { return themeObj; },
+    key() { return themeKey; }
+  };
+})();
 
 /***********************************
  *  State
@@ -94,25 +105,52 @@ function encodeRedirectParamInLocation() {
 }
 
 /***********************************
- *  Theme loader (pinup or default)
+ *  Dynamic Theme Loader (convention-based)
  ***********************************/
-async function loadTheme() {
-  const params = new URLSearchParams(location.search);
-  const campaign = (params.get('campaign') || params.get('promo') || '').toLowerCase();
-  if (!THEME_CONFIG.enabled) return;
-  const themeKey = THEME_CONFIG.themes[campaign] ? campaign : 'default';
-  const src = THEME_CONFIG.themes[themeKey];
-  if (!src) return;
+function resolveThemeKeyFromUrl() {
+  const p = new URLSearchParams(location.search);
+  for (const k of THEME_CONFIG.urlParams) {
+    const v = (p.get(k) || '').trim().toLowerCase();
+    if (v) return v;
+  }
+  return THEME_CONFIG.defaultKey;
+}
 
-  await new Promise((resolve) => {
+function sanitizeThemeKey(key) {
+  // Allow simple slugs only
+  const slug = String(key || '').toLowerCase();
+  return /^[a-z0-9._-]+$/.test(slug) ? slug : THEME_CONFIG.defaultKey;
+}
+
+function loadScript(src) {
+  return new Promise((resolve) => {
     const s = document.createElement('script');
-    s.src = src; s.async = true; s.onload = resolve; s.onerror = resolve; document.head.appendChild(s);
+    s.src = src; s.async = true; s.onload = () => resolve({ ok: true, src });
+    s.onerror = () => resolve({ ok: false, src });
+    document.head.appendChild(s);
   });
+}
 
-  try {
-    if (themeKey === 'pinup' && window.PinUpTheme?.apply) window.PinUpTheme.apply();
-    else if (window.GlassDefaultTheme?.apply) window.GlassDefaultTheme.apply();
-  } catch (e) { debugLog('⚠️ Theme apply failed', e); }
+async function loadTheme() {
+  if (!THEME_CONFIG.enabled) return;
+  const rawKey = resolveThemeKeyFromUrl();
+  const themeKey = sanitizeThemeKey(rawKey);
+  const trySrc = `${THEME_CONFIG.basePath}/${themeKey}.js`;
+  const fallbackSrc = `${THEME_CONFIG.basePath}/${THEME_CONFIG.defaultKey}.js`;
+
+  debugLog('🎨 Loading theme', { themeKey, trySrc });
+  const first = await loadScript(trySrc);
+  if (!first.ok) { debugLog('⚠️ Theme not found, loading default'); await loadScript(fallbackSrc); }
+
+  // Prefer registry; then support legacy globals for backward compatibility
+  let theme = (window.ThemeRegistry && window.ThemeRegistry.get && window.ThemeRegistry.get()) || null;
+  if (!theme) {
+    if (themeKey === 'pinup' && window.PinUpTheme?.apply) theme = window.PinUpTheme;
+    else if (window.GlassDefaultTheme?.apply) theme = window.GlassDefaultTheme; // default legacy
+  }
+
+  try { theme?.apply?.(); }
+  catch (e) { debugLog('⚠️ Theme apply failed', e); }
 }
 
 /***********************************
@@ -178,7 +216,7 @@ function initializeValidation() {
   const phoneEl = qs('phone');
   const countryEl = qs('countryCode');
 
-  // Ensure numeric-only UX and placeholder without dashes
+  // Numeric-only UX & simple placeholder (no dashes)
   if (phoneEl) {
     phoneEl.setAttribute('inputmode', 'numeric');
     phoneEl.setAttribute('pattern', '[0-9]*');
@@ -191,10 +229,9 @@ function initializeValidation() {
   emailEl.addEventListener('blur', () => validateField('email'));
   emailEl.addEventListener('input', () => { if (state.validationState.email) validateField('email'); updateProgress(); });
 
-  // Digits-only, no auto-format
   phoneEl.addEventListener('blur', () => validateField('phone'));
   phoneEl.addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, ''); // keep only digits
+    this.value = this.value.replace(/\D/g, '');
     if (state.validationState.phone) validateField('phone');
     updateProgress();
   });
