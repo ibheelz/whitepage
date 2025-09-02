@@ -20,7 +20,7 @@
       ensureFont();
       applyBackground(cfg.bgImage);
       normalizeContainer();
-      injectLogo(cfg.logo); // fixed-height, visible
+      injectLogo(cfg.logo); // center & larger
       styleForm(cfg);
       injectDynamicCss(cfg);
       setDefaultPhoneCountry('+56');
@@ -79,19 +79,22 @@
   function injectLogo(src) {
     const holder = document.querySelector('.logo');
     if (!holder) return;
-    // Important: remove base '.logo { display:none }' by replacing className & forcing display
-    holder.className = 'tar-logo mx-auto';
-    holder.style.display = 'block';
-    holder.style.marginBottom = '16px';
+    // Ensure visibility and center alignment
+    holder.className = 'tar-logo';
+    holder.style.display = 'flex';
+    holder.style.alignItems = 'center';
+    holder.style.justifyContent = 'center';
+    holder.style.width = '100%';
+    holder.style.height = '72px';
+    holder.style.margin = '8px auto 12px';
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
 
     if (!document.getElementById('tar-logo-css')) {
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
-        .tar-logo { width: 160px; height: 56px; }
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ width:132px; height:46px; } }
+        @media (max-width: 480px){ .tar-logo{ height:60px; margin:6px auto 10px; } }
       `;
       document.head.appendChild(s);
     }
@@ -142,7 +145,7 @@
       submitBtn.style.background = `linear-gradient(to bottom, ${cfg.buttonTop}, ${cfg.buttonBottom})`;
       submitBtn.style.borderRadius = RADIUS + 'px';
       submitBtn.style.border = '2px solid transparent';
-      submitBtn.style.color = '#ffffff'; // ensure white text
+      submitBtn.style.color = '#ffffff';
     }
   }
 
