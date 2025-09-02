@@ -1,31 +1,26 @@
 // File: /themes/todoalrojo.js
-// Theme: Todo al Rojo — same UI as PIN‑UP; only colors + background + logo differ.
-// Usage: add ?campaign=todoalrojo (or ?theme=todoalrojo). Assets:
-//   /assets/todoalrojo-bg.png, /assets/todoalrojo-logo.png (1080x1080 square)
+// Theme: Todo al Rojo — mirrors PIN‑UP UI; only color, background, and logo differ.
+// Usage: add ?campaign=todoalrojo (or ?theme=todoalrojo). Assets required:
+//   /assets/todoalrojo-bg.png, /assets/todoalrojo-logo.png (1080x1080)
 (function () {
-  const RADIUS = 20; // match PIN‑UP
+  const RADIUS = 20; // match PIN‑UP roundness
 
   const TodoAlRojoTheme = {
     config: {
       name: 'todoalrojo',
       logo: '/assets/todoalrojo-logo.png',
       bgImage: '/assets/todoalrojo-bg.png',
-      colors: {
-        primary: '#ef4444', // brand red for borders/accents
-        inputBgAlpha: 0.55,
-      },
+      colors: { primary: '#ef4444', inputBgAlpha: 0.55 },
       green: '#01d0a6',
-      greenDark: '#0e8477',
       buttonTop: '#ef4444',
       buttonBottom: '#b91c1c',
     },
-
     apply() {
       const cfg = this.config;
       ensureFont();
       applyBackground(cfg.bgImage);
-      injectLogo(cfg.logo); // square → fixed height, auto width
       normalizeContainer();
+      injectLogo(cfg.logo); // fixed-height, visible
       styleForm(cfg);
       injectDynamicCss(cfg);
       setDefaultPhoneCountry('+56');
@@ -42,7 +37,6 @@
   }
 
   function applyBackground(url) {
-    // No dark overlay; show artwork as-is
     document.body.style.backgroundImage = `url('${url}')`;
     document.body.style.backgroundRepeat = 'no-repeat';
     document.body.style.backgroundAttachment = 'fixed';
@@ -51,14 +45,46 @@
     document.querySelectorAll('.bg-decoration').forEach((el) => (el.style.display = 'none'));
   }
 
-  function injectLogo(src) {
-    const logoHolder = document.querySelector('.logo');
-    if (!logoHolder) return;
-    logoHolder.className = 'logo tar-logo mx-auto mb-4';
-    // Fixed height like PIN‑UP; width scales automatically to preserve aspect
-    logoHolder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
+  function normalizeContainer() {
+    const container = document.querySelector('.container');
+    if (!container) return;
+    container.className = 'container relative z-10 w-full mx-auto';
+    container.style.maxWidth = '480px';
+    container.style.width = '100%';
 
-    // Precise sizing for a square 1080×1080. Keep it subtle on mobile.
+    if (container.querySelector('.tar-card')) return;
+    const card = document.createElement('div');
+    card.className = 'tar-card';
+    card.style.position = 'relative';
+    card.style.overflow = 'hidden';
+    card.style.padding = '24px 24px 18px';
+    card.style.borderRadius = RADIUS + 'px';
+    card.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.58), rgba(11,12,16,0.58))';
+    card.style.backdropFilter = 'blur(16px) saturate(140%)';
+    card.style.webkitBackdropFilter = 'blur(16px) saturate(140%)';
+    card.style.border = '1px solid rgba(255,255,255,0.10)';
+    card.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+
+    const gloss = document.createElement('div');
+    gloss.style.position = 'absolute'; gloss.style.left = '0'; gloss.style.right = '0'; gloss.style.top = '0';
+    gloss.style.height = '64px';
+    gloss.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0))';
+    gloss.style.pointerEvents = 'none';
+    card.appendChild(gloss);
+
+    while (container.firstChild) card.appendChild(container.firstChild);
+    container.appendChild(card);
+  }
+
+  function injectLogo(src) {
+    const holder = document.querySelector('.logo');
+    if (!holder) return;
+    // Important: remove base '.logo { display:none }' by replacing className & forcing display
+    holder.className = 'tar-logo mx-auto';
+    holder.style.display = 'block';
+    holder.style.marginBottom = '16px';
+    holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
+
     if (!document.getElementById('tar-logo-css')) {
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
@@ -71,51 +97,13 @@
     }
   }
 
-  function normalizeContainer() {
-    const container = document.querySelector('.container');
-    if (!container) return;
-    container.className = 'container relative z-10 w-full mx-auto';
-    container.style.maxWidth = '480px';
-    container.style.width = '100%';
-
-    // Ensure there is a single card wrapper with the same glass effect as PIN‑UP
-    const hasCard = container.querySelector('.tar-card');
-    if (hasCard) return;
-
-    const card = document.createElement('div');
-    card.className = 'tar-card';
-    card.style.position = 'relative';
-    card.style.overflow = 'hidden';
-    card.style.padding = '24px 24px 18px';
-    card.style.borderRadius = RADIUS + 'px';
-    // glass gradient (soft, not dark)
-    card.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.58), rgba(11,12,16,0.58))';
-    card.style.backdropFilter = 'blur(16px) saturate(140%)';
-    card.style.webkitBackdropFilter = 'blur(16px) saturate(140%)';
-    card.style.border = '1px solid rgba(255,255,255,0.10)';
-    card.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
-
-    // subtle top gloss (lighter, not dark)
-    const gloss = document.createElement('div');
-    gloss.style.position = 'absolute'; gloss.style.left = '0'; gloss.style.right = '0'; gloss.style.top = '0';
-    gloss.style.height = '64px';
-    gloss.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0))';
-    gloss.style.pointerEvents = 'none';
-    card.appendChild(gloss);
-
-    while (container.firstChild) card.appendChild(container.firstChild);
-    container.appendChild(card);
-  }
-
   function styleForm(cfg) {
-    // Header
     const header = document.querySelector('.header');
     if (header) {
       header.className = 'header text-center mb-4';
       const h1 = header.querySelector('h1'); if (h1) h1.style.color = '#ffffff';
     }
 
-    // Inputs (2px brand red border, keep same placeholder color as base)
     document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach((input) => {
       input.className = 'w-full px-4 py-3 text-white placeholder-gray-400 transition-all';
       input.style.backgroundColor = `rgba(31,41,55,${cfg.colors.inputBgAlpha})`;
@@ -125,7 +113,6 @@
       input.style.paddingLeft = '1rem';
     });
 
-    // Selects
     document.querySelectorAll('select').forEach((select) => {
       select.className = 'w-full px-4 py-3 text-white transition-all appearance-none cursor-pointer';
       select.style.backgroundColor = `rgba(31,41,55,${cfg.colors.inputBgAlpha})`;
@@ -135,10 +122,8 @@
       select.style.paddingRight = '2.25rem';
     });
 
-    // Hide field icons (PIN‑UP uses plain left padding)
     document.querySelectorAll('.input-icon').forEach((icon) => (icon.style.display = 'none'));
 
-    // Phone compact layout
     const phoneContainer = document.querySelector('.phone-container');
     if (phoneContainer) {
       phoneContainer.className = 'phone-container flex gap-2';
@@ -151,14 +136,13 @@
       }
     }
 
-    // Submit button (ensure white text)
     const submitBtn = document.querySelector('.submit-btn');
     if (submitBtn) {
       submitBtn.className = 'submit-btn w-full font-semibold py-3 px-6 transition-all transform uppercase shadow-lg tracking-wide';
       submitBtn.style.background = `linear-gradient(to bottom, ${cfg.buttonTop}, ${cfg.buttonBottom})`;
       submitBtn.style.borderRadius = RADIUS + 'px';
       submitBtn.style.border = '2px solid transparent';
-      submitBtn.style.color = '#ffffff';
+      submitBtn.style.color = '#ffffff'; // ensure white text
     }
   }
 
