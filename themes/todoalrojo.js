@@ -1,6 +1,6 @@
 // File: /themes/todoalrojo.js
-// Theme: Todo al Rojo — mirrors PIN‑UP UI; only color, background, and logo differ.
-// Usage: add ?campaign=todoalrojo (or ?theme=todoalrojo). Assets required:
+// Theme: Todo al Rojo — mirrors PIN‑UP UI; only color, background, logo, and global font differ.
+// Usage: add ?campaign=todoalrojo (or ?theme=todoalrojo). Assets:
 //   /assets/todoalrojo-bg.png, /assets/todoalrojo-logo.png (1080x1080)
 (function () {
   const RADIUS = 20;
@@ -15,8 +15,8 @@
       green: '#01d0a6',
       buttonTop: '#ef4444',
       buttonBottom: '#b91c1c',
-      logoHeightDesktop: 110, // bigger
-      logoHeightMobile: 80,
+      logoHeightDesktop: 150, // MUCH bigger
+      logoHeightMobile: 110,
     },
     apply() {
       const cfg = this.config;
@@ -31,23 +31,27 @@
   };
 
   function ensureMontserratEverywhere() {
+    // Preconnect for faster font paint
+    if (!document.querySelector("link[data-tar='preconnect-gfonts']")) {
+      const l1 = document.createElement('link'); l1.rel = 'preconnect'; l1.href = 'https://fonts.googleapis.com'; l1.setAttribute('data-tar','preconnect-gfonts'); document.head.appendChild(l1);
+      const l2 = document.createElement('link'); l2.rel = 'preconnect'; l2.href = 'https://fonts.gstatic.com'; l2.crossOrigin = 'anonymous'; l2.setAttribute('data-tar','preconnect-gfonts'); document.head.appendChild(l2);
+    }
     if (!document.querySelector("link[href*='fonts.googleapis.com'][href*='Montserrat']")) {
       const font = document.createElement('link');
       font.rel = 'stylesheet';
       font.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap';
       document.head.appendChild(font);
     }
-    document.body.style.fontFamily = "Montserrat, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+    // Global font variable + strong override inside the card only
+    const FAMILY = "'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+    document.body.style.fontFamily = FAMILY;
     if (!document.getElementById('tar-font-global')) {
       const s = document.createElement('style');
       s.id = 'tar-font-global';
       s.textContent = `
-        html, body, .container, .tar-card, .header h1, .header p,
-        label, input, select, button, .submit-btn, .validation-message,
-        #successSection, #successSection *, .footer, .footer * {
-          font-family: inherit !important;
-          -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-        }
+        :root{ --tar-font:${FAMILY}; }
+        .tar-card, .tar-card *:not(svg):not(path):not(i) { font-family: var(--tar-font) !important; }
+        input::placeholder, textarea::placeholder { font-family: var(--tar-font) !important; }
       `;
       document.head.appendChild(s);
     }
@@ -102,7 +106,7 @@
     holder.style.justifyContent = 'center';
     holder.style.width = '100%';
     holder.style.height = cfg.logoHeightDesktop + 'px';
-    holder.style.margin = '8px auto 12px';
+    holder.style.margin = '10px auto 12px';
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" loading="eager" />`;
 
     if (!document.getElementById('tar-logo-css')) {
@@ -110,7 +114,7 @@
       s.id = 'tar-logo-css';
       s.textContent = `
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:6px auto 10px; } }
+        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:8px auto 10px; } }
       `;
       document.head.appendChild(s);
     }
@@ -120,7 +124,8 @@
     const header = document.querySelector('.header');
     if (header) {
       header.className = 'header text-center mb-4';
-      const h1 = header.querySelector('h1'); if (h1) h1.style.color = '#ffffff';
+      const h1 = header.querySelector('h1'); if (h1) { h1.style.color = '#ffffff'; h1.style.fontWeight = '800'; }
+      const p = header.querySelector('p'); if (p) p.style.fontWeight = '500';
     }
 
     document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach((input) => {
@@ -130,6 +135,7 @@
       input.style.border = `2px solid ${cfg.colors.primary}`;
       input.style.borderRadius = RADIUS + 'px';
       input.style.paddingLeft = '1rem';
+      input.style.fontWeight = '500';
     });
 
     document.querySelectorAll('select').forEach((select) => {
@@ -146,6 +152,7 @@
       select.style.backgroundRepeat = 'no-repeat';
       select.style.backgroundPosition = 'right 14px center';
       select.style.backgroundSize = '14px 14px';
+      select.style.fontWeight = '500';
     });
 
     document.querySelectorAll('.input-icon').forEach((icon) => (icon.style.display = 'none'));
@@ -167,6 +174,7 @@
         phoneSelect.style.backgroundRepeat = 'no-repeat';
         phoneSelect.style.backgroundPosition = 'right 12px center';
         phoneSelect.style.backgroundSize = '12px 12px';
+        phoneSelect.style.fontWeight = '500';
       }
     }
 
@@ -177,6 +185,7 @@
       submitBtn.style.borderRadius = RADIUS + 'px';
       submitBtn.style.border = '2px solid transparent';
       submitBtn.style.color = '#ffffff';
+      submitBtn.style.fontWeight = '700';
     }
   }
 
