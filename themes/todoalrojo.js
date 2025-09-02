@@ -3,7 +3,7 @@
 // Usage: add ?campaign=todoalrojo (or ?theme=todoalrojo). Assets required:
 //   /assets/todoalrojo-bg.png, /assets/todoalrojo-logo.png (1080x1080)
 (function () {
-  const RADIUS = 20; // match PIN‑UP roundness
+  const RADIUS = 20;
   const CHEVRON_BG = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E\")";
 
   const TodoAlRojoTheme = {
@@ -15,12 +15,12 @@
       green: '#01d0a6',
       buttonTop: '#ef4444',
       buttonBottom: '#b91c1c',
-      logoHeightDesktop: 84,
-      logoHeightMobile: 64,
+      logoHeightDesktop: 110, // bigger
+      logoHeightMobile: 80,
     },
     apply() {
       const cfg = this.config;
-      ensureFont();
+      ensureMontserratEverywhere();
       applyBackground(cfg.bgImage);
       normalizeContainer();
       injectLogo(cfg.logo, cfg);
@@ -30,12 +30,26 @@
     },
   };
 
-  function ensureFont() {
-    if (!document.querySelector('link[href*="fonts.googleapis.com"][href*="Montserrat"]')) {
+  function ensureMontserratEverywhere() {
+    if (!document.querySelector("link[href*='fonts.googleapis.com'][href*='Montserrat']")) {
       const font = document.createElement('link');
       font.rel = 'stylesheet';
-      font.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap';
+      font.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap';
       document.head.appendChild(font);
+    }
+    document.body.style.fontFamily = "Montserrat, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+    if (!document.getElementById('tar-font-global')) {
+      const s = document.createElement('style');
+      s.id = 'tar-font-global';
+      s.textContent = `
+        html, body, .container, .tar-card, .header h1, .header p,
+        label, input, select, button, .submit-btn, .validation-message,
+        #successSection, #successSection *, .footer, .footer * {
+          font-family: inherit !important;
+          -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+      `;
+      document.head.appendChild(s);
     }
   }
 
@@ -88,7 +102,7 @@
     holder.style.justifyContent = 'center';
     holder.style.width = '100%';
     holder.style.height = cfg.logoHeightDesktop + 'px';
-    holder.style.margin = '6px auto 10px';
+    holder.style.margin = '8px auto 12px';
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" loading="eager" />`;
 
     if (!document.getElementById('tar-logo-css')) {
@@ -96,7 +110,7 @@
       s.id = 'tar-logo-css';
       s.textContent = `
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:4px auto 8px; } }
+        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:6px auto 10px; } }
       `;
       document.head.appendChild(s);
     }
@@ -120,7 +134,6 @@
 
     document.querySelectorAll('select').forEach((select) => {
       select.className = 'w-full px-4 py-3 text-white transition-all cursor-pointer';
-      // Hide native arrow and add our chevron with proper spacing from red border
       select.style.appearance = 'none';
       select.style.webkitAppearance = 'none';
       select.style.MozAppearance = 'none';
@@ -128,7 +141,7 @@
       select.style.backdropFilter = 'blur(6px)';
       select.style.border = `2px solid ${cfg.colors.primary}`;
       select.style.borderRadius = RADIUS + 'px';
-      select.style.paddingRight = '3rem'; // space for chevron
+      select.style.paddingRight = '3rem';
       select.style.backgroundImage = CHEVRON_BG;
       select.style.backgroundRepeat = 'no-repeat';
       select.style.backgroundPosition = 'right 14px center';
