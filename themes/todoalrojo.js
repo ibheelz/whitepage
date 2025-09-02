@@ -4,6 +4,7 @@
 //   /assets/todoalrojo-bg.png, /assets/todoalrojo-logo.png (1080x1080)
 (function () {
   const RADIUS = 20; // match PIN‑UP roundness
+  const CHEVRON_BG = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E\")";
 
   const TodoAlRojoTheme = {
     config: {
@@ -14,13 +15,15 @@
       green: '#01d0a6',
       buttonTop: '#ef4444',
       buttonBottom: '#b91c1c',
+      logoHeightDesktop: 84,
+      logoHeightMobile: 64,
     },
     apply() {
       const cfg = this.config;
       ensureFont();
       applyBackground(cfg.bgImage);
       normalizeContainer();
-      injectLogo(cfg.logo); // center & larger
+      injectLogo(cfg.logo, cfg);
       styleForm(cfg);
       injectDynamicCss(cfg);
       setDefaultPhoneCountry('+56');
@@ -76,25 +79,24 @@
     container.appendChild(card);
   }
 
-  function injectLogo(src) {
+  function injectLogo(src, cfg) {
     const holder = document.querySelector('.logo');
     if (!holder) return;
-    // Ensure visibility and center alignment
     holder.className = 'tar-logo';
     holder.style.display = 'flex';
     holder.style.alignItems = 'center';
     holder.style.justifyContent = 'center';
     holder.style.width = '100%';
-    holder.style.height = '72px';
-    holder.style.margin = '8px auto 12px';
-    holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
+    holder.style.height = cfg.logoHeightDesktop + 'px';
+    holder.style.margin = '6px auto 10px';
+    holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" loading="eager" />`;
 
     if (!document.getElementById('tar-logo-css')) {
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ height:60px; margin:6px auto 10px; } }
+        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:4px auto 8px; } }
       `;
       document.head.appendChild(s);
     }
@@ -117,12 +119,20 @@
     });
 
     document.querySelectorAll('select').forEach((select) => {
-      select.className = 'w-full px-4 py-3 text-white transition-all appearance-none cursor-pointer';
+      select.className = 'w-full px-4 py-3 text-white transition-all cursor-pointer';
+      // Hide native arrow and add our chevron with proper spacing from red border
+      select.style.appearance = 'none';
+      select.style.webkitAppearance = 'none';
+      select.style.MozAppearance = 'none';
       select.style.backgroundColor = `rgba(31,41,55,${cfg.colors.inputBgAlpha})`;
       select.style.backdropFilter = 'blur(6px)';
       select.style.border = `2px solid ${cfg.colors.primary}`;
       select.style.borderRadius = RADIUS + 'px';
-      select.style.paddingRight = '2.25rem';
+      select.style.paddingRight = '3rem'; // space for chevron
+      select.style.backgroundImage = CHEVRON_BG;
+      select.style.backgroundRepeat = 'no-repeat';
+      select.style.backgroundPosition = 'right 14px center';
+      select.style.backgroundSize = '14px 14px';
     });
 
     document.querySelectorAll('.input-icon').forEach((icon) => (icon.style.display = 'none'));
@@ -132,10 +142,18 @@
       phoneContainer.className = 'phone-container flex gap-2';
       const phoneSelect = phoneContainer.querySelector('select');
       if (phoneSelect) {
-        phoneSelect.className = 'flex-shrink-0 w-36 px-3 py-3 text-white text-sm appearance-none cursor-pointer';
+        phoneSelect.className = 'flex-shrink-0 w-36 px-3 py-3 text-white text-sm cursor-pointer';
+        phoneSelect.style.appearance = 'none';
+        phoneSelect.style.webkitAppearance = 'none';
+        phoneSelect.style.MozAppearance = 'none';
         phoneSelect.style.backgroundColor = `rgba(31,41,55,${cfg.colors.inputBgAlpha})`;
         phoneSelect.style.border = `2px solid ${cfg.colors.primary}`;
         phoneSelect.style.borderRadius = RADIUS + 'px';
+        phoneSelect.style.paddingRight = '2.5rem';
+        phoneSelect.style.backgroundImage = CHEVRON_BG;
+        phoneSelect.style.backgroundRepeat = 'no-repeat';
+        phoneSelect.style.backgroundPosition = 'right 12px center';
+        phoneSelect.style.backgroundSize = '12px 12px';
       }
     }
 
