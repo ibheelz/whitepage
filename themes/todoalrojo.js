@@ -15,7 +15,7 @@
       green: '#01d0a6',
       buttonTop: '#ef4444',
       buttonBottom: '#b91c1c',
-      logoHeightDesktop: 170, // bigger
+      logoHeightDesktop: 170,
       logoHeightMobile: 120,
     },
     apply() {
@@ -31,7 +31,6 @@
   };
 
   function ensureMontserratEverywhere() {
-    // Preconnect for faster font paint
     if (!document.querySelector("link[data-tar='preconnect-gfonts']")) {
       const l1 = document.createElement('link'); l1.rel = 'preconnect'; l1.href = 'https://fonts.googleapis.com'; l1.setAttribute('data-tar','preconnect-gfonts'); document.head.appendChild(l1);
       const l2 = document.createElement('link'); l2.rel = 'preconnect'; l2.href = 'https://fonts.gstatic.com'; l2.crossOrigin = 'anonymous'; l2.setAttribute('data-tar','preconnect-gfonts'); document.head.appendChild(l2);
@@ -42,7 +41,6 @@
       font.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap';
       document.head.appendChild(font);
     }
-    // Global font variable + strong override inside the card only
     const FAMILY = "'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
     document.body.style.fontFamily = FAMILY;
     if (!document.getElementById('tar-font-global')) {
@@ -78,7 +76,7 @@
     card.className = 'tar-card';
     card.style.position = 'relative';
     card.style.overflow = 'hidden';
-    card.style.padding = '14px 24px 16px'; // tighter top/bottom to reduce spacing around logo
+    card.style.padding = '8px 24px 14px'; // tighter top/bottom
     card.style.borderRadius = RADIUS + 'px';
     card.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.58), rgba(11,12,16,0.58))';
     card.style.backdropFilter = 'blur(16px) saturate(140%)';
@@ -88,7 +86,7 @@
 
     const gloss = document.createElement('div');
     gloss.style.position = 'absolute'; gloss.style.left = '0'; gloss.style.right = '0'; gloss.style.top = '0';
-    gloss.style.height = '40px'; // less gloss height to free vertical space
+    gloss.style.height = '28px'; // smaller gloss area to reduce perceived spacing
     gloss.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0))';
     gloss.style.pointerEvents = 'none';
     card.appendChild(gloss);
@@ -106,7 +104,7 @@
     holder.style.justifyContent = 'center';
     holder.style.width = '100%';
     holder.style.height = cfg.logoHeightDesktop + 'px';
-    holder.style.margin = '0 auto 6px'; // minimal spacing
+    holder.style.margin = '0 auto 4px'; // minimal space below
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" loading="eager" />`;
 
     if (!document.getElementById('tar-logo-css')) {
@@ -114,7 +112,7 @@
       s.id = 'tar-logo-css';
       s.textContent = `
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:0 auto 6px; } }
+        @media (max-width: 480px){ .tar-logo{ height:${cfg.logoHeightMobile}px; margin:0 auto 4px; } }
       `;
       document.head.appendChild(s);
     }
@@ -124,9 +122,9 @@
     const header = document.querySelector('.header');
     if (header) {
       header.className = 'header text-center';
-      header.style.marginBottom = '8px'; // less space under logo
-      const h1 = header.querySelector('h1'); if (h1) { h1.style.color = '#ffffff'; h1.style.fontWeight = '800'; }
-      const p = header.querySelector('p'); if (p) p.style.fontWeight = '500';
+      header.style.margin = '2px 0 6px'; // very tight under logo
+      const h1 = header.querySelector('h1'); if (h1) { h1.style.color = '#ffffff'; h1.style.fontWeight = '800'; h1.style.margin = '6px 0 8px'; }
+      const p = header.querySelector('p'); if (p) { p.style.fontWeight = '500'; p.style.margin = '0 0 4px'; }
     }
 
     document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach((input) => {
