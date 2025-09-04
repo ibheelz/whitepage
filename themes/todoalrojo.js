@@ -51,17 +51,13 @@
     container.className = 'container relative z-10 w-full mx-auto';
     container.style.maxWidth = '480px';
     container.style.width = '100%';
-    // Add more spacing around the container
-    container.style.margin = '32px auto';
-    container.style.padding = '0 16px';
 
     if (container.querySelector('.tar-card')) return;
     const card = document.createElement('div');
     card.className = 'tar-card';
     card.style.position = 'relative';
     card.style.overflow = 'hidden';
-    // Increased padding for better spacing
-    card.style.padding = '32px 32px 24px';
+    card.style.padding = '24px 24px 18px';
     card.style.borderRadius = RADIUS + 'px';
     card.style.background = 'linear-gradient(to bottom, rgba(42,48,60,0.58), rgba(11,12,16,0.58))';
     card.style.backdropFilter = 'blur(16px) saturate(140%)';
@@ -89,10 +85,9 @@
     holder.style.alignItems = 'center';
     holder.style.justifyContent = 'center';
     holder.style.width = '100%';
-    // Increased logo height from 72px to 96px
-    holder.style.height = '96px';
-    // Increased margins around logo
-    holder.style.margin = '16px auto 20px';
+    // Double the logo size from 72px to 144px
+    holder.style.height = '144px';
+    holder.style.margin = '8px auto 12px';
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
 
     if (!document.getElementById('tar-logo-css')) {
@@ -100,14 +95,7 @@
       s.id = 'tar-logo-css';
       s.textContent = `
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ 
-          .tar-logo{ height:80px; margin:12px auto 16px; }
-          .tar-card { padding: 24px 24px 20px !important; }
-        }
-        @media (max-width: 360px){
-          .tar-logo{ height:72px; margin:10px auto 14px; }
-          .tar-card { padding: 20px 20px 18px !important; }
-        }
+        @media (max-width: 480px){ .tar-logo{ height:120px; margin:6px auto 10px; } }
       `;
       document.head.appendChild(s);
     }
@@ -127,8 +115,6 @@
       input.style.border = `2px solid ${cfg.colors.primary}`;
       input.style.borderRadius = RADIUS + 'px';
       input.style.paddingLeft = '1rem';
-      // Add some margin between form elements
-      input.style.marginBottom = '12px';
     });
 
     document.querySelectorAll('select').forEach((select) => {
@@ -138,7 +124,6 @@
       select.style.border = `2px solid ${cfg.colors.primary}`;
       select.style.borderRadius = RADIUS + 'px';
       select.style.paddingRight = '2.25rem';
-      select.style.marginBottom = '12px';
     });
 
     document.querySelectorAll('.input-icon').forEach((icon) => (icon.style.display = 'none'));
@@ -146,14 +131,20 @@
     const phoneContainer = document.querySelector('.phone-container');
     if (phoneContainer) {
       phoneContainer.className = 'phone-container flex gap-2';
-      phoneContainer.style.marginBottom = '12px';
       const phoneSelect = phoneContainer.querySelector('select');
+      const phoneInput = phoneContainer.querySelector('input[type="tel"]');
+      
       if (phoneSelect) {
         phoneSelect.className = 'flex-shrink-0 w-36 px-3 py-3 text-white text-sm appearance-none cursor-pointer';
         phoneSelect.style.backgroundColor = `rgba(31,41,55,${cfg.colors.inputBgAlpha})`;
         phoneSelect.style.border = `2px solid ${cfg.colors.primary}`;
         phoneSelect.style.borderRadius = RADIUS + 'px';
-        phoneSelect.style.marginBottom = '0';
+        phoneSelect.style.height = '48px'; // Match input height
+      }
+      
+      if (phoneInput) {
+        phoneInput.style.height = '48px'; // Ensure equal height
+        phoneInput.style.flex = '1'; // Take remaining space
       }
     }
 
@@ -164,8 +155,6 @@
       submitBtn.style.borderRadius = RADIUS + 'px';
       submitBtn.style.border = '2px solid transparent';
       submitBtn.style.color = '#ffffff';
-      // Add top margin to button for better spacing
-      submitBtn.style.marginTop = '20px';
     }
   }
 
@@ -176,10 +165,6 @@
       .form-group.success input, .form-group.success select { border-color: ${cfg.green} !important; }
       .form-group.error input, .form-group.error select { border-color: ${cfg.colors.primary} !important; }
       .submit-btn, .submit-btn * { color: #ffffff !important; }
-      
-      /* Additional spacing improvements */
-      .form-group { margin-bottom: 16px; }
-      .header { margin-bottom: 24px; }
     `;
   }
 
