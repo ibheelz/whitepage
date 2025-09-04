@@ -138,28 +138,30 @@
           margin: 0 auto 24px auto !important; /* Center container and add bottom margin */
         }
         
-        /* LOGO IMAGE STYLING - Standardized sizing */
+        /* LOGO IMAGE STYLING - 3X Larger sizing */
         .tar-logo-img { 
           display: inline-block !important; /* Inline-block for centering */
-          width: 180px !important;          /* Standardized width - larger than before */
-          height: 64px !important;          /* Standardized height - larger than before */
+          width: 540px !important;          /* 3X larger: 180px × 3 = 540px */
+          height: 192px !important;         /* 3X larger: 64px × 3 = 192px */
           object-fit: contain !important;   /* Scale image to fit without distortion */
-          max-width: 100% !important;       /* Responsive constraint */
+          max-width: 90% !important;        /* Responsive constraint - reduced to 90% to fit better */
         }
         
         /* RESPONSIVE LOGO SIZING - Mobile devices */
         @media (max-width: 480px) { 
           .tar-logo-img { 
-            width: 150px !important;   /* Mobile logo width - proportionally scaled */
-            height: 53px !important;   /* Mobile logo height - proportionally scaled */
+            width: 450px !important;   /* 3X larger: 150px × 3 = 450px */
+            height: 159px !important;  /* 3X larger: 53px × 3 = 159px */
+            max-width: 85% !important; /* Tighter constraint for mobile */
           } 
         }
         
         /* VERY SMALL SCREENS - Extra responsive breakpoint */
         @media (max-width: 360px) { 
           .tar-logo-img { 
-            width: 130px !important;   /* Very small screen width */
-            height: 46px !important;   /* Very small screen height */
+            width: 390px !important;   /* 3X larger: 130px × 3 = 390px */
+            height: 138px !important;  /* 3X larger: 46px × 3 = 138px */
+            max-width: 80% !important; /* Even tighter constraint for very small screens */
           } 
         }
       `;
