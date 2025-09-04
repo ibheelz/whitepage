@@ -2,6 +2,7 @@
 
 // File: /public/js/lead-form.js
 // Why: Make themes pluggable—drop /themes/<slug>.js and use ?campaign=<slug> (or ?theme=, ?promo=).
+// Enhanced: Now supports encoding of campaign and source parameters
 
 /***********************************
  *  Configuration (client-side)
@@ -86,6 +87,49 @@ function b64urlDecode(str) {
     return decodeURIComponent(atob(b64 + pad));
   } catch { return ''; }
 }
+
+// Enhanced: Function to encode campaign and source parameters
+function encodeCampaignAndSourceInLocation() {
+  try {
+    const url = new URL(location.href);
+    let hasChanges = false;
+
+    // Encode campaign parameter if present and not already encoded
+    if (!url.searchParams.has('campaign_enc')) {
+      const campaign = url.searchParams.get('campaign');
+      if (campaign) {
+        const enc = b64urlEncode(campaign);
+        if (enc) {
+          url.searchParams.delete('campaign');
+          url.searchParams.set('campaign_enc', enc);
+          hasChanges = true;
+          debugLog('🔐 campaign encoded -> campaign_enc');
+        }
+      }
+    }
+
+    // Encode source parameter if present and not already encoded
+    if (!url.searchParams.has('source_enc')) {
+      const source = url.searchParams.get('source');
+      if (source) {
+        const enc = b64urlEncode(source);
+        if (enc) {
+          url.searchParams.delete('source');
+          url.searchParams.set('source_enc', enc);
+          hasChanges = true;
+          debugLog('🔐 source encoded -> source_enc');
+        }
+      }
+    }
+
+    if (hasChanges) {
+      history.replaceState(null, '', url.toString());
+    }
+  } catch (e) { 
+    debugLog('encodeCampaignAndSourceInLocation failed', e); 
+  }
+}
+
 function encodeRedirectParamInLocation() {
   try {
     const url = new URL(location.href);
@@ -110,7 +154,16 @@ function encodeRedirectParamInLocation() {
 function resolveThemeKeyFromUrl() {
   const p = new URLSearchParams(location.search);
   for (const k of THEME_CONFIG.urlParams) {
-    const v = (p.get(k) || '').trim().toLowerCase();
+    let v = (p.get(k) || '').trim().toLowerCase();
+    
+    // Enhanced: Check for encoded campaign parameter for theme resolution
+    if (k === 'campaign' && !v) {
+      const campaignEnc = p.get('campaign_enc');
+      if (campaignEnc) {
+        v = b64urlDecode(campaignEnc).toLowerCase();
+      }
+    }
+    
     if (v) return v;
   }
   return THEME_CONFIG.defaultKey;
@@ -159,7 +212,28 @@ async function loadTheme() {
 function initializeTracking() {
   const p = new URLSearchParams(location.search);
   const payload = p.get('payload') || '';
-  const campaign = p.get('campaign') || '';
+  
+  // Enhanced: Handle both regular and encoded campaign/source parameters
+  let campaign = p.get('campaign') || '';
+  let source = p.get('source') || '';
+  
+  // Check for encoded versions if regular ones are empty
+  if (!campaign) {
+    const campaignEnc = p.get('campaign_enc');
+    if (campaignEnc) {
+      campaign = b64urlDecode(campaignEnc);
+      debugLog('🔓 Decoded campaign:', campaign);
+    }
+  }
+  
+  if (!source) {
+    const sourceEnc = p.get('source_enc');
+    if (sourceEnc) {
+      source = b64urlDecode(sourceEnc);
+      debugLog('🔓 Decoded source:', source);
+    }
+  }
+  
   const redirEnc = p.get('redir_enc') || '';
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
@@ -171,6 +245,7 @@ function initializeTracking() {
     clickid,
     payload: clickid,
     promo: campaign,
+    source: source, // Enhanced: Now capturing source parameter
     redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
     referrer: document.referrer || 'direct',
@@ -316,6 +391,7 @@ async function submitToAirtable() {
     'Phone Number': state.formData.phone,
     'Click ID': state.trackingData.clickid || state.trackingData.payload || '',
     'Promo/Influencer': state.trackingData.promo || state.trackingData.campaign || '',
+    'Source': state.trackingData.source || '', // Enhanced: Now including source in Airtable
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
@@ -362,7 +438,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const style = document.createElement('style');
   style.textContent = `@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
   document.head.appendChild(style);
+  
+  // Enhanced: Encode both redirect and campaign/source parameters
   encodeRedirectParamInLocation();
+  encodeCampaignAndSourceInLocation();
+  
   await loadTheme();
   setTimeout(() => { initializeTracking(); initializeValidation(); initializeForm(); fetchGeoData(); }, 200);
 });
@@ -388,5 +468,20 @@ window.debugSubmit = function () {
 
 window.debugState = function () { console.log('📊 State', state); console.log('🔗 Tracking', state.trackingData); console.log('🌍 Geo', state.geoData); };
 
+// Enhanced: Debug function to test encoding
+window.debugEncoding = function() {
+  console.log('🔐 Testing encoding/decoding:');
+  const test1 = 'todoalrojo';
+  const encoded1 = b64urlEncode(test1);
+  const decoded1 = b64urlDecode(encoded1);
+  console.log(`Campaign: "${test1}" -> encoded: "${encoded1}" -> decoded: "${decoded1}"`);
+  
+  const test2 = 'redtrack';
+  const encoded2 = b64urlEncode(test2);
+  const decoded2 = b64urlDecode(encoded2);
+  console.log(`Source: "${test2}" -> encoded: "${encoded2}" -> decoded: "${decoded2}"`);
+};
+
 console.log('💡 TIP: Use debugSubmit() to test form submission');
 console.log('💡 TIP: Use debugState() to view current state');
+console.log('💡 TIP: Use debugEncoding() to test parameter encoding');
