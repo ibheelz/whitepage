@@ -225,8 +225,8 @@
       
       /* Additional subtitle spacing styles */
       .header p, .subtitle, [class*="subtitle"], [class*="description"] {
-        margin-bottom: 20px !important;
-        padding-bottom: 8px !important;
+        margin-bottom: 10px !important; /* Reduced spacing by half */
+        padding-bottom: 4px !important;
       }
     `;
   }
