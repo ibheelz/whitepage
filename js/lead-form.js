@@ -28,7 +28,6 @@ const THEME_CONFIG = {
 /***********************************
  *  Theme Registry (global)
  ***********************************/
-// Why: Decouple themes from this file—each theme registers itself here.
 window.ThemeRegistry = window.ThemeRegistry || (function () {
   let themeObj = null; let themeKey = null;
   return {
@@ -66,13 +65,11 @@ function toggleLoading(isLoading) {
 /**
  * Build a safe redirect URL that preserves ALL existing parameters
  * and appends exactly one `clickid` (if provided and not already present).
- *
- * Why: Some affiliate links were being modified to add `payload` and `external_id` too,
- * which caused duplicates. This function now only cares about `clickid`.
  */
 function buildSafeRedirectUrl(rawUrl, clickid) {
   try {
     let candidate = String(rawUrl || '').trim();
+    debugLog('🔗 buildSafeRedirectUrl input:', { rawUrl, clickid });
     if (!candidate) return CONFIG.DEFAULT_REDIRECT_URL;
 
     // If missing scheme but looks like a host/path, default to https
@@ -99,50 +96,49 @@ function buildSafeRedirectUrl(rawUrl, clickid) {
       }
     }
 
-    // Do NOT add/alter any other params (payload, external_id, etc.)
-    return url.toString();
+    const finalUrl = url.toString();
+    debugLog('🔗 buildSafeRedirectUrl output:', finalUrl);
+    return finalUrl;
   } catch (e) {
+    debugLog('buildSafeRedirectUrl failed', e);
     return CONFIG.DEFAULT_REDIRECT_URL;
   }
 }
 
 // --- URL encoding helpers (base64url) ---
 function b64urlEncode(str) {
-  try { return btoa(encodeURIComponent(str)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, ''); } catch (e) { return ''; }
+  try {
+    const encoded = btoa(encodeURIComponent(str)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+    debugLog('🔢 b64urlEncode input:', str, 'output:', encoded);
+    return encoded;
+  } catch (e) {
+    debugLog('b64urlEncode failed', e);
+    return '';
+  }
 }
+
 function b64urlDecode(str) {
   try {
     const b64 = (str || '').replace(/-/g, '+').replace(/_/g, '/');
     const pad = b64.length % 4 === 0 ? '' : '='.repeat(4 - (b64.length % 4));
-    return decodeURIComponent(atob(b64 + pad));
-  } catch (e) { return ''; }
+    const decoded = decodeURIComponent(atob(b64 + pad));
+    debugLog('🔢 b64urlDecode input:', str, 'output:', decoded);
+    return decoded;
+  } catch (e) {
+    debugLog('b64urlDecode failed', e);
+    return '';
+  }
 }
 
 function encodeRedirectParamInLocation() {
-  // Preserve full redirect even if it contains unencoded &
-  function extractRedirectFromHref(href) {
-    try {
-      const q = (String(href || '').split('?')[1] || '');
-      const key = 'redirect=';
-      const pos = q.toLowerCase().indexOf(key);
-      if (pos === -1) return '';
-      let raw = q.slice(pos + key.length);
-      const hashIndex = raw.indexOf('#');
-      if (hashIndex !== -1) raw = raw.slice(0, hashIndex);
-      try { return decodeURIComponent(raw); } catch (e) { return raw; }
-    } catch (e) { return ''; }
-  }
-
   try {
     const current = new URL(location.href);
     if (current.searchParams.has('redir_enc')) return;
 
-    const fromHref = extractRedirectFromHref(location.href);
-    const fromQs = current.searchParams.get('redirect') || '';
-    const fullValue = (fromHref && fromHref.length >= fromQs.length) ? fromHref : fromQs;
-    if (!fullValue) return;
+    const redirectRaw = current.searchParams.get('redirect') || '';
+    if (!redirectRaw) return;
 
-    const enc = b64urlEncode(fullValue);
+    const enc = b64urlEncode(redirectRaw);
     if (!enc) return;
     current.searchParams.set('redir_enc', enc);
     history.replaceState(null, '', current.toString());
@@ -225,7 +221,9 @@ function initializeTracking() {
     try {
       const ru = new URL(decodedRedirect);
       clickFromRedirect = ru.searchParams.get('clickid') || ru.searchParams.get('external_id') || ru.searchParams.get('payload') || '';
-    } catch (e) {}
+    } catch (e) {
+      debugLog('Failed to parse decodedRedirect:', e);
+    }
   }
   const clickid = clickFromOuter || clickFromRedirect || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
   if (clickid) { localStorage.setItem('clickid', clickid); localStorage.setItem('payload', clickid); }
@@ -234,15 +232,12 @@ function initializeTracking() {
     clickid,
     payload: clickid,
     promo: campaign,
-    redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
+    redirectUrl: decodedRedirect || redirectRaw || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
     referrer: document.referrer || 'direct',
     landingPage: location.href,
   };
 
-  if (!state.trackingData.redirectUrl || state.trackingData.redirectUrl === 'null') {
-    state.trackingData.redirectUrl = CONFIG.DEFAULT_REDIRECT_URL;
-  }
   debugLog('📊 Final tracking data:', state.trackingData);
 }
 
