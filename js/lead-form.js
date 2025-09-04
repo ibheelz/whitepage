@@ -8,7 +8,7 @@
  ***********************************/
 const CONFIG = {
   AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
-  AIRTABLE_TABLE_NAME: 'Leads',
+  AIRTABLE_TABLE_NAME: 'Clicks Table',
   AIRTABLE_API_KEY:
     'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd', // local testing only
   PROXY_URL: '',
