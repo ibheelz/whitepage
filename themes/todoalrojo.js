@@ -94,7 +94,7 @@
       'justify-content': 'center',
       'align-items': 'center',
       width: '100%',
-      margin: '0 auto 12px', // tight, decent spacing
+      margin: '0 auto 8px', // Reduced logo margin
       padding: '0',
       'text-align': 'center',
     });
