@@ -211,6 +211,13 @@ function initializeTracking() {
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
 
+  debugLog('📊 Tracking params:', {
+    campaign,
+    redirEnc: redirEnc ? 'present' : 'missing',
+    redirectRaw,
+    decodedRedirect
+  });
+
   // Derive clickid from outer params OR from the redirect URL's params
   let clickFromOuter = p.get('payload') || p.get('clickid') || '';
   let clickFromRedirect = '';
@@ -236,7 +243,7 @@ function initializeTracking() {
   if (!state.trackingData.redirectUrl || state.trackingData.redirectUrl === 'null') {
     state.trackingData.redirectUrl = CONFIG.DEFAULT_REDIRECT_URL;
   }
-  debugLog('📊 Tracking', state.trackingData);
+  debugLog('📊 Final tracking data:', state.trackingData);
 }
 
 async function fetchGeoData() {
