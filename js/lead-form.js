@@ -62,17 +62,48 @@ function toggleLoading(isLoading) {
   btn.classList.toggle('loading', !!isLoading);
   overlay.classList.toggle('show', !!isLoading);
 }
+
+/**
+ * Build a safe redirect URL that preserves ALL existing parameters
+ * and appends exactly one `clickid` (if provided and not already present).
+ *
+ * Why: Some affiliate links were being modified to add `payload` and `external_id` too,
+ * which caused duplicates. This function now only cares about `clickid`.
+ */
 function buildSafeRedirectUrl(rawUrl, clickid) {
   try {
-    const url = new URL(rawUrl || CONFIG.DEFAULT_REDIRECT_URL);
-    if (!/^https?:$/.test(url.protocol)) throw new Error('protocol');
-    if (clickid) {
-      if (!url.searchParams.has('payload')) url.searchParams.set('payload', clickid);
-      if (!url.searchParams.has('clickid')) url.searchParams.set('clickid', clickid);
-      if (!url.searchParams.has('external_id')) url.searchParams.set('external_id', clickid);
+    let candidate = String(rawUrl || '').trim();
+    if (!candidate) return CONFIG.DEFAULT_REDIRECT_URL;
+
+    // If missing scheme but looks like a host/path, default to https
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(candidate)) {
+      candidate = 'https://' + candidate;
     }
+
+    const url = new URL(candidate);
+
+    // Only allow http/https
+    if (!/^https?:$/.test(url.protocol)) throw new Error('protocol');
+
+    if (clickid) {
+      // Normalize to a single `clickid` param, preserving existing non-empty value if present.
+      const existingValues = url.searchParams.getAll('clickid');
+      const existing = existingValues.find((v) => v && String(v).trim().length > 0);
+
+      // Remove any duplicates first to guarantee single occurrence and correct ordering at the end
+      if (existingValues.length > 0) {
+        url.searchParams.delete('clickid');
+        url.searchParams.append('clickid', existing || String(clickid)); // ensure it appears once at the end
+      } else {
+        url.searchParams.append('clickid', String(clickid)); // not present → append once at the end
+      }
+    }
+
+    // Do NOT add/alter any other params (payload, external_id, etc.)
     return url.toString();
-  } catch { return CONFIG.DEFAULT_REDIRECT_URL; }
+  } catch {
+    return CONFIG.DEFAULT_REDIRECT_URL;
+  }
 }
 
 // --- URL encoding helpers (base64url) ---
