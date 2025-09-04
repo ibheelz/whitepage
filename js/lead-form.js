@@ -369,13 +369,13 @@ async function handleSubmit(evt) {
 }
 
 async function submitToAirtable() {
+  // Build only the known Airtable columns to avoid 422 from unknown fields
   const record = {
     'Full Name': state.formData.fullName,
     'Email': state.formData.email,
     'Phone Number': state.formData.phone,
     'Click ID': state.trackingData.clickid || state.trackingData.payload || '',
     'Promo/Influencer': state.trackingData.promo || state.trackingData.campaign || '',
-    'Source': state.trackingData.source || '',
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
@@ -383,8 +383,12 @@ async function submitToAirtable() {
     'Language': state.geoData.language || '',
     'Referrer': state.trackingData.referrer || '',
     'Landing Page': state.trackingData.landingPage || '',
-    'Timestamp': state.trackingData.timestamp || '',
+    'Timestamp': state.trackingData.timestamp || new Date().toISOString(),
   };
+
+  // Drop any undefined/empty values to keep payload minimal
+  Object.keys(record).forEach((k) => { const v = record[k]; if (v === null || v === undefined || v === '') delete record[k]; });
+
   const payload = { records: [{ fields: record }], typecast: true };
   debugLog('📊 Airtable payload', payload);
 
@@ -396,11 +400,17 @@ async function submitToAirtable() {
 
   const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
   const res = await fetch(endpoint, { method: 'POST', headers: { 'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-  if (!res.ok) { let err = {}; try { err = await res.json(); } catch {} debugLog('❌ Airtable error', { status: res.status, err }); throw new Error(`HTTP ${res.status}`); }
+  if (!res.ok) {
+    let err = {}; try { err = await res.json(); } catch {}
+    debugLog('❌ Airtable error', { status: res.status, err });
+    // Surface specific Airtable validation messages in console for quicker fixes
+    if (err && err.error) console.error('Airtable says:', err.error);
+    throw new Error(`HTTP ${res.status}`);
+  }
   const json = await res.json(); debugLog('✅ Airtable response', json); return json;
 }
 
-function performRedirect() {
+function performRedirect() {() {
   const clickid = state.trackingData.clickid || state.trackingData.payload || '';
   const safe = buildSafeRedirectUrl(state.trackingData.redirectUrl, clickid);
   debugLog('🔄 Redirecting to', safe);
