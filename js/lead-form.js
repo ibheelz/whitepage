@@ -449,7 +449,12 @@ window.debugSubmit = function () {
   qs('leadForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 };
 
-window.debugState = function () { console.log('📊 State', state); console.log('🔗 Tracking', state.trackingData); console.log('🌍 Geo', state.geoData); };
+window.debugState = function () { 
+  console.log('📊 State', state); 
+  console.log('🔗 Tracking', state.trackingData); 
+  console.log('🌍 Geo', state.geoData);
+  console.log('🎯 Original Redirect URL:', ORIGINAL_REDIRECT_URL);
+};
 
 console.log('💡 TIP: Use debugSubmit() to test form submission');
-console.log('💡 TIP: Use debugState() to view current state');
+console.log('💡 TIP: Use debugState() to view current state and captured redirect URL');
