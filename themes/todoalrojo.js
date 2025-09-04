@@ -115,18 +115,23 @@
     const holder = document.querySelector('.logo');
     if (!holder) return; // Exit if no logo container found
     
-    // IMPORTANT: Override default '.logo { display:none }' by replacing className
-    holder.className = 'tar-logo';             // Remove any existing classes
-    holder.style.display = 'block';            // Force display (overrides any display:none)
-    holder.style.width = '100%';               // Full width container
-    holder.style.textAlign = 'center';         // Center content horizontally
-    holder.style.marginBottom = '24px';        // Add space below logo (increased from 16px)
-    holder.style.minHeight = '200px';          // Ensure enough height for large logo
+    // FORCE CONTAINER STYLING WITH HIGHEST PRIORITY - NO MARGINS/PADDING
+    holder.className = 'tar-logo';
+    holder.style.cssText = `
+      display: block !important;
+      width: 100% !important;
+      text-align: center !important;
+      margin: 0 auto 12px auto !important;
+      padding: 0 !important;
+      min-height: auto !important;
+      max-height: auto !important;
+      line-height: 1 !important;
+    `;
     
-    // Inject logo image with alt text and DIRECT INLINE STYLES (highest priority)
+    // Inject logo image with PERFECT CENTERING and NO EXTRA SPACING
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" 
       style="
-        display: inline-block !important;
+        display: block !important;
         width: 540px !important;
         height: 192px !important;
         min-width: 540px !important;
@@ -135,56 +140,77 @@
         max-height: none !important;
         object-fit: contain !important;
         margin: 0 auto !important;
+        padding: 0 !important;
+        vertical-align: top !important;
+        border: none !important;
+        outline: none !important;
       " />`;
 
-    // Also set up a resize observer to force sizing on window resize
+    // Force resize and perfect centering on window resize
     if (window.ResizeObserver) {
       const img = holder.querySelector('img');
       if (img) {
-        // Force resize based on screen width
         const forceResize = () => {
           const screenWidth = window.innerWidth;
+          let width, height;
+          
           if (screenWidth <= 480) {
-            // Mobile
-            img.style.width = '360px';
-            img.style.height = '127px';
-            img.style.minWidth = '360px';
-            img.style.minHeight = '127px';
+            width = '360px'; height = '127px';
           } else if (screenWidth <= 768) {
-            // Tablet
-            img.style.width = '450px';
-            img.style.height = '159px';
-            img.style.minWidth = '450px';
-            img.style.minHeight = '159px';
+            width = '450px'; height = '159px';
           } else {
-            // Desktop
-            img.style.width = '540px';
-            img.style.height = '192px';
-            img.style.minWidth = '540px';
-            img.style.minHeight = '192px';
+            width = '540px'; height = '192px';
           }
+          
+          // FORCE PERFECT SIZING AND CENTERING
+          img.style.cssText = `
+            display: block !important;
+            width: ${width} !important;
+            height: ${height} !important;
+            min-width: ${width} !important;
+            min-height: ${height} !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            vertical-align: top !important;
+            border: none !important;
+            outline: none !important;
+          `;
+          
+          // FORCE CONTAINER CENTERING TOO
+          holder.style.cssText = `
+            display: block !important;
+            width: 100% !important;
+            text-align: center !important;
+            margin: 0 auto 12px auto !important;
+            padding: 0 !important;
+            min-height: auto !important;
+            max-height: auto !important;
+            line-height: 1 !important;
+          `;
         };
         
-        // Force resize immediately and on window resize
         forceResize();
         window.addEventListener('resize', forceResize);
+        
+        // Also force after a short delay to override any late-loading CSS
+        setTimeout(forceResize, 100);
+        setTimeout(forceResize, 500);
       }
     }
 
-    // Still inject CSS as backup, but inline styles will take priority
+    // Minimal backup CSS
     if (!document.getElementById('tar-logo-css')) {
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
-        /* BACKUP CSS - Inline styles above will override these */
-        .tar-logo,
-        .logo,
-        div[class*="logo"] { 
-          display: block !important;
-          width: 100% !important;
+        /* FORCE REMOVE ALL SPACING */
+        .tar-logo, .logo { 
+          margin: 0 auto 12px auto !important;
+          padding: 0 !important;
           text-align: center !important;
-          margin: 0 auto 24px auto !important;
-          min-height: 200px !important;
         }
       `;
       document.head.appendChild(s);
