@@ -165,6 +165,14 @@
       .form-group.success input, .form-group.success select { border-color: ${cfg.green} !important; }
       .form-group.error input, .form-group.error select { border-color: ${cfg.colors.primary} !important; }
       .submit-btn, .submit-btn * { color: #ffffff !important; }
+      
+      /* Phone dropdown styling to match PIN-UP */
+      .phone-container select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 16px;
+      }
     `;
   }
 
