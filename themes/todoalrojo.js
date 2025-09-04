@@ -132,10 +132,10 @@
         container.appendChild(formCard);
       }
 
-      // Logo - exact same as PIN-UP
+      // Logo - slightly bigger than PIN-UP
       const logoContainer = document.querySelector('.logo');
       if (logoContainer) {
-        logoContainer.className = 'w-36 h-12 mx-auto mb-6';
+        logoContainer.className = 'w-40 h-14 mx-auto mb-6';
         logoContainer.innerHTML = `<img src="${this.config.logo}" alt="TODOALROJO" class="w-full h-full object-contain" />`;
       }
 
