@@ -118,18 +118,89 @@ function b64urlDecode(str) {
   } catch { return ''; }
 }
 function encodeRedirectParamInLocation() {
+  // Why: "redirect" value from RedTrack arrives UN-encoded, so URLSearchParams
+  // splits on its inner & and we lose params. We read from the raw href instead.
+  function extractRedirectFromHref(href) {
+    try {
+      const h = String(href || '');
+      const qIndex = h.indexOf('?');
+      if (qIndex === -1) return '';
+      const query = h.slice(qIndex + 1);
+      const m = query.match(/(?:^|[&?])redirect=([^#]+)/i);
+      if (!m) return '';
+      let raw = m[1];
+      // Heuristic: cut off any accidental outer params appended after redirect
+      const stops = ['&payload=', '&campaign=', '&source=', '&redir_enc=', '&utm_'];
+      let cut = raw.length;
+      for (const s of stops) {
+        const i = raw.indexOf(s);
+        if (i !== -1) cut = Math.min(cut, i);
+      }
+      raw = raw.slice(0, cut);
+      try { return decodeURIComponent(raw); } catch { return raw; }
+    } catch { return ''; }
+  }
+
   try {
-    const url = new URL(location.href);
-    if (!url.searchParams.has('redir_enc')) {
-      const raw = url.searchParams.get('redirect');
-      if (raw) {
-        const enc = b64urlEncode(raw);
-        if (enc) {
-          url.searchParams.delete('redirect');
-          url.searchParams.set('redir_enc', enc);
-          history.replaceState(null, '', url.toString());
-          debugLog('🔐 redirect encoded -> redir_enc');
-        }
+    const current = new URL(location.href);
+    if (current.searchParams.has('redir_enc')) return; // already normalized
+
+    const fullRedirect = extractRedirectFromHref(location.href);
+    if (!fullRedirect) return; // nothing to do
+
+    // Replace messy split params with a single safe redir_enc param
+    current.searchParams.delete('redirect');
+    const enc = b64urlEncode(fullRedirect);
+    if (enc) {
+      current.searchParams.set('redir_enc', enc);
+      history.replaceState(null, '', current.toString());
+      debugLog('🔐 redirect encoded (full preservation) -> redir_enc');
+    }
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+} catch {}
+      return { key: k, value: v, raw: seg };
+    });
+
+    const startIdx = tokens.findIndex((t) => t.key === 'redirect');
+    if (startIdx === -1) return; // nothing to fix
+
+    let redirectValue = tokens[startIdx].value || '';
+    if (!redirectValue) return;
+
+    // Keys that belong to the LANDING PAGE (stop before these). Everything else is assumed to belong to the redirect.
+    const RESERVED = new Set([
+      'redirect', 'redir_enc', 'payload', 'clickid', 'campaign', 'promo', 'theme',
+      'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+      'ref', 'referrer', 'language', 'country', 'countryCode'
+    ]);
+
+    const consumedIdx = new Set([startIdx]);
+    for (let i = startIdx + 1; i < tokens.length; i++) {
+      const { key, value } = tokens[i];
+      if (RESERVED.has(key)) break;
+      redirectValue += (redirectValue.includes('?') ? '&' : '?') + key + '=' + value;
+      consumedIdx.add(i);
+    }
+
+    // Rewrite query: remove the consumed tokens and place stable redir_enc
+    params.delete('redirect');
+    // Remove only the consumed keys (best-effort; duplicate names are uncommon in our landing page)
+    for (const i of consumedIdx) {
+      const k = tokens[i].key;
+      // delete all occurrences of that key once; safe because they were inserted split by the browser
+      while (params.has(k)) params.delete(k);
+    }
+
+    const enc = b64urlEncode(redirectValue);
+    if (enc) params.set('redir_enc', enc);
+    history.replaceState(null, '', current.toString());
+    debugLog('🔐 redirect normalized -> redir_enc');
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+}
       }
     }
   } catch (e) { debugLog('encodeRedirectParamInLocation failed', e); }
@@ -189,14 +260,22 @@ async function loadTheme() {
  ***********************************/
 function initializeTracking() {
   const p = new URLSearchParams(location.search);
-  const payload = p.get('payload') || '';
   const campaign = p.get('campaign') || '';
   const redirEnc = p.get('redir_enc') || '';
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
 
-  if (payload) { localStorage.setItem('clickid', payload); localStorage.setItem('payload', payload); }
-  const clickid = payload || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
+  // Derive clickid from outer params OR from the redirect URL's params
+  let clickFromOuter = p.get('payload') || p.get('clickid') || '';
+  let clickFromRedirect = '';
+  if (decodedRedirect) {
+    try {
+      const ru = new URL(decodedRedirect);
+      clickFromRedirect = ru.searchParams.get('clickid') || ru.searchParams.get('external_id') || ru.searchParams.get('payload') || '';
+    } catch {}
+  }
+  const clickid = clickFromOuter || clickFromRedirect || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
+  if (clickid) { localStorage.setItem('clickid', clickid); localStorage.setItem('payload', clickid); }
 
   state.trackingData = {
     clickid,
