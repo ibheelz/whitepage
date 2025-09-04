@@ -404,10 +404,32 @@ async function submitToAirtable() {
 }
 
 function performRedirect() {
+  console.log('🔄 === PERFORMING FINAL REDIRECT ===');
+  
   const clickid = state.trackingData.clickid || state.trackingData.payload || '';
+  console.log('📍 STEP 1: Redirect Parameters');
+  console.log('   ClickID from state:', clickid || 'NONE');
+  console.log('   Redirect URL from state:', state.trackingData.redirectUrl);
+  
   const safe = buildSafeRedirectUrl(state.trackingData.redirectUrl, clickid);
-  debugLog('🔄 Redirecting to', safe);
-  if (CONFIG.REDIRECT_DELAY > 0) setTimeout(() => (location.href = safe), CONFIG.REDIRECT_DELAY); else location.href = safe;
+  console.log('📍 STEP 2: Built Final Redirect URL');
+  console.log('   🎯 FINAL REDIRECT URL:', safe);
+  
+  console.log('📍 STEP 3: Redirect Timing');
+  console.log('   Redirect delay (ms):', CONFIG.REDIRECT_DELAY);
+  
+  if (CONFIG.REDIRECT_DELAY > 0) {
+    console.log('   ⏱️ Setting timeout for redirect...');
+    setTimeout(() => {
+      console.log('   🚀 REDIRECTING NOW to:', safe);
+      location.href = safe;
+    }, CONFIG.REDIRECT_DELAY);
+  } else {
+    console.log('   🚀 IMMEDIATE REDIRECT to:', safe);
+    location.href = safe;
+  }
+  
+  console.log('🏁 === REDIRECT PROCESS COMPLETE ===');
 }
 
 function showError(message) {
