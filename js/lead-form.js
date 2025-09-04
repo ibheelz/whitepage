@@ -117,7 +117,6 @@ function b64urlDecode(str) {
     return decodeURIComponent(atob(b64 + pad));
   } catch (e) { return ''; }
 }
-
 function encodeRedirectParamInLocation() {
   // Preserve full redirect even if it contains unencoded &
   function extractRedirectFromHref(href) {
@@ -150,6 +149,97 @@ function encodeRedirectParamInLocation() {
   } catch (e) {
     debugLog('encodeRedirectParamInLocation failed', e);
   }
+} catch (e) { return raw; }
+    } catch (e) { return ''; }
+  }
+
+  try {
+    const current = new URL(location.href);
+    if (current.searchParams.has('redir_enc')) return; // already normalized
+
+    const fullRedirect = extractRedirectFromHref(location.href);
+    if (!fullRedirect) return; // nothing to do
+
+    // Replace with a single safe redir_enc param
+    current.searchParams.delete('redirect');
+    const enc = b64urlEncode(fullRedirect);
+    if (enc) {
+      current.searchParams.set('redir_enc', enc);
+      history.replaceState(null, '', current.toString());
+      debugLog('🔐 redirect encoded (full preservation) -> redir_enc');
+    }
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+}
+      raw = raw.slice(0, cut);
+      try { return decodeURIComponent(raw); } catch (e) { return raw; }
+    } catch (e) { return ''; }
+  }
+
+  try {
+    const current = new URL(location.href);
+    if (current.searchParams.has('redir_enc')) return; // already normalized
+
+    const fullRedirect = extractRedirectFromHref(location.href);
+    if (!fullRedirect) return; // nothing to do
+
+    // Replace messy split params with a single safe redir_enc param
+    current.searchParams.delete('redirect');
+    const enc = b64urlEncode(fullRedirect);
+    if (enc) {
+      current.searchParams.set('redir_enc', enc);
+      history.replaceState(null, '', current.toString());
+      debugLog('🔐 redirect encoded (full preservation) -> redir_enc');
+    }
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+} catch (e) {}
+      return { key: k, value: v, raw: seg };
+    });
+
+    const startIdx = tokens.findIndex((t) => t.key === 'redirect');
+    if (startIdx === -1) return; // nothing to fix
+
+    let redirectValue = tokens[startIdx].value || '';
+    if (!redirectValue) return;
+
+    // Keys that belong to the LANDING PAGE (stop before these). Everything else is assumed to belong to the redirect.
+    const RESERVED = new Set([
+      'redirect', 'redir_enc', 'payload', 'clickid', 'campaign', 'promo', 'theme',
+      'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+      'ref', 'referrer', 'language', 'country', 'countryCode'
+    ]);
+
+    const consumedIdx = new Set([startIdx]);
+    for (let i = startIdx + 1; i < tokens.length; i++) {
+      const { key, value } = tokens[i];
+      if (RESERVED.has(key)) break;
+      redirectValue += (redirectValue.includes('?') ? '&' : '?') + key + '=' + value;
+      consumedIdx.add(i);
+    }
+
+    // Rewrite query: remove the consumed tokens and place stable redir_enc
+    params.delete('redirect');
+    // Remove only the consumed keys (best-effort; duplicate names are uncommon in our landing page)
+    for (const i of consumedIdx) {
+      const k = tokens[i].key;
+      // delete all occurrences of that key once; safe because they were inserted split by the browser
+      while (params.has(k)) params.delete(k);
+    }
+
+    const enc = b64urlEncode(redirectValue);
+    if (enc) params.set('redir_enc', enc);
+    history.replaceState(null, '', current.toString());
+    debugLog('🔐 redirect normalized -> redir_enc');
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+}
+      }
+    }
+  } catch (e) { debugLog('encodeRedirectParamInLocation failed', e); }
 }
 
 /***********************************
@@ -211,13 +301,6 @@ function initializeTracking() {
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
 
-  debugLog('📊 Tracking params:', {
-    campaign,
-    redirEnc: redirEnc ? 'present' : 'missing',
-    redirectRaw,
-    decodedRedirect
-  });
-
   // Derive clickid from outer params OR from the redirect URL's params
   let clickFromOuter = p.get('payload') || p.get('clickid') || '';
   let clickFromRedirect = '';
@@ -243,7 +326,7 @@ function initializeTracking() {
   if (!state.trackingData.redirectUrl || state.trackingData.redirectUrl === 'null') {
     state.trackingData.redirectUrl = CONFIG.DEFAULT_REDIRECT_URL;
   }
-  debugLog('📊 Final tracking data:', state.trackingData);
+  debugLog('📊 Tracking', state.trackingData);
 }
 
 async function fetchGeoData() {
@@ -345,7 +428,7 @@ function updateFieldUI(fieldName, isValid, message, messageType) {
     group.classList.add(messageType); messageEl.classList.add(messageType, 'show'); messageText.textContent = message;
     const path = messageEl.querySelector('svg path'); if (path) {
       const successD = 'M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z';
-      const infoD = 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z';
+      const infoD = 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z';
       path.setAttribute('d', messageType === 'success' ? successD : infoD);
     }
   }
@@ -404,32 +487,10 @@ async function submitToAirtable() {
 }
 
 function performRedirect() {
-  console.log('🔄 === PERFORMING FINAL REDIRECT ===');
-  
   const clickid = state.trackingData.clickid || state.trackingData.payload || '';
-  console.log('📍 STEP 1: Redirect Parameters');
-  console.log('   ClickID from state:', clickid || 'NONE');
-  console.log('   Redirect URL from state:', state.trackingData.redirectUrl);
-  
   const safe = buildSafeRedirectUrl(state.trackingData.redirectUrl, clickid);
-  console.log('📍 STEP 2: Built Final Redirect URL');
-  console.log('   🎯 FINAL REDIRECT URL:', safe);
-  
-  console.log('📍 STEP 3: Redirect Timing');
-  console.log('   Redirect delay (ms):', CONFIG.REDIRECT_DELAY);
-  
-  if (CONFIG.REDIRECT_DELAY > 0) {
-    console.log('   ⏱️ Setting timeout for redirect...');
-    setTimeout(() => {
-      console.log('   🚀 REDIRECTING NOW to:', safe);
-      location.href = safe;
-    }, CONFIG.REDIRECT_DELAY);
-  } else {
-    console.log('   🚀 IMMEDIATE REDIRECT to:', safe);
-    location.href = safe;
-  }
-  
-  console.log('🏁 === REDIRECT PROCESS COMPLETE ===');
+  debugLog('🔄 Redirecting to', safe);
+  if (CONFIG.REDIRECT_DELAY > 0) setTimeout(() => (location.href = safe), CONFIG.REDIRECT_DELAY); else location.href = safe;
 }
 
 function showError(message) {
@@ -471,12 +532,7 @@ window.debugSubmit = function () {
   qs('leadForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 };
 
-window.debugState = function () { 
-  console.log('📊 State', state); 
-  console.log('🔗 Tracking', state.trackingData); 
-  console.log('🌍 Geo', state.geoData);
-  console.log('🎯 Original Redirect URL:', ORIGINAL_REDIRECT_URL);
-};
+window.debugState = function () { console.log('📊 State', state); console.log('🔗 Tracking', state.trackingData); console.log('🌍 Geo', state.geoData); };
 
 console.log('💡 TIP: Use debugSubmit() to test form submission');
-console.log('💡 TIP: Use debugState() to view current state and captured redirect URL');
+console.log('💡 TIP: Use debugState() to view current state');
