@@ -130,38 +130,63 @@
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
-        /* LOGO CONTAINER - Full width with center alignment */
-        .tar-logo { 
-          display: block !important;      /* Override any display:none */
-          width: 100% !important;         /* Full container width */
-          text-align: center !important;  /* Center the image */
-          margin: 0 auto 24px auto !important; /* Center container and add bottom margin */
+        /* FORCE LOGO CONTAINER - Override everything */
+        .tar-logo,
+        .logo,
+        div[class*="logo"],
+        div[class*="Logo"] { 
+          display: block !important;
+          width: 100% !important;
+          text-align: center !important;
+          margin: 0 auto 24px auto !important;
+          min-height: 200px !important;
         }
         
-        /* LOGO IMAGE STYLING - 3X Larger sizing */
-        .tar-logo-img { 
-          display: inline-block !important; /* Inline-block for centering */
-          width: 540px !important;          /* 3X larger: 180px × 3 = 540px */
-          height: 192px !important;         /* 3X larger: 64px × 3 = 192px */
-          object-fit: contain !important;   /* Scale image to fit without distortion */
-          max-width: 90% !important;        /* Responsive constraint - reduced to 90% to fit better */
+        /* FORCE LOGO IMAGE - Ultra specific targeting with 3X sizing */
+        .tar-logo-img,
+        .tar-logo img,
+        .logo img,
+        div[class*="logo"] img,
+        div[class*="Logo"] img,
+        img[alt*="TODO"],
+        img[alt*="LOGO"],
+        img[src*="logo"] { 
+          display: inline-block !important;
+          width: 540px !important;
+          height: 192px !important;
+          min-width: 540px !important;
+          min-height: 192px !important;
+          max-width: none !important;
+          max-height: none !important;
+          object-fit: contain !important;
+          margin: 0 auto !important;
         }
         
-        /* RESPONSIVE LOGO SIZING - Mobile devices */
-        @media (max-width: 480px) { 
-          .tar-logo-img { 
-            width: 450px !important;   /* 3X larger: 150px × 3 = 450px */
-            height: 159px !important;  /* 3X larger: 53px × 3 = 159px */
-            max-width: 85% !important; /* Tighter constraint for mobile */
+        /* MOBILE RESPONSIVE - Force mobile sizing */
+        @media (max-width: 768px) { 
+          .tar-logo-img,
+          .tar-logo img,
+          .logo img,
+          div[class*="logo"] img,
+          img[src*="logo"] { 
+            width: 450px !important;
+            height: 159px !important;
+            min-width: 450px !important;
+            min-height: 159px !important;
           } 
         }
         
-        /* VERY SMALL SCREENS - Extra responsive breakpoint */
-        @media (max-width: 360px) { 
-          .tar-logo-img { 
-            width: 390px !important;   /* 3X larger: 130px × 3 = 390px */
-            height: 138px !important;  /* 3X larger: 46px × 3 = 138px */
-            max-width: 80% !important; /* Even tighter constraint for very small screens */
+        /* SMALL SCREENS - Force small screen sizing */
+        @media (max-width: 480px) { 
+          .tar-logo-img,
+          .tar-logo img,
+          .logo img,
+          div[class*="logo"] img,
+          img[src*="logo"] { 
+            width: 360px !important;
+            height: 127px !important;
+            min-width: 360px !important;
+            min-height: 127px !important;
           } 
         }
       `;
