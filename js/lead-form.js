@@ -1,7 +1,10 @@
 'use strict';
 
 // File: /public/js/lead-form.js
-// Why: Make themes pluggable—drop /themes/<slug>.js and use ?campaign=<slug> (or ?theme=, ?promo=).
+// Why: Make themes pluggable and make ALL inbound URL params encodable into a single
+//      base64url param (?enc=...), then decoded transparently at runtime.
+//      This hides raw params like payload/campaign/source/redirect while keeping
+//      existing code paths working.
 
 /***********************************
  *  Configuration (client-side)
@@ -9,8 +12,9 @@
 const CONFIG = {
   AIRTABLE_BASE_ID: 'app2I0jOClbHteBNP',
   AIRTABLE_TABLE_NAME: 'Leads',
+  // NOTE: local testing only. Do not ship secrets to prod; use a proxy instead.
   AIRTABLE_API_KEY:
-    'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd', // local testing only
+    'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
   PROXY_URL: '',
   DEFAULT_REDIRECT_URL: 'https://mieladigital.com',
   REDIRECT_DELAY: 0,
@@ -47,6 +51,11 @@ const state = {
   trackingData: {},
   isSubmitting: false,
   validationState: { fullName: false, email: false, phone: false },
+};
+
+// Decoded URL params live here when ?enc= is present
+const URL_STATE = {
+  decoded: /** @type {Record<string,string>} */ (null),
 };
 
 /***********************************
@@ -86,38 +95,88 @@ function b64urlDecode(str) {
     return decodeURIComponent(atob(b64 + pad));
   } catch { return ''; }
 }
-function encodeRedirectParamInLocation() {
+
+function collectParamsFromUrl() {
+  const p = new URLSearchParams(location.search);
+  const obj = {};
+  p.forEach((v, k) => { if (k !== 'enc' && v != null && v !== '') obj[k] = v; });
+  return obj;
+}
+
+function getParam(name) {
+  if (URL_STATE.decoded && Object.prototype.hasOwnProperty.call(URL_STATE.decoded, name)) {
+    return String(URL_STATE.decoded[name] ?? '');
+  }
+  return new URLSearchParams(location.search).get(name) || '';
+}
+
+function getAllParams() {
+  const base = collectParamsFromUrl();
+  return URL_STATE.decoded ? { ...base, ...URL_STATE.decoded } : base;
+}
+
+// Encode *all* current URL params into a single ?enc=<b64url(JSON)>
+function encodeAllParamsInLocation() {
   try {
-    const url = new URL(location.href);
-    if (!url.searchParams.has('redir_enc')) {
-      const raw = url.searchParams.get('redirect');
-      if (raw) {
-        const enc = b64urlEncode(raw);
-        if (enc) {
-          url.searchParams.delete('redirect');
-          url.searchParams.set('redir_enc', enc);
-          history.replaceState(null, '', url.toString());
-          debugLog('🔐 redirect encoded -> redir_enc');
-        }
-      }
+    const hasEnc = new URLSearchParams(location.search).has('enc');
+    if (hasEnc) return; // already encoded
+
+    const raw = collectParamsFromUrl();
+    // If "redirect" present and no redir_enc, encode it too.
+    if (raw.redirect && !raw.redir_enc) {
+      raw.redir_enc = b64urlEncode(raw.redirect);
+      delete raw.redirect;
     }
-  } catch (e) { debugLog('encodeRedirectParamInLocation failed', e); }
+    const enc = b64urlEncode(JSON.stringify(raw));
+    if (!enc) return;
+
+    const url = new URL(location.href);
+    url.search = '';
+    url.searchParams.set('enc', enc);
+    history.replaceState(null, '', url.toString());
+    debugLog('🔐 All params encoded → ?enc');
+  } catch (e) { debugLog('encodeAllParamsInLocation failed', e); }
+}
+
+// If ?enc present, decode it into URL_STATE.decoded and optionally clean visible params
+function decodeEncParamFromLocation() {
+  try {
+    const p = new URLSearchParams(location.search);
+    const enc = p.get('enc');
+    if (!enc) return;
+    const raw = b64urlDecode(enc);
+    if (!raw) return;
+    let obj = null;
+    try { obj = JSON.parse(raw); }
+    catch { // fallback: try querystring format inside the payload
+      const test = new URLSearchParams(raw); const tmp = {}; let has = false;
+      test.forEach((v, k) => { tmp[k] = v; has = true; });
+      if (has) obj = tmp;
+    }
+    if (obj && typeof obj === 'object') {
+      // Sanitize to strings only
+      const clean = {}; Object.keys(obj).forEach((k) => { const v = obj[k]; if (v != null) clean[k] = String(v); });
+      URL_STATE.decoded = clean;
+      // Keep URL minimal: ensure only ?enc is visible
+      const url = new URL(location.href); url.search = ''; url.searchParams.set('enc', enc);
+      history.replaceState(null, '', url.toString());
+      debugLog('🗝️ Decoded enc payload', clean);
+    }
+  } catch (e) { debugLog('decodeEncParamFromLocation failed', e); }
 }
 
 /***********************************
  *  Dynamic Theme Loader (convention-based)
  ***********************************/
 function resolveThemeKeyFromUrl() {
-  const p = new URLSearchParams(location.search);
   for (const k of THEME_CONFIG.urlParams) {
-    const v = (p.get(k) || '').trim().toLowerCase();
+    const v = (getParam(k) || '').trim().toLowerCase();
     if (v) return v;
   }
   return THEME_CONFIG.defaultKey;
 }
 
 function sanitizeThemeKey(key) {
-  // Allow simple slugs only
   const slug = String(key || '').toLowerCase();
   return /^[a-z0-9._-]+$/.test(slug) ? slug : THEME_CONFIG.defaultKey;
 }
@@ -142,11 +201,10 @@ async function loadTheme() {
   const first = await loadScript(trySrc);
   if (!first.ok) { debugLog('⚠️ Theme not found, loading default'); await loadScript(fallbackSrc); }
 
-  // Prefer registry; then support legacy globals for backward compatibility
   let theme = (window.ThemeRegistry && window.ThemeRegistry.get && window.ThemeRegistry.get()) || null;
   if (!theme) {
     if (themeKey === 'pinup' && window.PinUpTheme?.apply) theme = window.PinUpTheme;
-    else if (window.GlassDefaultTheme?.apply) theme = window.GlassDefaultTheme; // default legacy
+    else if (window.GlassDefaultTheme?.apply) theme = window.GlassDefaultTheme;
   }
 
   try { theme?.apply?.(); }
@@ -157,11 +215,11 @@ async function loadTheme() {
  *  Tracking & geo
  ***********************************/
 function initializeTracking() {
-  const p = new URLSearchParams(location.search);
-  const payload = p.get('payload') || '';
-  const campaign = p.get('campaign') || '';
-  const redirEnc = p.get('redir_enc') || '';
-  const redirectRaw = p.get('redirect') || '';
+  const payload = getParam('payload');
+  const campaign = getParam('campaign');
+  const source = getParam('source');
+  const redirEnc = getParam('redir_enc');
+  const redirectRaw = getParam('redirect');
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
 
   if (payload) { localStorage.setItem('clickid', payload); localStorage.setItem('payload', payload); }
@@ -171,6 +229,8 @@ function initializeTracking() {
     clickid,
     payload: clickid,
     promo: campaign,
+    campaign,
+    source,
     redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
     referrer: document.referrer || 'direct',
@@ -216,7 +276,6 @@ function initializeValidation() {
   const phoneEl = qs('phone');
   const countryEl = qs('countryCode');
 
-  // Numeric-only UX & simple placeholder (no dashes)
   if (phoneEl) {
     phoneEl.setAttribute('inputmode', 'numeric');
     phoneEl.setAttribute('pattern', '[0-9]*');
@@ -316,6 +375,7 @@ async function submitToAirtable() {
     'Phone Number': state.formData.phone,
     'Click ID': state.trackingData.clickid || state.trackingData.payload || '',
     'Promo/Influencer': state.trackingData.promo || state.trackingData.campaign || '',
+    'Source': state.trackingData.source || '',
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
@@ -357,14 +417,32 @@ function showError(message) {
 /***********************************
  *  Boot
  ***********************************/
-document.addEventListener('DOMContentLoaded', async () => {
-  debugLog('🚀 Init');
+
+// Animate helper keyframes (toast)
+(function injectKeyframes(){
   const style = document.createElement('style');
   style.textContent = `@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
   document.head.appendChild(style);
-  encodeRedirectParamInLocation();
+})();
+
+document.addEventListener('DOMContentLoaded', async () => {
+  debugLog('🚀 Init');
+
+  // 1) If ?enc present → decode to hidden map and keep URL minimal (?enc only)
+  decodeEncParamFromLocation();
+  // 2) If NO ?enc present → encode all current params into ?enc and update URL
+  encodeAllParamsInLocation();
+  // 3) Re-decode after encoding so getters read from hidden map
+  decodeEncParamFromLocation();
+
   await loadTheme();
-  setTimeout(() => { initializeTracking(); initializeValidation(); initializeForm(); fetchGeoData(); }, 200);
+
+  setTimeout(() => {
+    initializeTracking();
+    initializeValidation();
+    initializeForm();
+    fetchGeoData();
+  }, 200);
 });
 
 function initializeForm() {
@@ -386,7 +464,12 @@ window.debugSubmit = function () {
   qs('leadForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 };
 
-window.debugState = function () { console.log('📊 State', state); console.log('🔗 Tracking', state.trackingData); console.log('🌍 Geo', state.geoData); };
+window.debugState = function () {
+  console.log('📊 State', state);
+  console.log('🔗 Tracking', state.trackingData);
+  console.log('🌍 Geo', state.geoData);
+  console.log('🧭 Params', getAllParams());
+};
 
 console.log('💡 TIP: Use debugSubmit() to test form submission');
 console.log('💡 TIP: Use debugState() to view current state');
