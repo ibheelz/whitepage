@@ -28,6 +28,7 @@ const THEME_CONFIG = {
 /***********************************
  *  Theme Registry (global)
  ***********************************/
+// Why: Decouple themes from this file—each theme registers itself here.
 window.ThemeRegistry = window.ThemeRegistry || (function () {
   let themeObj = null; let themeKey = null;
   return {
@@ -65,11 +66,13 @@ function toggleLoading(isLoading) {
 /**
  * Build a safe redirect URL that preserves ALL existing parameters
  * and appends exactly one `clickid` (if provided and not already present).
+ *
+ * Why: Some affiliate links were being modified to add `payload` and `external_id` too,
+ * which caused duplicates. This function now only cares about `clickid`.
  */
 function buildSafeRedirectUrl(rawUrl, clickid) {
   try {
     let candidate = String(rawUrl || '').trim();
-    debugLog('🔗 buildSafeRedirectUrl input:', { rawUrl, clickid });
     if (!candidate) return CONFIG.DEFAULT_REDIRECT_URL;
 
     // If missing scheme but looks like a host/path, default to https
@@ -96,56 +99,40 @@ function buildSafeRedirectUrl(rawUrl, clickid) {
       }
     }
 
-    const finalUrl = url.toString();
-    debugLog('🔗 buildSafeRedirectUrl output:', finalUrl);
-    return finalUrl;
-  } catch (e) {
-    debugLog('buildSafeRedirectUrl failed', e);
+    // Do NOT add/alter any other params (payload, external_id, etc.)
+    return url.toString();
+  } catch {
     return CONFIG.DEFAULT_REDIRECT_URL;
   }
 }
 
 // --- URL encoding helpers (base64url) ---
 function b64urlEncode(str) {
-  try {
-    const encoded = btoa(encodeURIComponent(str)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-    debugLog('🔢 b64urlEncode input:', str, 'output:', encoded);
-    return encoded;
-  } catch (e) {
-    debugLog('b64urlEncode failed', e);
-    return '';
-  }
+  try { return btoa(encodeURIComponent(str)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, ''); } catch { return ''; }
 }
-
 function b64urlDecode(str) {
   try {
     const b64 = (str || '').replace(/-/g, '+').replace(/_/g, '/');
     const pad = b64.length % 4 === 0 ? '' : '='.repeat(4 - (b64.length % 4));
-    const decoded = decodeURIComponent(atob(b64 + pad));
-    debugLog('🔢 b64urlDecode input:', str, 'output:', decoded);
-    return decoded;
-  } catch (e) {
-    debugLog('b64urlDecode failed', e);
-    return '';
-  }
+    return decodeURIComponent(atob(b64 + pad));
+  } catch { return ''; }
 }
-
 function encodeRedirectParamInLocation() {
   try {
-    const current = new URL(location.href);
-    if (current.searchParams.has('redir_enc')) return;
-
-    const redirectRaw = current.searchParams.get('redirect') || '';
-    if (!redirectRaw) return;
-
-    const enc = b64urlEncode(redirectRaw);
-    if (!enc) return;
-    current.searchParams.set('redir_enc', enc);
-    history.replaceState(null, '', current.toString());
-    debugLog('🔐 redirect preserved -> redir_enc');
-  } catch (e) {
-    debugLog('encodeRedirectParamInLocation failed', e);
-  }
+    const url = new URL(location.href);
+    if (!url.searchParams.has('redir_enc')) {
+      const raw = url.searchParams.get('redirect');
+      if (raw) {
+        const enc = b64urlEncode(raw);
+        if (enc) {
+          url.searchParams.delete('redirect');
+          url.searchParams.set('redir_enc', enc);
+          history.replaceState(null, '', url.toString());
+          debugLog('🔐 redirect encoded -> redir_enc');
+        }
+      }
+    }
+  } catch (e) { debugLog('encodeRedirectParamInLocation failed', e); }
 }
 
 /***********************************
@@ -202,43 +189,29 @@ async function loadTheme() {
  ***********************************/
 function initializeTracking() {
   const p = new URLSearchParams(location.search);
+  const payload = p.get('payload') || '';
   const campaign = p.get('campaign') || '';
   const redirEnc = p.get('redir_enc') || '';
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
 
-  debugLog('📊 Tracking params:', {
-    campaign,
-    redirEnc: redirEnc ? 'present' : 'missing',
-    redirectRaw,
-    decodedRedirect
-  });
-
-  // Derive clickid from outer params OR from the redirect URL's params
-  let clickFromOuter = p.get('payload') || p.get('clickid') || '';
-  let clickFromRedirect = '';
-  if (decodedRedirect) {
-    try {
-      const ru = new URL(decodedRedirect);
-      clickFromRedirect = ru.searchParams.get('clickid') || ru.searchParams.get('external_id') || ru.searchParams.get('payload') || '';
-    } catch (e) {
-      debugLog('Failed to parse decodedRedirect:', e);
-    }
-  }
-  const clickid = clickFromOuter || clickFromRedirect || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
-  if (clickid) { localStorage.setItem('clickid', clickid); localStorage.setItem('payload', clickid); }
+  if (payload) { localStorage.setItem('clickid', payload); localStorage.setItem('payload', payload); }
+  const clickid = payload || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
 
   state.trackingData = {
     clickid,
     payload: clickid,
     promo: campaign,
-    redirectUrl: decodedRedirect || redirectRaw || CONFIG.DEFAULT_REDIRECT_URL,
+    redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
     referrer: document.referrer || 'direct',
     landingPage: location.href,
   };
 
-  debugLog('📊 Final tracking data:', state.trackingData);
+  if (!state.trackingData.redirectUrl || state.trackingData.redirectUrl === 'null') {
+    state.trackingData.redirectUrl = CONFIG.DEFAULT_REDIRECT_URL;
+  }
+  debugLog('📊 Tracking', state.trackingData);
 }
 
 async function fetchGeoData() {
@@ -340,7 +313,7 @@ function updateFieldUI(fieldName, isValid, message, messageType) {
     group.classList.add(messageType); messageEl.classList.add(messageType, 'show'); messageText.textContent = message;
     const path = messageEl.querySelector('svg path'); if (path) {
       const successD = 'M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z';
-      const infoD = 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z';
+      const infoD = 'M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z';
       path.setAttribute('d', messageType === 'success' ? successD : infoD);
     }
   }
@@ -388,13 +361,13 @@ async function submitToAirtable() {
 
   if (CONFIG.PROXY_URL) {
     const r = await fetch(CONFIG.PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'create', payload }) });
-    if (!r.ok) { let e = {}; try { e = await r.json(); } catch (e) {} throw new Error(`Proxy HTTP ${r.status}: ${JSON.stringify(e)}`); }
+    if (!r.ok) { let e = {}; try { e = await r.json(); } catch {} throw new Error(`Proxy HTTP ${r.status}: ${JSON.stringify(e)}`); }
     return r.json();
   }
 
   const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
   const res = await fetch(endpoint, { method: 'POST', headers: { 'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-  if (!res.ok) { let err = {}; try { err = await res.json(); } catch (e) {} debugLog('❌ Airtable error', { status: res.status, err }); throw new Error(`HTTP ${res.status}`); }
+  if (!res.ok) { let err = {}; try { err = await res.json(); } catch {} debugLog('❌ Airtable error', { status: res.status, err }); throw new Error(`HTTP ${res.status}`); }
   const json = await res.json(); debugLog('✅ Airtable response', json); return json;
 }
 
