@@ -121,73 +121,70 @@
     holder.style.width = '100%';               // Full width container
     holder.style.textAlign = 'center';         // Center content horizontally
     holder.style.marginBottom = '24px';        // Add space below logo (increased from 16px)
+    holder.style.minHeight = '200px';          // Ensure enough height for large logo
     
-    // Inject logo image with alt text
-    holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
+    // Inject logo image with alt text and DIRECT INLINE STYLES (highest priority)
+    holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" 
+      style="
+        display: inline-block !important;
+        width: 540px !important;
+        height: 192px !important;
+        min-width: 540px !important;
+        min-height: 192px !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+      " />`;
 
-    // Inject CSS for logo sizing if not already present
+    // Also set up a resize observer to force sizing on window resize
+    if (window.ResizeObserver) {
+      const img = holder.querySelector('img');
+      if (img) {
+        // Force resize based on screen width
+        const forceResize = () => {
+          const screenWidth = window.innerWidth;
+          if (screenWidth <= 480) {
+            // Mobile
+            img.style.width = '360px';
+            img.style.height = '127px';
+            img.style.minWidth = '360px';
+            img.style.minHeight = '127px';
+          } else if (screenWidth <= 768) {
+            // Tablet
+            img.style.width = '450px';
+            img.style.height = '159px';
+            img.style.minWidth = '450px';
+            img.style.minHeight = '159px';
+          } else {
+            // Desktop
+            img.style.width = '540px';
+            img.style.height = '192px';
+            img.style.minWidth = '540px';
+            img.style.minHeight = '192px';
+          }
+        };
+        
+        // Force resize immediately and on window resize
+        forceResize();
+        window.addEventListener('resize', forceResize);
+      }
+    }
+
+    // Still inject CSS as backup, but inline styles will take priority
     if (!document.getElementById('tar-logo-css')) {
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
-        /* FORCE LOGO CONTAINER - Override everything */
+        /* BACKUP CSS - Inline styles above will override these */
         .tar-logo,
         .logo,
-        div[class*="logo"],
-        div[class*="Logo"] { 
+        div[class*="logo"] { 
           display: block !important;
           width: 100% !important;
           text-align: center !important;
           margin: 0 auto 24px auto !important;
           min-height: 200px !important;
-        }
-        
-        /* FORCE LOGO IMAGE - Ultra specific targeting with 3X sizing */
-        .tar-logo-img,
-        .tar-logo img,
-        .logo img,
-        div[class*="logo"] img,
-        div[class*="Logo"] img,
-        img[alt*="TODO"],
-        img[alt*="LOGO"],
-        img[src*="logo"] { 
-          display: inline-block !important;
-          width: 540px !important;
-          height: 192px !important;
-          min-width: 540px !important;
-          min-height: 192px !important;
-          max-width: none !important;
-          max-height: none !important;
-          object-fit: contain !important;
-          margin: 0 auto !important;
-        }
-        
-        /* MOBILE RESPONSIVE - Force mobile sizing */
-        @media (max-width: 768px) { 
-          .tar-logo-img,
-          .tar-logo img,
-          .logo img,
-          div[class*="logo"] img,
-          img[src*="logo"] { 
-            width: 450px !important;
-            height: 159px !important;
-            min-width: 450px !important;
-            min-height: 159px !important;
-          } 
-        }
-        
-        /* SMALL SCREENS - Force small screen sizing */
-        @media (max-width: 480px) { 
-          .tar-logo-img,
-          .tar-logo img,
-          .logo img,
-          div[class*="logo"] img,
-          img[src*="logo"] { 
-            width: 360px !important;
-            height: 127px !important;
-            min-width: 360px !important;
-            min-height: 127px !important;
-          } 
         }
       `;
       document.head.appendChild(s);
