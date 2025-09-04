@@ -118,18 +118,38 @@ function b64urlDecode(str) {
   } catch (e) { return ''; }
 }
 function encodeRedirectParamInLocation() {
-  // Read raw "redirect=" value from the full href to preserve inner & params
+  // Preserve full redirect even if it contains unencoded &
   function extractRedirectFromHref(href) {
     try {
-      const h = String(href || '');
-      const qIndex = h.indexOf('?');
-      if (qIndex === -1) return '';
-      const query = h.slice(qIndex + 1);
-      const m = query.match(/(?:^|[&?])redirect=([^#]+)/i);
-      if (!m) return '';
-      let raw = m[1];
-      // Keep everything after redirect=; do not trim on & — this preserves the full inner query
+      const q = (String(href || '').split('?')[1] || '');
+      const key = 'redirect=';
+      const pos = q.toLowerCase().indexOf(key);
+      if (pos === -1) return '';
+      let raw = q.slice(pos + key.length);
+      const hashIndex = raw.indexOf('#');
+      if (hashIndex !== -1) raw = raw.slice(0, hashIndex);
       try { return decodeURIComponent(raw); } catch (e) { return raw; }
+    } catch (e) { return ''; }
+  }
+
+  try {
+    const current = new URL(location.href);
+    if (current.searchParams.has('redir_enc')) return;
+
+    const fromHref = extractRedirectFromHref(location.href);
+    const fromQs = current.searchParams.get('redirect') || '';
+    const fullValue = (fromHref && fromHref.length >= fromQs.length) ? fromHref : fromQs;
+    if (!fullValue) return;
+
+    const enc = b64urlEncode(fullValue);
+    if (!enc) return;
+    current.searchParams.set('redir_enc', enc);
+    history.replaceState(null, '', current.toString());
+    debugLog('🔐 redirect preserved -> redir_enc');
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+} catch (e) { return raw; }
     } catch (e) { return ''; }
   }
 
