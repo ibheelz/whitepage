@@ -101,25 +101,24 @@ function buildSafeRedirectUrl(rawUrl, clickid) {
 
     // Do NOT add/alter any other params (payload, external_id, etc.)
     return url.toString();
-  } catch {
+  } catch (e) {
     return CONFIG.DEFAULT_REDIRECT_URL;
   }
 }
 
 // --- URL encoding helpers (base64url) ---
 function b64urlEncode(str) {
-  try { return btoa(encodeURIComponent(str)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, ''); } catch { return ''; }
+  try { return btoa(encodeURIComponent(str)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, ''); } catch (e) { return ''; }
 }
 function b64urlDecode(str) {
   try {
     const b64 = (str || '').replace(/-/g, '+').replace(/_/g, '/');
     const pad = b64.length % 4 === 0 ? '' : '='.repeat(4 - (b64.length % 4));
     return decodeURIComponent(atob(b64 + pad));
-  } catch { return ''; }
+  } catch (e) { return ''; }
 }
 function encodeRedirectParamInLocation() {
-  // Why: "redirect" value from RedTrack arrives UN-encoded, so URLSearchParams
-  // splits on its inner & and we lose params. We read from the raw href instead.
+  // Read raw "redirect=" value from the full href to preserve inner & params
   function extractRedirectFromHref(href) {
     try {
       const h = String(href || '');
@@ -129,16 +128,33 @@ function encodeRedirectParamInLocation() {
       const m = query.match(/(?:^|[&?])redirect=([^#]+)/i);
       if (!m) return '';
       let raw = m[1];
-      // Heuristic: cut off any accidental outer params appended after redirect
-      const stops = ['&payload=', '&campaign=', '&source=', '&redir_enc=', '&utm_'];
-      let cut = raw.length;
-      for (const s of stops) {
-        const i = raw.indexOf(s);
-        if (i !== -1) cut = Math.min(cut, i);
-      }
+      // Keep everything after redirect=; do not trim on & — this preserves the full inner query
+      try { return decodeURIComponent(raw); } catch (e) { return raw; }
+    } catch (e) { return ''; }
+  }
+
+  try {
+    const current = new URL(location.href);
+    if (current.searchParams.has('redir_enc')) return; // already normalized
+
+    const fullRedirect = extractRedirectFromHref(location.href);
+    if (!fullRedirect) return; // nothing to do
+
+    // Replace with a single safe redir_enc param
+    current.searchParams.delete('redirect');
+    const enc = b64urlEncode(fullRedirect);
+    if (enc) {
+      current.searchParams.set('redir_enc', enc);
+      history.replaceState(null, '', current.toString());
+      debugLog('🔐 redirect encoded (full preservation) -> redir_enc');
+    }
+  } catch (e) {
+    debugLog('encodeRedirectParamInLocation failed', e);
+  }
+}
       raw = raw.slice(0, cut);
-      try { return decodeURIComponent(raw); } catch { return raw; }
-    } catch { return ''; }
+      try { return decodeURIComponent(raw); } catch (e) { return raw; }
+    } catch (e) { return ''; }
   }
 
   try {
@@ -159,7 +175,7 @@ function encodeRedirectParamInLocation() {
   } catch (e) {
     debugLog('encodeRedirectParamInLocation failed', e);
   }
-} catch {}
+} catch (e) {}
       return { key: k, value: v, raw: seg };
     });
 
@@ -272,7 +288,7 @@ function initializeTracking() {
     try {
       const ru = new URL(decodedRedirect);
       clickFromRedirect = ru.searchParams.get('clickid') || ru.searchParams.get('external_id') || ru.searchParams.get('payload') || '';
-    } catch {}
+    } catch (e) {}
   }
   const clickid = clickFromOuter || clickFromRedirect || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
   if (clickid) { localStorage.setItem('clickid', clickid); localStorage.setItem('payload', clickid); }
@@ -440,13 +456,13 @@ async function submitToAirtable() {
 
   if (CONFIG.PROXY_URL) {
     const r = await fetch(CONFIG.PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'create', payload }) });
-    if (!r.ok) { let e = {}; try { e = await r.json(); } catch {} throw new Error(`Proxy HTTP ${r.status}: ${JSON.stringify(e)}`); }
+    if (!r.ok) { let e = {}; try { e = await r.json(); } catch (e) {} throw new Error(`Proxy HTTP ${r.status}: ${JSON.stringify(e)}`); }
     return r.json();
   }
 
   const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
   const res = await fetch(endpoint, { method: 'POST', headers: { 'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-  if (!res.ok) { let err = {}; try { err = await res.json(); } catch {} debugLog('❌ Airtable error', { status: res.status, err }); throw new Error(`HTTP ${res.status}`); }
+  if (!res.ok) { let err = {}; try { err = await res.json(); } catch (e) {} debugLog('❌ Airtable error', { status: res.status, err }); throw new Error(`HTTP ${res.status}`); }
   const json = await res.json(); debugLog('✅ Airtable response', json); return json;
 }
 
