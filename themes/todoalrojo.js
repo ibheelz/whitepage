@@ -110,15 +110,17 @@
   }
 
   // ===== LOGO INJECTION AND SIZING =====
-  // Handles logo display with responsive sizing
+  // Handles logo display with responsive sizing and proper centering
   function injectLogo(src) {
     const holder = document.querySelector('.logo');
     if (!holder) return; // Exit if no logo container found
     
     // IMPORTANT: Override default '.logo { display:none }' by replacing className
-    holder.className = 'tar-logo mx-auto';      // Center logo horizontally
+    holder.className = 'tar-logo';             // Remove any existing classes
     holder.style.display = 'block';            // Force display (overrides any display:none)
-    holder.style.marginBottom = '16px';        // Add space below logo
+    holder.style.width = '100%';               // Full width container
+    holder.style.textAlign = 'center';         // Center content horizontally
+    holder.style.marginBottom = '24px';        // Add space below logo (increased from 16px)
     
     // Inject logo image with alt text
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
@@ -128,25 +130,36 @@
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
-        /* LOGO CONTAINER SIZING */
+        /* LOGO CONTAINER - Full width with center alignment */
         .tar-logo { 
-          width: 160px;   /* Desktop logo width */
-          height: 56px;   /* Desktop logo height - maintains aspect ratio */
+          display: block !important;      /* Override any display:none */
+          width: 100% !important;         /* Full container width */
+          text-align: center !important;  /* Center the image */
+          margin: 0 auto 24px auto !important; /* Center container and add bottom margin */
         }
         
-        /* LOGO IMAGE STYLING */
+        /* LOGO IMAGE STYLING - Standardized sizing */
         .tar-logo-img { 
-          display: block;        /* Remove inline spacing */
-          height: 100%;         /* Fill container height */
-          width: auto;          /* Auto width maintains aspect ratio */
-          object-fit: contain;  /* Scale image to fit without distortion */
+          display: inline-block !important; /* Inline-block for centering */
+          width: 180px !important;          /* Standardized width - larger than before */
+          height: 64px !important;          /* Standardized height - larger than before */
+          object-fit: contain !important;   /* Scale image to fit without distortion */
+          max-width: 100% !important;       /* Responsive constraint */
         }
         
         /* RESPONSIVE LOGO SIZING - Mobile devices */
         @media (max-width: 480px) { 
-          .tar-logo { 
-            width: 132px;   /* Smaller mobile logo width */
-            height: 46px;   /* Smaller mobile logo height */
+          .tar-logo-img { 
+            width: 150px !important;   /* Mobile logo width - proportionally scaled */
+            height: 53px !important;   /* Mobile logo height - proportionally scaled */
+          } 
+        }
+        
+        /* VERY SMALL SCREENS - Extra responsive breakpoint */
+        @media (max-width: 360px) { 
+          .tar-logo-img { 
+            width: 130px !important;   /* Very small screen width */
+            height: 46px !important;   /* Very small screen height */
           } 
         }
       `;
