@@ -232,7 +232,7 @@ function initializeTracking() {
     campaign,
     source,
     redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
-    timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
+    timestamp: new Date().toISOString(),
     referrer: document.referrer || 'direct',
     landingPage: location.href,
   };
