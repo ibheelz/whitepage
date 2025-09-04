@@ -106,16 +106,39 @@
       display: 'block',
       margin: '0 auto', // true center
       'object-fit': 'contain',
-      'max-width': '100%',
-      height: 'auto',
+      'max-width': '180px', // Standardized maximum width
+      'width': '100%', // Responsive within max-width
+      'height': 'auto',
+      // Responsive sizing for different screens
+      '@media (max-width: 480px)': {
+        'max-width': '140px'
+      },
+      '@media (max-width: 360px)': {
+        'max-width': '120px'
+      }
     });
 
-    // Highest-priority safety net
+    // Highest-priority safety net with responsive logo sizes
     let s = document.getElementById('tar-logo-css');
     if (!s) { s = document.createElement('style'); s.id = 'tar-logo-css'; document.head.appendChild(s); }
     s.textContent = `
       .tar-logo, .logo { display:flex !important; justify-content:center !important; align-items:center !important; width:100% !important; margin:0 auto 12px !important; padding:0 !important; text-align:center !important; }
-      .tar-logo-img { display:block !important; margin:0 auto !important; object-fit:contain !important; height:auto !important; max-width:100% !important; }
+      .tar-logo-img { 
+        display:block !important; 
+        margin:0 auto !important; 
+        object-fit:contain !important; 
+        height:auto !important; 
+        max-width:180px !important; 
+        width:100% !important;
+      }
+      
+      /* Responsive logo sizing */
+      @media (max-width: 480px) {
+        .tar-logo-img { max-width:140px !important; }
+      }
+      @media (max-width: 360px) {
+        .tar-logo-img { max-width:120px !important; }
+      }
     `;
   }
 
@@ -124,8 +147,31 @@
     if (header) {
       header.className = 'header text-center';
       header.style.margin = '4px 0 8px';
-      const h1 = header.querySelector('h1'); if (h1) h1.style.color = '#ffffff';
+      const h1 = header.querySelector('h1'); 
+      if (h1) h1.style.color = '#ffffff';
+      
+      // Style subtitle/description text with additional spacing
+      const subtitle = header.querySelector('p, .subtitle, [class*="subtitle"], [class*="description"]') || 
+                      document.querySelector('p, .subtitle, [class*="subtitle"], [class*="description"]');
+      if (subtitle) {
+        subtitle.style.marginBottom = '20px';
+        subtitle.style.paddingBottom = '8px';
+        subtitle.style.color = '#e5e7eb';
+        subtitle.style.fontSize = '14px';
+        subtitle.style.lineHeight = '1.4';
+      }
     }
+
+    // Additional check for subtitle text by content matching
+    document.querySelectorAll('p, div, span').forEach(el => {
+      if (el.textContent && el.textContent.includes('Únete a más de') && el.textContent.includes('clientes satisfechos')) {
+        el.style.marginBottom = '20px';
+        el.style.paddingBottom = '8px';
+        el.style.color = '#e5e7eb';
+        el.style.fontSize = '14px';
+        el.style.lineHeight = '1.4';
+      }
+    });
 
     document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach((input) => {
       input.className = 'w-full px-4 py-3 text-white placeholder-gray-400 transition-all';
@@ -176,6 +222,12 @@
       .form-group.success input, .form-group.success select { border-color: ${cfg.green} !important; }
       .form-group.error input, .form-group.error select { border-color: ${cfg.colors.primary} !important; }
       .submit-btn, .submit-btn * { color: #ffffff !important; }
+      
+      /* Additional subtitle spacing styles */
+      .header p, .subtitle, [class*="subtitle"], [class*="description"] {
+        margin-bottom: 20px !important;
+        padding-bottom: 8px !important;
+      }
     `;
   }
 
