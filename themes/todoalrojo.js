@@ -20,7 +20,7 @@
       ensureFont();
       applyBackground(cfg.bgImage);
       normalizeContainer();
-      injectLogo(cfg.logo); // center & larger
+      injectLogo(cfg.logo); // fixed-height, visible
       styleForm(cfg);
       injectDynamicCss(cfg);
       setDefaultPhoneCountry('+56');
@@ -79,23 +79,19 @@
   function injectLogo(src) {
     const holder = document.querySelector('.logo');
     if (!holder) return;
-    // Ensure visibility and center alignment
-    holder.className = 'tar-logo';
-    holder.style.display = 'flex';
-    holder.style.alignItems = 'center';
-    holder.style.justifyContent = 'center';
-    holder.style.width = '100%';
-    // Double the logo size from 72px to 144px
-    holder.style.height = '144px';
-    holder.style.margin = '8px auto 12px';
+    // Important: remove base '.logo { display:none }' by replacing className & forcing display
+    holder.className = 'tar-logo mx-auto';
+    holder.style.display = 'block';
+    holder.style.marginBottom = '16px';
     holder.innerHTML = `<img src="${src}" alt="TODOALROJO" class="tar-logo-img" />`;
 
     if (!document.getElementById('tar-logo-css')) {
       const s = document.createElement('style');
       s.id = 'tar-logo-css';
       s.textContent = `
+        .tar-logo { width: 160px; height: 56px; }
         .tar-logo-img { display:block; height:100%; width:auto; object-fit:contain; }
-        @media (max-width: 480px){ .tar-logo{ height:120px; margin:6px auto 10px; } }
+        @media (max-width: 480px){ .tar-logo{ width:132px; height:46px; } }
       `;
       document.head.appendChild(s);
     }
@@ -132,19 +128,11 @@
     if (phoneContainer) {
       phoneContainer.className = 'phone-container flex gap-2';
       const phoneSelect = phoneContainer.querySelector('select');
-      const phoneInput = phoneContainer.querySelector('input[type="tel"]');
-      
       if (phoneSelect) {
         phoneSelect.className = 'flex-shrink-0 w-36 px-3 py-3 text-white text-sm appearance-none cursor-pointer';
         phoneSelect.style.backgroundColor = `rgba(31,41,55,${cfg.colors.inputBgAlpha})`;
         phoneSelect.style.border = `2px solid ${cfg.colors.primary}`;
         phoneSelect.style.borderRadius = RADIUS + 'px';
-        phoneSelect.style.height = '48px'; // Match input height
-      }
-      
-      if (phoneInput) {
-        phoneInput.style.height = '48px'; // Ensure equal height
-        phoneInput.style.flex = '1'; // Take remaining space
       }
     }
 
@@ -154,7 +142,7 @@
       submitBtn.style.background = `linear-gradient(to bottom, ${cfg.buttonTop}, ${cfg.buttonBottom})`;
       submitBtn.style.borderRadius = RADIUS + 'px';
       submitBtn.style.border = '2px solid transparent';
-      submitBtn.style.color = '#ffffff';
+      submitBtn.style.color = '#ffffff'; // ensure white text
     }
   }
 
@@ -165,14 +153,6 @@
       .form-group.success input, .form-group.success select { border-color: ${cfg.green} !important; }
       .form-group.error input, .form-group.error select { border-color: ${cfg.colors.primary} !important; }
       .submit-btn, .submit-btn * { color: #ffffff !important; }
-      
-      /* Phone dropdown styling to match PIN-UP */
-      .phone-container select {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 4px center;
-        background-size: 12px;
-      }
     `;
   }
 
