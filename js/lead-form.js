@@ -1140,7 +1140,7 @@ async function submitToAirtable() {
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
-    'Landing Page': state.trackingData.landingPage || '',
+    'Landing Page': state.trackingData.redirectUrl || '',
     'Traffic Source': state.trackingData.source || 'Direct',
     'User Agent': state.geoData.userAgent || '',
     'Language': state.geoData.language || '',
