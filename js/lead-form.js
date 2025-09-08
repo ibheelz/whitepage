@@ -1142,8 +1142,6 @@ async function submitToAirtable() {
     'Traffic Source': state.trackingData.source || 'Direct',
     'User Agent': state.geoData.userAgent || '',
     'Language': state.geoData.language || '',
-    // 'Referrer': state.trackingData.referrer || '', // ← Remove this line entirely
-    // 'Landing Page': state.trackingData.landingPage || '', // ← Optionally remove this too
     'Timestamp': state.trackingData.timestamp || '',
   };
   
