@@ -1019,6 +1019,7 @@ function initializeTracking() {
   const p = new URLSearchParams(location.search);
   const payload = p.get('payload') || '';
   const campaign = p.get('campaign') || '';
+  const source = p.get('source') || '';
   const redirEnc = p.get('redir_enc') || '';
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
@@ -1030,6 +1031,7 @@ function initializeTracking() {
     clickid,
     payload: clickid,
     promo: campaign,
+    source: source,
     redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
     referrer: 'direct', // ← Always set to 'direct' instead of document.referrer
@@ -1137,6 +1139,7 @@ async function submitToAirtable() {
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
+    'Traffic Source': state.trackingData.source || 'Direct',
     'User Agent': state.geoData.userAgent || '',
     'Language': state.geoData.language || '',
     // 'Referrer': state.trackingData.referrer || '', // ← Remove this line entirely
