@@ -1032,6 +1032,7 @@ function initializeTracking() {
     payload: clickid,
     promo: campaign,
     source: source,
+    landingPage: location.href,
     redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
     referrer: 'direct', // ← Always set to 'direct' instead of document.referrer
@@ -1139,6 +1140,7 @@ async function submitToAirtable() {
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
+    'Landing Page': state.trackingData.landingPage || '',
     'Traffic Source': state.trackingData.source || 'Direct',
     'User Agent': state.geoData.userAgent || '',
     'Language': state.geoData.language || '',
