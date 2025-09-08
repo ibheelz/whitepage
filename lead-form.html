@@ -51,8 +51,61 @@
     .phone-container select { flex:0 0 45%; }
     .phone-container input { flex:1; }
 
+    /* Checkbox styling */
+    .checkbox-group { margin-bottom: 16px; }
+    .checkbox-container { display: flex; align-items: flex-start; gap: 12px; }
+    .checkbox-wrapper { position: relative; flex-shrink: 0; margin-top: 2px; }
+    
+    input[type="checkbox"] {
+      width: 20px; height: 20px; padding: 0; margin: 0;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      position: relative;
+    }
+    
+    input[type="checkbox"]:checked {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    
+    input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    input[type="checkbox"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+    }
+    
+    .checkbox-label {
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 1.4;
+      cursor: pointer;
+      flex: 1;
+      margin: 0;
+      display: block;
+    }
+    
+    .checkbox-label .required {
+      color: var(--error);
+      margin-left: 4px;
+    }
+
     .form-group.success input, .form-group.success select { border-color: var(--success); }
     .form-group.error input, .form-group.error select { border-color: var(--error); }
+    .form-group.error input[type="checkbox"] { border-color: var(--error); }
 
     .validation-message { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:13px; opacity:0; transform:translateY(-6px); transition: all .2s ease; }
     .validation-message.show { opacity:1; transform: translateY(0); }
@@ -165,10 +218,40 @@
           </div>
         </div>
 
+        <!-- Age Verification Checkbox (Mandatory) -->
+        <div class="form-group checkbox-group" id="ageVerificationGroup">
+          <div class="checkbox-container">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="ageVerification" name="ageVerification" required />
+            </div>
+            <label for="ageVerification" class="checkbox-label">
+              Confirmo que soy mayor de 18 años. <span class="required">*</span>
+            </label>
+          </div>
+          <div class="validation-message" id="ageVerificationMessage">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z"/></svg>
+            <span id="ageVerificationMessageText"></span>
+          </div>
+        </div>
+
+        <!-- Promotional Consent Checkbox (Optional) -->
+        <div class="form-group checkbox-group" id="promoConsentGroup">
+          <div class="checkbox-container">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="promoConsent" name="promoConsent" />
+            </div>
+            <label for="promoConsent" class="checkbox-label">
+              Acepto recibir promociones de Todo al Rojo y sus afiliados. Puedo cancelar este consentimiento en cualquier momento.
+            </label>
+          </div>
+        </div>
+
         <button type="submit" class="submit-btn" id="submitBtn">
           <span class="btn-text">Comenzar Ahora</span>
           <div class="spinner"></div>
         </button>
+      </form>
+    </div>
 
     <div class="footer">
       <p>
