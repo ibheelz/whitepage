@@ -426,33 +426,7 @@ async function verifyCode(verificationId, code) {
   }
 }
 
-async function checkDuplicateEmailAndSource(email, source) {
-  try {
-    const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
-    const formula = `AND({Email}="${email}", {Traffic Source}="${source}")`;
-    const url = `${endpoint}?filterByFormula=${encodeURIComponent(formula)}`;
-    
-    const response = await fetch(url, {
-      headers: { 
-        'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      debugLog('Duplicate check failed:', response.status);
-      return false; // Allow if check fails
-    }
-    
-    const data = await response.json();
-    const isDuplicate = data.records && data.records.length > 0;
-    debugLog('Duplicate check result:', { email, source, isDuplicate, count: data.records?.length || 0 });
-    return isDuplicate;
-  } catch (error) {
-    debugLog('Duplicate check error:', error);
-    return false; // Allow if check fails
-  }
-}
+
 
 /***********************************
  *  OTP UI Functions - FIXED
@@ -1104,6 +1078,7 @@ async function fetchGeoData() {
 /***********************************
  *  Submit → Airtable → Redirect - FIXED
  ***********************************/
+// REPLACE your handleSubmit function with this updated version (remove source checking):
 async function handleSubmit(evt) {
   evt.preventDefault();
   if (state.isSubmitting) return;
@@ -1154,16 +1129,21 @@ async function handleSubmit(evt) {
       emailVerified: state.emailVerification.isVerified,
     };
 
-    // Check for email + source duplicate
+    // Check ONLY for email + campaign duplicates (allow same email from same source for different campaigns)
     const email = state.formData.email;
-    const source = state.trackingData.source || 'Direct';
+    const campaign = state.trackingData.promo || '';
     
-    debugLog('Checking for duplicates:', { email, source });
-    const isDuplicate = await checkDuplicateEmailAndSource(email, source);
+    debugLog('Checking for campaign duplicates:', { email, campaign });
     
-    if (isDuplicate) {
-      showError('Este correo electrónico ya ha sido registrado.');
-      return;
+    // Only check campaign duplicates
+    if (campaign) {
+      const campaignDuplicate = await checkDuplicateEmailAndCampaign(email, campaign);
+      
+      if (campaignDuplicate) {
+        debugLog('Campaign duplicate found:', { email, campaign });
+        showError('Este correo electrónico ya ha sido registrado.');
+        return;
+      }
     }
     
     debugLog('Form data', state.formData);
