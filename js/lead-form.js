@@ -426,7 +426,33 @@ async function verifyCode(verificationId, code) {
   }
 }
 
-
+async function checkDuplicateEmailAndSource(email, source) {
+  try {
+    const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
+    const formula = `AND({Email}="${email}", {Traffic Source}="${source}")`;
+    const url = `${endpoint}?filterByFormula=${encodeURIComponent(formula)}`;
+    
+    const response = await fetch(url, {
+      headers: { 
+        'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      debugLog('Source duplicate check failed:', response.status);
+      return false; // Allow if check fails
+    }
+    
+    const data = await response.json();
+    const isDuplicate = data.records && data.records.length > 0;
+    debugLog('Source duplicate check result:', { email, source, isDuplicate, count: data.records?.length || 0 });
+    return isDuplicate;
+  } catch (error) {
+    debugLog('Source duplicate check error:', error);
+    return false; // Allow if check fails
+  }
+}
 
 /***********************************
  *  OTP UI Functions - FIXED
@@ -1129,18 +1155,18 @@ async function handleSubmit(evt) {
       emailVerified: state.emailVerification.isVerified,
     };
 
-    // Check ONLY for email + campaign duplicates (allow same email from same source for different campaigns)
+    // Check for email + source duplicates ACROSS ALL CAMPAIGNS
     const email = state.formData.email;
-    const campaign = state.trackingData.promo || '';
+    const source = state.trackingData.source || 'Direct';
     
-    debugLog('Checking for campaign duplicates:', { email, campaign });
+    debugLog('Checking for source duplicates across all campaigns:', { email, source });
     
-    // Only check campaign duplicates
-    if (campaign) {
-      const campaignDuplicate = await checkDuplicateEmailAndCampaign(email, campaign);
+    // Only check source duplicates (blocks same email from same source regardless of campaign)
+    if (source && source !== 'Direct') {
+      const sourceDuplicate = await checkDuplicateEmailAndSource(email, source);
       
-      if (campaignDuplicate) {
-        debugLog('Campaign duplicate found:', { email, campaign });
+      if (sourceDuplicate) {
+        debugLog('Source duplicate found:', { email, source });
         showError('Este correo electrónico ya ha sido registrado.');
         return;
       }
