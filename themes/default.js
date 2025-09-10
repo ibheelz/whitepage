@@ -135,20 +135,32 @@
     placeholderCSS.textContent = `input::placeholder{color:${PLACEHOLDER};}`;
     document.head.appendChild(placeholderCSS);
 
-    // Selects
+    // Selects - Fixed for phone container
     document.querySelectorAll('select').forEach((select) => {
-      const defaultVal = select.value; // treat current (Chile +56) as default sentinel
-      select.className = 'w-full px-4 py-3 transition-all appearance-none cursor-pointer';
+      const defaultVal = select.value;
+      const isCountryCode = select.id === 'countryCode';
+      
+      if (isCountryCode) {
+        // Country code select - narrower width, simpler styling
+        select.className = 'px-3 py-3 transition-all cursor-pointer';
+        select.style.width = '140px'; // Fixed width for country codes
+        select.style.flex = '0 0 140px'; // Override base CSS flex property
+        select.style.flexShrink = '0';
+      } else {
+        // Other selects - full width
+        select.className = 'w-full px-4 py-3 transition-all cursor-pointer';
+      }
+      
       select.style.color = PLACEHOLDER; // show like placeholder initially
       select.style.backgroundColor = 'rgba(255,255,255,0.06)';
       select.style.backdropFilter = 'blur(6px)';
       select.style.border = `2px solid ${neutralBorder}`;
       select.style.borderRadius = RADIUS + 'px';
-      select.style.backgroundImage = "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239aa0a6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")";
-      select.style.backgroundPosition = 'right 0.75rem center';
-      select.style.backgroundRepeat = 'no-repeat';
-      select.style.backgroundSize = '1.25em 1.25em';
-      select.style.paddingRight = '2.25rem';
+      
+      // Remove custom dropdown icon to avoid double icons
+      select.style.appearance = '';
+      select.style.webkitAppearance = '';
+      
       select.addEventListener('change', () => {
         // turn white when user chooses a value different from default sentinel
         select.style.color = (select.value === defaultVal) ? PLACEHOLDER : '#ffffff';
@@ -156,6 +168,14 @@
       // ensure initial tone based on current value
       select.style.color = (select.value === defaultVal) ? PLACEHOLDER : '#ffffff';
     });
+
+    // Fix phone container layout
+    const phoneContainer = document.querySelector('.phone-container');
+    if (phoneContainer) {
+      phoneContainer.style.display = 'flex';
+      phoneContainer.style.gap = '8px';
+      phoneContainer.style.alignItems = 'stretch';
+    }
 
     // FIXED: Default phone country to Chile +56
     const countrySelect = document.getElementById('countryCode');
