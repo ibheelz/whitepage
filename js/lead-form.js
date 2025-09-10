@@ -1162,7 +1162,7 @@ async function handleSubmit(evt) {
     const isDuplicate = await checkDuplicateEmailAndSource(email, source);
     
     if (isDuplicate) {
-      showError(`Este email ya fue registrado desde la fuente: ${source}`);
+      showError('Este correo electrónico ya ha sido registrado.');
       return;
     }
     
