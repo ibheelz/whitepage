@@ -426,6 +426,34 @@ async function verifyCode(verificationId, code) {
   }
 }
 
+async function checkDuplicateEmailAndSource(email, source) {
+  try {
+    const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
+    const formula = `AND({Email}="${email}", {Traffic Source}="${source}")`;
+    const url = `${endpoint}?filterByFormula=${encodeURIComponent(formula)}`;
+    
+    const response = await fetch(url, {
+      headers: { 
+        'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      debugLog('Duplicate check failed:', response.status);
+      return false; // Allow if check fails
+    }
+    
+    const data = await response.json();
+    const isDuplicate = data.records && data.records.length > 0;
+    debugLog('Duplicate check result:', { email, source, isDuplicate, count: data.records?.length || 0 });
+    return isDuplicate;
+  } catch (error) {
+    debugLog('Duplicate check error:', error);
+    return false; // Allow if check fails
+  }
+}
+
 /***********************************
  *  OTP UI Functions - FIXED
  ***********************************/
@@ -1125,6 +1153,18 @@ async function handleSubmit(evt) {
       promoConsent: qs('promoConsent').checked,
       emailVerified: state.emailVerification.isVerified,
     };
+
+    // Check for email + source duplicate
+    const email = state.formData.email;
+    const source = state.trackingData.source || 'Direct';
+    
+    debugLog('Checking for duplicates:', { email, source });
+    const isDuplicate = await checkDuplicateEmailAndSource(email, source);
+    
+    if (isDuplicate) {
+      showError(`Este email ya fue registrado desde la fuente: ${source}`);
+      return;
+    }
     
     debugLog('Form data', state.formData);
     toggleLoading(true);
