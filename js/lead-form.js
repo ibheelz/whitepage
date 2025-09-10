@@ -84,6 +84,7 @@ const state = {
   geoData: {},
   trackingData: {},
   isSubmitting: false,
+  submittedClickIds: new Set(), // ← ADD THIS LINE
   validationState: { 
     fullName: false, 
     email: false, 
@@ -1078,52 +1079,73 @@ async function fetchGeoData() {
 async function handleSubmit(evt) {
   evt.preventDefault();
   if (state.isSubmitting) return;
-  
-  // Validate all fields
-  const okName = await validateField('fullName');
-  const okEmail = await validateField('email');
-  const okPhone = await validateField('phone');
-  const okAge = await validateField('ageVerification');
-  
-  // Additional check for email verification if required
-  if (state.emailVerification.isRequired && !state.emailVerification.isVerified) {
-    showError('Por favor verifica tu email antes de continuar');
-    const firstOtpInput = document.querySelector('.otp-input');
-    if (firstOtpInput) firstOtpInput.focus();
-    return;
-  }
-  
-  if (!okName || !okEmail || !okPhone || !okAge) {
-    // Focus on first invalid field
-    if (!okName) qs('fullName').focus();
-    else if (!okEmail) qs('email').focus();
-    else if (!okPhone) qs('phone').focus();
-    else if (!okAge) qs('ageVerification').focus();
-    return;
-  }
-  
-  // Collect form data
-  state.formData = {
-    fullName: qs('fullName').value.trim(),
-    email: qs('email').value.trim(),
-    phone: `${qs('countryCode').value} ${qs('phone').value.replace(/\D/g, '')}`,
-    ageVerification: qs('ageVerification').checked,
-    promoConsent: qs('promoConsent').checked,
-    emailVerified: state.emailVerification.isVerified,
-  };
-  
-  debugLog('Form data', state.formData);
-  toggleLoading(true);
-  
+
+  // Disable button immediately to prevent multiple clicks
+  const submitBtn = qs('submitBtn');
+  if (submitBtn) submitBtn.disabled = true;
+
   try {
+    const clickid = state.trackingData.clickid || state.trackingData.payload || '';
+    
+    // Prevent duplicate submissions of same clickid
+    if (clickid && state.submittedClickIds.has(clickid)) {
+      showError('Esta solicitud ya fue enviada');
+      return;
+    }
+
+    // Validate all fields
+    const okName = await validateField('fullName');
+    const okEmail = await validateField('email');
+    const okPhone = await validateField('phone');
+    const okAge = await validateField('ageVerification');
+    
+    // Additional check for email verification if required
+    if (state.emailVerification.isRequired && !state.emailVerification.isVerified) {
+      showError('Por favor verifica tu email antes de continuar');
+      const firstOtpInput = document.querySelector('.otp-input');
+      if (firstOtpInput) firstOtpInput.focus();
+      return;
+    }
+    
+    if (!okName || !okEmail || !okPhone || !okAge) {
+      // Focus on first invalid field
+      if (!okName) qs('fullName').focus();
+      else if (!okEmail) qs('email').focus();
+      else if (!okPhone) qs('phone').focus();
+      else if (!okAge) qs('ageVerification').focus();
+      return;
+    }
+    
+    // Collect form data
+    state.formData = {
+      fullName: qs('fullName').value.trim(),
+      email: qs('email').value.trim(),
+      phone: `${qs('countryCode').value} ${qs('phone').value.replace(/\D/g, '')}`,
+      ageVerification: qs('ageVerification').checked,
+      promoConsent: qs('promoConsent').checked,
+      emailVerified: state.emailVerification.isVerified,
+    };
+    
+    debugLog('Form data', state.formData);
+    toggleLoading(true);
+    
     await submitToAirtable();
+    
+    // Mark this clickid as submitted
+    if (clickid) {
+      state.submittedClickIds.add(clickid);
+    }
+    
     debugLog('Submission successful');
     performRedirect();
+    
   } catch (error) {
     console.error('Submission error:', error);
     showError('Algo salió mal. Por favor intenta de nuevo.');
   } finally {
     toggleLoading(false);
+    // Re-enable button in case of error
+    if (submitBtn) submitBtn.disabled = false;
   }
 }
 
@@ -1189,6 +1211,10 @@ async function submitToAirtable() {
 }
 
 function performRedirect() {
+  // Clear form to prevent resubmission
+  const form = qs('leadForm');
+  if (form) form.reset();
+  
   const clickid = state.trackingData.clickid || state.trackingData.payload || '';
   const safeUrl = buildSafeRedirectUrl(state.trackingData.redirectUrl, clickid);
   debugLog('Redirecting to', safeUrl);
