@@ -1,5 +1,6 @@
 // File: /themes/default.js
 // Default Glass Theme (no brand logo). Neutral glass with subtle dark background elements.
+// FIXED VERSION - Mobile responsive, OTP inputs working, Chile default
 
 (function () {
   const RADIUS = 20;
@@ -60,11 +61,11 @@
     const progressBar = document.querySelector('.progress-bar');
     if (progressBar) progressBar.style.display = 'none';
 
-    // Container as glass card
+    // Container as glass card - FIXED for mobile responsiveness
     const container = document.querySelector('.container');
     if (container && !container.dataset.defaultGlassApplied) {
       container.dataset.defaultGlassApplied = 'true';
-      container.className = 'relative z-10 w-full mx-auto';
+      container.className = 'relative z-10 w-full mx-auto px-4'; // ADD px-4 for mobile padding
       container.style.maxWidth = '480px';
       container.style.width = '100%';
 
@@ -72,7 +73,7 @@
       card.className = 'glass-card';
       card.style.position = 'relative';
       card.style.overflow = 'hidden';
-      card.style.padding = '24px';
+      card.style.padding = '20px'; // Reduced from 24px for mobile
       card.style.background = 'linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.03))';
       card.style.backdropFilter = 'blur(16px) saturate(140%)';
       card.style.webkitBackdropFilter = 'blur(16px) saturate(140%)';
@@ -128,6 +129,7 @@
       input.style.borderRadius = RADIUS + 'px';
       input.style.paddingLeft = '44px'; // room for icon
     });
+    
     // Consistent placeholder tone
     const placeholderCSS = document.createElement('style');
     placeholderCSS.textContent = `input::placeholder{color:${PLACEHOLDER};}`;
@@ -154,6 +156,15 @@
       // ensure initial tone based on current value
       select.style.color = (select.value === defaultVal) ? PLACEHOLDER : '#ffffff';
     });
+
+    // FIXED: Default phone country to Chile +56
+    const countrySelect = document.getElementById('countryCode');
+    if (countrySelect && !countrySelect.value) {
+      countrySelect.value = '+56';
+      countrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+      // Update color to white since value is selected
+      countrySelect.style.color = '#ffffff';
+    }
 
     // Input icons: show and white
     document.querySelectorAll('.input-icon').forEach((icon) => {
@@ -183,6 +194,94 @@
       const p = footer.querySelector('p');
       if (p) { p.className = 'text-xs text-center'; p.style.color = '#cbd5e1'; }
       footer.querySelectorAll('a').forEach((a) => { a.style.color = '#e5e7eb'; a.style.textDecorationColor = 'rgba(229,231,235,0.45)'; });
+    }
+
+    // FIXED: Add specific OTP input styling that doesn't conflict
+    const otpStyleId = 'default-otp-fixes';
+    if (!document.getElementById(otpStyleId)) {
+      const otpStyle = document.createElement('style');
+      otpStyle.id = otpStyleId;
+      otpStyle.textContent = `
+        /* Override default theme input styles for OTP inputs specifically */
+        .otp-input {
+          background: rgba(0,0,0,.25) !important;
+          border: 1px solid rgba(255,255,255,.08) !important;
+          border-radius: 10px !important;
+          padding: 0 !important;
+          backdrop-filter: none !important;
+          box-shadow: none !important;
+          width: 44px !important;
+          height: 44px !important;
+          text-align: center !important;
+          font-size: 18px !important;
+          color: #e5e7eb !important;
+          transition: transform .08s ease !important;
+        }
+        
+        .otp-input:focus {
+          border-color: #22d3ee !important;
+          box-shadow: 0 0 0 2px rgba(34,211,238,.25) !important;
+          transform: scale(1.03) !important;
+          outline: none !important;
+        }
+
+        /* Ensure OTP card is visible and properly styled */
+        .otp-card {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          margin-top: 12px !important;
+          background: rgba(255,255,255,.05) !important;
+          backdrop-filter: blur(6px) !important;
+          border: 1px solid rgba(255,255,255,.08) !important;
+          border-radius: 12px !important;
+          padding: 14px !important;
+          flex-direction: column !important;
+          gap: 8px !important;
+        }
+
+        .otp-inputs {
+          display: flex !important;
+          gap: 10px !important;
+          justify-content: center !important;
+          margin: 6px 0 !important;
+        }
+
+        /* Mobile responsive fixes */
+        @media (max-width: 480px) {
+          .glass-card {
+            padding: 16px !important;
+            margin: 8px !important;
+          }
+          
+          .otp-inputs {
+            gap: 6px !important;
+          }
+          
+          .otp-input {
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 16px !important;
+          }
+
+          .container {
+            padding: 0 8px !important;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .otp-input {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 14px !important;
+          }
+          
+          .otp-inputs {
+            gap: 4px !important;
+          }
+        }
+      `;
+      document.head.appendChild(otpStyle);
     }
 
     // Validation: texts red/green (borders remain neutral glass)

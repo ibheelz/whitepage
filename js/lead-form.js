@@ -1178,7 +1178,7 @@ async function submitToAirtable() {
     'Promotional Consent': state.formData.promoConsent ? 'Yes' : 'No',
     'Email Verified': state.formData.emailVerified ? 'Yes' : 'No',
     'Click ID': state.trackingData.clickid || state.trackingData.payload || '',
-    'Promo/Influencer': state.trackingData.promo || state.trackingData.campaign || '',
+    'Campaign': state.trackingData.promo || state.trackingData.campaign || '',
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
     'City': state.geoData.city || '',
