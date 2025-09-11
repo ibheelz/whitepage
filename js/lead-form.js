@@ -1180,6 +1180,9 @@ async function handleSubmit(evt) {
     
     await submitToAirtable();
     
+    // Track lead conversion in RedTrack after successful Airtable submission
+    trackLeadConversion(clickId);
+    
     // Mark this click_id as submitted
     if (clickId) {
       state.submittedClickIds.add(clickId);
@@ -1195,6 +1198,30 @@ async function handleSubmit(evt) {
     toggleLoading(false);
     // Re-enable button in case of error
     if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+/**
+ * Track lead conversion in RedTrack after successful form submission
+ */
+function trackLeadConversion(clickId) {
+  if (!clickId) {
+    debugLog('No click_id found, skipping lead conversion tracking');
+    return;
+  }
+  
+  try {
+    // RedTrack lead conversion postback
+    // Replace 'your-redtrack-domain.com' with your actual RedTrack domain
+    const postbackUrl = `https://your-redtrack-domain.com/conv?cid=${encodeURIComponent(clickId)}&goal=lead`;
+    
+    // Fire the conversion pixel
+    const img = new Image();
+    img.src = postbackUrl;
+    
+    debugLog('Lead conversion tracked to RedTrack:', postbackUrl);
+  } catch (error) {
+    debugLog('Error tracking lead conversion:', error);
   }
 }
 
