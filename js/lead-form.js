@@ -933,7 +933,7 @@ function initializeValidation() {
 /***********************************
  *  URL and tracking functions (unchanged)
  ***********************************/
-function buildSafeRedirectUrl(rawUrl, clickid) {
+function buildSafeRedirectUrl(rawUrl, clickId) {
   try {
     let candidate = String(rawUrl || '').trim();
     if (!candidate) return CONFIG.DEFAULT_REDIRECT_URL;
@@ -946,16 +946,14 @@ function buildSafeRedirectUrl(rawUrl, clickid) {
 
     if (!/^https?:$/.test(url.protocol)) throw new Error('protocol');
 
-    if (clickid) {
-      const existingValues = url.searchParams.getAll('clickid');
-      const existing = existingValues.find((v) => v && String(v).trim().length > 0);
-
-      if (existingValues.length > 0) {
-        url.searchParams.delete('clickid');
-        url.searchParams.append('clickid', existing || String(clickid));
-      } else {
-        url.searchParams.append('clickid', String(clickid));
-      }
+    if (clickId) {
+      // Remove any existing click tracking parameters
+      url.searchParams.delete('clickid');
+      url.searchParams.delete('click_id');
+      url.searchParams.delete('payload');
+      
+      // Add only click_id parameter (with underscore)
+      url.searchParams.append('click_id', String(clickId));
     }
 
     return url.toString();
@@ -1046,26 +1044,31 @@ async function loadTheme() {
  ***********************************/
 function initializeTracking() {
   const p = new URLSearchParams(location.search);
-  const payload = p.get('payload') || '';
+  // Only use click_id parameter (with underscore) - standardized
+  const clickId = p.get('click_id') || p.get('clickid') || p.get('payload') || '';
   const campaign = p.get('campaign') || '';
   const source = p.get('source') || '';
   const redirEnc = p.get('redir_enc') || '';
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
 
-  if (payload) { localStorage.setItem('clickid', payload); localStorage.setItem('payload', payload); }
-  const clickid = payload || localStorage.getItem('clickid') || localStorage.getItem('payload') || '';
+  // Store using consistent naming
+  if (clickId) { 
+    localStorage.setItem('click_id', clickId); 
+    // Also clear old storage keys
+    localStorage.removeItem('clickid');
+    localStorage.removeItem('payload');
+  }
+  const finalClickId = clickId || localStorage.getItem('click_id') || '';
 
   state.trackingData = {
-    clickid,
-    payload: clickid,
+    clickId: finalClickId, // Use consistent naming
     promo: campaign,
     source: source,
     landingPage: location.href,
     redirectUrl: decodedRedirect || CONFIG.DEFAULT_REDIRECT_URL,
     timestamp: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
-    referrer: 'direct', // ← Always set to 'direct' instead of document.referrer
-    landingPage: location.href,
+    referrer: 'direct',
   };
 
   if (!state.trackingData.redirectUrl || state.trackingData.redirectUrl === 'null') {
@@ -1114,10 +1117,10 @@ async function handleSubmit(evt) {
   if (submitBtn) submitBtn.disabled = true;
 
   try {
-    const clickid = state.trackingData.clickid || state.trackingData.payload || '';
+    const clickId = state.trackingData.clickId || '';
     
-    // Prevent duplicate submissions of same clickid
-    if (clickid && state.submittedClickIds.has(clickid)) {
+    // Prevent duplicate submissions of same click_id
+    if (clickId && state.submittedClickIds.has(clickId)) {
       showError('Esta solicitud ya fue enviada');
       return;
     }
@@ -1177,9 +1180,9 @@ async function handleSubmit(evt) {
     
     await submitToAirtable();
     
-    // Mark this clickid as submitted
-    if (clickid) {
-      state.submittedClickIds.add(clickid);
+    // Mark this click_id as submitted
+    if (clickId) {
+      state.submittedClickIds.add(clickId);
     }
     
     debugLog('Submission successful');
@@ -1203,7 +1206,7 @@ async function submitToAirtable() {
     'Age Verification': state.formData.ageVerification ? 'Yes' : 'No',
     'Promotional Consent': state.formData.promoConsent ? 'Yes' : 'No',
     'Email Verified': state.formData.emailVerified ? 'Yes' : 'No',
-    'Click ID': state.trackingData.clickid || state.trackingData.payload || '',
+    'Click ID': state.trackingData.clickId || '',
     'Campaign': state.trackingData.promo || state.trackingData.campaign || '',
     'IP Address': state.geoData.ip || '',
     'Country': state.geoData.country || '',
@@ -1261,8 +1264,8 @@ function performRedirect() {
   const form = qs('leadForm');
   if (form) form.reset();
   
-  const clickid = state.trackingData.clickid || state.trackingData.payload || '';
-  const safeUrl = buildSafeRedirectUrl(state.trackingData.redirectUrl, clickid);
+  const clickId = state.trackingData.clickId || '';
+  const safeUrl = buildSafeRedirectUrl(state.trackingData.redirectUrl, clickId);
   debugLog('Redirecting to', safeUrl);
   
   if (CONFIG.REDIRECT_DELAY > 0) {
