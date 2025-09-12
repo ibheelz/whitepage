@@ -17,6 +17,8 @@ const CONFIG = {
   DEBUG: true,
   // Email verification service endpoint
   EMAIL_VERIFICATION_API: 'https://email-verification-backend-psi.vercel.app/api/email-verify',
+  // SMS verification service endpoint - using Twilio or similar service
+  SMS_VERIFICATION_API: 'https://verification-backend-il2nvid8c-miela-digitals-projects.vercel.app/api/sms-verify',
 };
 
 /***********************************
@@ -30,6 +32,17 @@ const EMAIL_VERIFICATION = {
   requireVerificationForSuspicious: true,
   requireVerificationForAll: true, // Force verification for all emails
   apiTimeout: 3000,
+  verificationCodeLength: 6,
+  verificationExpiryMinutes: 10,
+};
+
+/***********************************
+ *  SMS Verification Configuration
+ ***********************************/
+const SMS_VERIFICATION = {
+  enabled: true,
+  requireVerificationForAll: true, // Force SMS verification for all phone numbers
+  apiTimeout: 5000,
   verificationCodeLength: 6,
   verificationExpiryMinutes: 10,
 };
@@ -90,9 +103,17 @@ const state = {
     email: false, 
     phone: false, 
     ageVerification: false,
-    emailVerification: false
+    emailVerification: false,
+    smsVerification: false
   },
   emailVerification: {
+    isRequired: false,
+    isVerified: false,
+    verificationId: null,
+    attempts: 0,
+    maxAttempts: 3,
+  },
+  smsVerification: {
     isRequired: false,
     isVerified: false,
     verificationId: null,
@@ -426,6 +447,97 @@ async function verifyCode(verificationId, code) {
   }
 }
 
+/***********************************
+ *  SMS Verification Functions
+ ***********************************/
+
+/**
+ * Send SMS verification code to phone number
+ */
+async function sendSMSVerificationCode(phoneNumber, countryCode) {
+  try {
+    const fullPhoneNumber = `${countryCode}${phoneNumber.replace(/\D/g, '')}`;
+    
+    const res = await fetch(CONFIG.SMS_VERIFICATION_API, {
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'send-sms-code', 
+        phoneNumber: fullPhoneNumber,
+        language: 'es', 
+        expiryMinutes: SMS_VERIFICATION.verificationExpiryMinutes 
+      })
+    });
+    
+    const raw = await res.text(); 
+    let data = {}; 
+    try { 
+      data = JSON.parse(raw); 
+    } catch {}
+    
+    if (!res.ok || data?.success === false) {
+      return { 
+        success: false, 
+        error: data?.details || data?.error || `HTTP ${res.status}` 
+      };
+    }
+    
+    return { 
+      success: true, 
+      verificationId: data.verificationId, 
+      expiresAt: data.expiresAt,
+      phoneNumber: fullPhoneNumber
+    };
+  } catch (error) {
+    debugLog('Send SMS verification code error:', error);
+    return { 
+      success: false, 
+      error: 'No se pudo enviar el código SMS' 
+    };
+  }
+}
+
+/**
+ * Verify SMS code
+ */
+async function verifySMSCode(verificationId, code) {
+  try {
+    const res = await fetch(CONFIG.SMS_VERIFICATION_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'verify-sms-code', 
+        verificationId, 
+        code 
+      }),
+    });
+
+    const txt = await res.text();
+    let data = {};
+    try {
+      data = JSON.parse(txt);
+    } catch {}
+
+    if (!res.ok) {
+      return { 
+        success: false, 
+        error: data?.error || `HTTP ${res.status}` 
+      };
+    }
+
+    return {
+      success: !!data.valid,
+      error: data.valid ? null : (data?.error || 'Código SMS incorrecto'),
+    };
+  } catch (error) {
+    debugLog('Verify SMS code error:', error);
+    return { 
+      success: false, 
+      error: 'Error al verificar el código SMS' 
+    };
+  }
+}
+
 async function checkDuplicateEmailAndSource(email, source) {
   try {
     const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
@@ -675,6 +787,240 @@ function showEmailVerificationUI(result, inputElement) {
 }
 
 /***********************************
+ *  SMS Verification UI Functions
+ ***********************************/
+
+/**
+ * Render SMS OTP UI block
+ */
+function renderSMSOtpBlock(phoneNumber) {
+  const card = document.createElement('div'); 
+  card.className = 'otp-card sms-otp-card';
+  card.innerHTML = `
+    <div class="otp-head">
+      <div class="otp-title">Código de Verificación SMS</div>
+      <div class="otp-to">Se envió a <strong>${phoneNumber}</strong></div>
+    </div>
+    <div class="otp-inputs" role="group" aria-label="Código de verificación SMS de 6 dígitos">
+      ${Array.from({length: 6}).map(() => 
+        `<input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input sms-otp-input"/>
+      `).join('')}
+    </div>
+    <div class="otp-actions">
+      <button type="button" class="otp-btn otp-btn-send" id="btnSendSMSCode">Enviar SMS</button>
+      <button type="button" class="otp-btn otp-btn-resend" id="btnResendSMS" disabled>Reenviar (30s)</button>
+    </div>
+    <div class="otp-msg" id="smsOtpMsg" style="color:#9ca3af">Ingresa el código de 6 dígitos recibido por SMS</div>
+  `;
+  return card;
+}
+
+/**
+ * Mount SMS OTP UI
+ */
+function mountSMSOtpUI(container, phoneNumber) {
+  // Clear any existing SMS OTP card
+  const old = container.querySelector('.sms-otp-card');
+  if (old) old.remove();
+
+  const card = renderSMSOtpBlock(phoneNumber);
+  container.appendChild(card);
+
+  const inputs = [...card.querySelectorAll('.sms-otp-input')];
+  const sendBtn = card.querySelector('#btnSendSMSCode');
+  const resendBtn = card.querySelector('#btnResendSMS');
+  const msg = card.querySelector('#smsOtpMsg');
+
+  const getCode = () => inputs.map(i => i.value).join('');
+  const clearCode = () => {
+    inputs.forEach(i => (i.value = ''));
+    inputs[0]?.focus();
+  };
+
+  // Input handling
+  inputs.forEach((el, idx) => {
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/\D/g, '');
+      if (el.value && idx < inputs.length - 1) {
+        inputs[idx + 1].focus();
+      }
+      
+      const code = getCode();
+      if (code.length === 6) {
+        handleSMSCodeVerification(code);
+      }
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !el.value && idx > 0) {
+        inputs[idx - 1].focus();
+        inputs[idx - 1].value = '';
+      }
+      if (e.key === 'Enter') {
+        const code = getCode();
+        if (code.length === 6) {
+          handleSMSCodeVerification(code);
+        }
+      }
+    });
+
+    el.addEventListener('paste', (e) => {
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      if (/^\d{6}$/.test(text)) {
+        e.preventDefault();
+        text.split('').forEach((ch, i) => {
+          if (inputs[i]) inputs[i].value = ch;
+        });
+        handleSMSCodeVerification(text);
+      }
+    });
+  });
+
+  // Countdown timer
+  let countdown = 30;
+  let timer = null;
+
+  const tick = () => {
+    countdown--;
+    resendBtn.textContent = countdown > 0 ? `Reenviar (${countdown}s)` : 'Reenviar';
+    resendBtn.disabled = countdown > 0;
+    if (countdown <= 0) clearInterval(timer);
+  };
+
+  const startCountdown = () => {
+    clearInterval(timer);
+    countdown = 30;
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Reenviar (30s)';
+    timer = setInterval(tick, 1000);
+  };
+
+  // Send SMS code function
+  async function doSendSMS() {
+    sendBtn.disabled = true;
+    resendBtn.disabled = true;
+    msg.className = 'otp-msg';
+    msg.textContent = 'Enviando código SMS...';
+
+    const phoneNumber = qs('phone').value.trim();
+    const countryCode = qs('countryCode').value;
+    
+    const result = await sendSMSVerificationCode(phoneNumber, countryCode);
+    
+    if (result.success) {
+      msg.className = 'otp-msg ok';
+      msg.textContent = 'SMS enviado. Revisa tu teléfono.';
+      state.smsVerification.verificationId = result.verificationId;
+      state.smsVerification.isRequired = true;
+      clearCode();
+      startCountdown();
+    } else {
+      msg.className = 'otp-msg err';
+      msg.textContent = result.error || 'No se pudo enviar el SMS';
+    }
+    
+    sendBtn.disabled = false;
+  }
+
+  sendBtn.addEventListener('click', doSendSMS);
+  resendBtn.addEventListener('click', doSendSMS);
+
+  // Auto-send SMS if not already sent
+  if (!state.smsVerification.verificationId) {
+    doSendSMS();
+  }
+}
+
+/**
+ * Handle SMS code verification
+ */
+async function handleSMSCodeVerification(code) {
+  const host = document.querySelector('.sms-verification-host');
+  const msg = host ? host.querySelector('#smsOtpMsg') : null;
+  
+  if (!state.smsVerification.verificationId) {
+    if (msg) {
+      msg.className = 'otp-msg err';
+      msg.textContent = 'Primero envía el código SMS';
+    }
+    return;
+  }
+
+  if (msg) {
+    msg.className = 'otp-msg';
+    msg.textContent = 'Verificando código SMS...';
+  }
+
+  const result = await verifySMSCode(state.smsVerification.verificationId, code);
+
+  if (result.success) {
+    // Mark SMS as verified
+    state.smsVerification.isVerified = true;
+    state.validationState.smsVerification = true;
+    state.validationState.phone = true;
+    
+    // Update UI to show success
+    if (msg) {
+      msg.className = 'otp-msg ok';
+      msg.textContent = '¡Código SMS verificado!';
+    }
+    
+    // Update field UI with green border
+    updateFieldUI('phone', true, '¡Teléfono verificado!', 'success');
+    updateProgress();
+    
+    // Hide the SMS OTP card after a delay
+    setTimeout(() => {
+      const host = document.querySelector('.sms-verification-host');
+      if (host) {
+        host.innerHTML = '';
+        host.style.display = 'none';
+      }
+    }, 1500);
+    
+    debugLog('SMS verification completed successfully');
+  } else {
+    if (msg) {
+      msg.className = 'otp-msg err';
+      msg.textContent = result.error || 'Código SMS incorrecto';
+    }
+    
+    // Focus on the first empty input or last input
+    const inputs = [...document.querySelectorAll('.sms-otp-input')];
+    const emptyInput = inputs.find(i => !i.value);
+    (emptyInput || inputs[inputs.length - 1])?.focus();
+  }
+}
+
+/**
+ * Show SMS verification UI
+ */
+function showSMSVerificationUI(inputElement) {
+  const group = inputElement.closest('.form-group');
+  if (!group) return;
+  
+  const inputWrapper = group.querySelector('.input-wrapper') || group;
+  let host = group.querySelector('.sms-verification-host');
+  
+  if (!host) {
+    host = document.createElement('div');
+    host.className = 'sms-verification-host';
+    inputWrapper.parentNode.insertBefore(host, inputWrapper.nextSibling);
+  }
+  
+  const phoneNumber = qs('phone').value.trim();
+  const countryCode = qs('countryCode').value;
+  const fullPhoneNumber = `${countryCode}${phoneNumber.replace(/\D/g, '')}`;
+  
+  if (SMS_VERIFICATION.enabled && phoneNumber && countryCode) {
+    state.smsVerification.isRequired = true;
+    mountSMSOtpUI(host, fullPhoneNumber);
+  } else {
+    host.innerHTML = '';
+  }
+}
+
+/***********************************
  *  Field Validation - FIXED
  ***********************************/
 async function validateField(fieldName) {
@@ -747,9 +1093,26 @@ async function validateField(fieldName) {
       } else if (phone.length > 15) {
         message = 'El número no puede tener más de 15 dígitos';
       } else {
-        isValid = true;
-        message = '¡Teléfono válido!';
-        messageType = 'success';
+        // Phone format is valid, now check SMS verification
+        if (SMS_VERIFICATION.enabled) {
+          showSMSVerificationUI(qs('phone'));
+          
+          if (state.smsVerification.isRequired) {
+            isValid = state.smsVerification.isVerified;
+            message = isValid ? '¡Teléfono verificado!' : 'Requiere verificación por SMS';
+            messageType = isValid ? 'success' : 'error';
+          } else {
+            // SMS verification not yet required
+            isValid = true;
+            message = '¡Formato válido - enviando SMS!';
+            messageType = 'success';
+          }
+        } else {
+          // SMS verification disabled
+          isValid = true;
+          message = '¡Teléfono válido!';
+          messageType = 'success';
+        }
       }
       
       state.validationState.phone = isValid;
@@ -1139,6 +1502,14 @@ async function handleSubmit(evt) {
       return;
     }
     
+    // Additional check for SMS verification if required
+    if (state.smsVerification.isRequired && !state.smsVerification.isVerified) {
+      showError('Por favor verifica tu teléfono con el código SMS');
+      const firstSmsInput = document.querySelector('.sms-otp-input');
+      if (firstSmsInput) firstSmsInput.focus();
+      return;
+    }
+    
     if (!okName || !okEmail || !okPhone || !okAge) {
       // Focus on first invalid field
       if (!okName) qs('fullName').focus();
@@ -1156,6 +1527,7 @@ async function handleSubmit(evt) {
       ageVerification: qs('ageVerification').checked,
       promoConsent: qs('promoConsent').checked,
       emailVerified: state.emailVerification.isVerified,
+      smsVerified: state.smsVerification.isVerified,
     };
 
     // Check for email + source duplicates ACROSS ALL CAMPAIGNS
@@ -1242,6 +1614,7 @@ async function submitToAirtable() {
     'Age Verification': state.formData.ageVerification ? 'Yes' : 'No',
     'Promotional Consent': state.formData.promoConsent ? 'Yes' : 'No',
     'Email Verified': state.formData.emailVerified ? 'Yes' : 'No',
+    'SMS Verified': state.formData.smsVerified ? 'Yes' : 'No',
     'Click ID': state.trackingData.clickId || '',
     'Campaign': state.trackingData.promo || state.trackingData.campaign || '',
     'IP Address': state.geoData.ip || '',
@@ -1580,7 +1953,19 @@ window.debugEmailVerification = function (email = 'test@gmail.com') {
   }
 };
 
+window.debugSMSVerification = function (phone = '56936280109', countryCode = '+56') {
+  console.log('=== DEBUG SMS VERIFICATION ===');
+  const phoneInput = qs('phone');
+  const countryInput = qs('countryCode');
+  if (phoneInput && countryInput) {
+    countryInput.value = countryCode;
+    phoneInput.value = phone;
+    validateField('phone');
+  }
+};
+
 console.log('=== LEAD FORM LOADED ===');
 console.log('TIP: Use debugSubmit() to test form submission');
 console.log('TIP: Use debugState() to view current state');
 console.log('TIP: Use debugEmailVerification() to test email verification');
+console.log('TIP: Use debugSMSVerification() to test SMS verification');
