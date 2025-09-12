@@ -1211,15 +1211,24 @@ function trackLeadConversion(clickId) {
   }
   
   try {
-    // RedTrack lead conversion postback
-    // Replace 'your-redtrack-domain.com' with your actual RedTrack domain
-    const postbackUrl = `https://your-redtrack-domain.com/conv?cid=${encodeURIComponent(clickId)}&goal=lead`;
+    // RedTrack lead conversion postback - exact format specified
+    const postbackUrl = `https://track.todoalrojo.club/postback?clickid=${encodeURIComponent(clickId)}&status=approved&type=Lead`;
     
     // Fire the conversion pixel
     const img = new Image();
     img.src = postbackUrl;
     
-    debugLog('Lead conversion tracked to RedTrack:', postbackUrl);
+    // Enhanced logging
+    debugLog('Lead conversion tracking:', {
+      clickId: clickId,
+      postbackUrl: postbackUrl,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Log success/error of the pixel request
+    img.onload = () => debugLog('RedTrack postback successful');
+    img.onerror = () => debugLog('RedTrack postback failed - check clickid or network');
+    
   } catch (error) {
     debugLog('Error tracking lead conversion:', error);
   }
