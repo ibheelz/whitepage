@@ -17,8 +17,8 @@ const CONFIG = {
   DEBUG: true,
   // Email verification service endpoint
   EMAIL_VERIFICATION_API: 'https://email-verification-backend-psi.vercel.app/api/email-verify',
-  // SMS verification service endpoint - MOCK for testing (replace with real SMS service)
-  SMS_VERIFICATION_API: 'MOCK_SMS_SERVICE',
+  // SMS verification service endpoint - Real Laaffic SMS service  
+  SMS_VERIFICATION_API: 'https://verification-backend-ogtrkqudy-miela-digitals-projects.vercel.app/api/phone-verify',
 };
 
 /***********************************
@@ -117,6 +117,7 @@ const state = {
     isRequired: false,
     isVerified: false,
     verificationId: null,
+    phoneNumber: null,
     attempts: 0,
     maxAttempts: 3,
   }
@@ -458,39 +459,15 @@ async function sendSMSVerificationCode(phoneNumber, countryCode) {
   try {
     const fullPhoneNumber = `${countryCode}${phoneNumber.replace(/\D/g, '')}`;
     
-    // MOCK SMS SERVICE for testing - replace with real SMS provider
-    if (CONFIG.SMS_VERIFICATION_API === 'MOCK_SMS_SERVICE') {
-      // Generate a mock 6-digit code
-      const mockCode = Math.floor(100000 + Math.random() * 900000).toString();
-      const mockVerificationId = `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Log the code for testing purposes
-      console.log(`🔥 MOCK SMS SENT TO ${fullPhoneNumber}`);
-      console.log(`📱 SMS CODE: ${mockCode}`);
-      console.log(`🆔 Verification ID: ${mockVerificationId}`);
-      console.log('👆 Use this code to test SMS verification');
-      
-      // Store the code temporarily for verification
-      window.__mockSMSCode = mockCode;
-      window.__mockVerificationId = mockVerificationId;
-      
-      return { 
-        success: true, 
-        verificationId: mockVerificationId, 
-        expiresAt: Date.now() + (SMS_VERIFICATION.verificationExpiryMinutes * 60 * 1000),
-        phoneNumber: fullPhoneNumber
-      };
-    }
-    
-    // Real SMS API call (when not using mock)
+    // Real Laaffic SMS API call
     const res = await fetch(CONFIG.SMS_VERIFICATION_API, {
       method: 'POST', 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        action: 'send-sms-code', 
-        phoneNumber: fullPhoneNumber,
-        language: 'es', 
-        expiryMinutes: SMS_VERIFICATION.verificationExpiryMinutes 
+        action: 'send-code', 
+        phone: fullPhoneNumber,
+        countryCode: countryCode,
+        language: 'es'
       })
     });
     
@@ -499,6 +476,8 @@ async function sendSMSVerificationCode(phoneNumber, countryCode) {
     try { 
       data = JSON.parse(raw); 
     } catch {}
+    
+    debugLog('SMS API Response:', { status: res.status, data });
     
     if (!res.ok || data?.success === false) {
       return { 
@@ -511,7 +490,8 @@ async function sendSMSVerificationCode(phoneNumber, countryCode) {
       success: true, 
       verificationId: data.verificationId, 
       expiresAt: data.expiresAt,
-      phoneNumber: fullPhoneNumber
+      phoneNumber: fullPhoneNumber,
+      message: data.message
     };
   } catch (error) {
     debugLog('Send SMS verification code error:', error);
@@ -527,48 +507,21 @@ async function sendSMSVerificationCode(phoneNumber, countryCode) {
  */
 async function verifySMSCode(verificationId, code) {
   try {
-    // MOCK SMS SERVICE for testing - replace with real SMS provider
-    if (CONFIG.SMS_VERIFICATION_API === 'MOCK_SMS_SERVICE') {
-      const mockCode = window.__mockSMSCode;
-      const mockVerificationId = window.__mockVerificationId;
-      
-      console.log(`🔍 Verifying SMS code: ${code}`);
-      console.log(`📝 Expected code: ${mockCode}`);
-      console.log(`🆔 Verification ID match: ${verificationId === mockVerificationId}`);
-      
-      if (verificationId !== mockVerificationId) {
-        return { 
-          success: false, 
-          error: 'ID de verificación inválido' 
-        };
-      }
-      
-      if (code === mockCode) {
-        console.log('✅ SMS code verification successful!');
-        // Clear the stored mock data
-        delete window.__mockSMSCode;
-        delete window.__mockVerificationId;
-        return {
-          success: true,
-          error: null,
-        };
-      } else {
-        console.log('❌ SMS code verification failed');
-        return {
-          success: false,
-          error: 'Código SMS incorrecto',
-        };
-      }
-    }
+    // Get phone number from stored state for verification
+    const phoneNumber = state.smsVerification.phoneNumber || qs('phone').value.trim();
+    const countryCode = qs('countryCode').value;
+    const fullPhoneNumber = `${countryCode}${phoneNumber.replace(/\D/g, '')}`;
     
-    // Real SMS API call (when not using mock)
+    // Real Laaffic SMS API call
     const res = await fetch(CONFIG.SMS_VERIFICATION_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        action: 'verify-sms-code', 
+        action: 'verify-code', 
         verificationId, 
-        code 
+        code,
+        phone: fullPhoneNumber,
+        countryCode: countryCode
       }),
     });
 
@@ -577,6 +530,8 @@ async function verifySMSCode(verificationId, code) {
     try {
       data = JSON.parse(txt);
     } catch {}
+
+    debugLog('SMS Verification Response:', { status: res.status, data });
 
     if (!res.ok) {
       return { 
@@ -971,6 +926,7 @@ function mountSMSOtpUI(container, phoneNumber) {
       msg.className = 'otp-msg ok';
       msg.textContent = 'SMS enviado. Revisa tu teléfono.';
       state.smsVerification.verificationId = result.verificationId;
+      state.smsVerification.phoneNumber = result.phoneNumber;
       state.smsVerification.isRequired = true;
       clearCode();
       startCountdown();
