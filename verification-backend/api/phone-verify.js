@@ -8,11 +8,10 @@ const CONFIG = {
   LAAFFIC_APP_ID: process.env.LAAFFIC_APP_ID,
   LAAFFIC_API_KEY: process.env.LAAFFIC_API_KEY,
   LAAFFIC_API_SECRET: process.env.LAAFFIC_API_SECRET,
-  LAAFFIC_SENDER_ID: process.env.LAAFFIC_SENDER_ID || 'Todo al Rojo',
+  LAAFFIC_SENDER_ID: process.env.LAAFFIC_SENDER_ID || 'TodoalRojo',
   LAAFFIC_BASE_URL: 'https://api.laaffic.com/v3',
   EXP_MIN: Number(process.env.VERIFICATION_EXPIRY_MINUTES || 10),
   SECRET: process.env.VERIFICATION_SECRET,
-  // Currently working but sends voice calls instead of SMS
   TEST_MODE: false,
 };
 
@@ -76,7 +75,10 @@ function formatPhoneNumber(phone, countryCode = "") {
     return "56" + cleanPhone;
   }
   
-  // Default handling
+  // Test: Try with different formats to see what works
+  console.log(`Phone format test - Original: ${phone}, Clean: ${cleanPhone}, Final: ${cleanPhone}`);
+  
+  // Default handling - return clean number as is
   return cleanPhone;
 }
 
@@ -131,9 +133,13 @@ async function sendSMS(to, message) {
     appId: CONFIG.LAAFFIC_APP_ID,
     numbers: to,
     content: message,
-    senderId: CONFIG.LAAFFIC_SENDER_ID,
     orderId: `verify_${Date.now()}`
   };
+  
+  // Only add senderId if it's provided and not empty
+  if (CONFIG.LAAFFIC_SENDER_ID && CONFIG.LAAFFIC_SENDER_ID.trim()) {
+    requestBody.senderId = CONFIG.LAAFFIC_SENDER_ID;
+  }
   
   console.log("Laaffic Debug:");
   console.log("API Key:", CONFIG.LAAFFIC_API_KEY);

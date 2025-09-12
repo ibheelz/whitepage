@@ -1,10 +1,10 @@
 // Local test of phone verification with Chilean number
 
 // Set environment variables FIRST before requiring the module
-process.env.LAAFFIC_APP_ID = 'wqceXTJa';
+process.env.LAAFFIC_APP_ID = 'RI9VpAik';
 process.env.LAAFFIC_API_KEY = 'uj26EVWQ';
 process.env.LAAFFIC_API_SECRET = 'jVuVHQ0b';
-process.env.LAAFFIC_SENDER_ID = 'Todo al Rojo';
+process.env.LAAFFIC_SENDER_ID = 'TodoalRojo';
 process.env.VERIFICATION_SECRET = 'todoalrojo-secret-key-2024-verification-12345';
 process.env.VERIFICATION_EXPIRY_MINUTES = '10';
 
@@ -22,7 +22,7 @@ const mockReq = {
   method: 'POST',
   body: {
     action: 'send-code',
-    phone: '56952059109', // Chilean number that worked before
+    phone: '56952059109', // Back to original format
     language: 'es'
   }
 };
