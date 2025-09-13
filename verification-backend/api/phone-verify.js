@@ -5,14 +5,14 @@
 const crypto = require("crypto");
 
 const CONFIG = {
-  LAAFFIC_APP_ID: process.env.LAAFFIC_APP_ID,
-  LAAFFIC_API_KEY: process.env.LAAFFIC_API_KEY,
-  LAAFFIC_API_SECRET: process.env.LAAFFIC_API_SECRET,
-  LAAFFIC_SENDER_ID: process.env.LAAFFIC_SENDER_ID || 'TodoalRojo',
+  LAAFFIC_APP_ID: process.env.LAAFFIC_APP_ID || 'wqceXTJa',
+  LAAFFIC_API_KEY: process.env.LAAFFIC_API_KEY || 'uj26EVWQ',
+  LAAFFIC_API_SECRET: process.env.LAAFFIC_API_SECRET || 'jVuVHQ0b',
+  LAAFFIC_SENDER_ID: process.env.LAAFFIC_SENDER_ID || 'Todo al Rojo',
   LAAFFIC_BASE_URL: 'https://api.laaffic.com/v3',
   EXP_MIN: Number(process.env.VERIFICATION_EXPIRY_MINUTES || 10),
-  SECRET: process.env.VERIFICATION_SECRET,
-  TEST_MODE: false,
+  SECRET: process.env.VERIFICATION_SECRET || process.env.PHONE_VERIFICATION_SECRET || 'todoalrojo-secret-key-2024-verification-12345',
+  TEST_MODE: process.env.NODE_ENV === 'development' || process.env.TEST_MODE === 'true',
 };
 
 function cors(res) {
@@ -241,6 +241,7 @@ module.exports = async (req, res) => {
           success: true,
           verificationId: token,
           expiresAt: new Date(Date.now() + CONFIG.EXP_MIN * 60 * 1000).toISOString(),
+          phoneNumber: formattedPhone, // Return the formatted phone used in token
           message: CONFIG.TEST_MODE ? "Código generado (modo test)" : "Código SMS enviado exitosamente"
         });
       } catch (smsError) {
