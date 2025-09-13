@@ -11,12 +11,14 @@ const CONFIG = {
   AIRTABLE_TABLE_NAME: 'Leads',
   AIRTABLE_API_KEY:
     'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd', // local testing only
-  PROXY_URL: '',
+  PROXY_URL: 'https://verification-backend-isemtzpeo-miela-digitals-projects.vercel.app/api/airtable-proxy',
   DEFAULT_REDIRECT_URL: 'https://mieladigital.com',
   REDIRECT_DELAY: 0,
   DEBUG: true,
   // Email verification service endpoint
   EMAIL_VERIFICATION_API: 'https://email-verification-backend-psi.vercel.app/api/email-verify',
+  // SMS verification service endpoint - Real Laaffic SMS service
+  SMS_VERIFICATION_API: 'https://verification-backend-4nneqcojm-miela-digitals-projects.vercel.app/api/phone-verify',
 };
 
 /***********************************
@@ -30,6 +32,17 @@ const EMAIL_VERIFICATION = {
   requireVerificationForSuspicious: true,
   requireVerificationForAll: true, // Force verification for all emails
   apiTimeout: 3000,
+  verificationCodeLength: 6,
+  verificationExpiryMinutes: 10,
+};
+
+/***********************************
+ *  SMS Verification Configuration
+ ***********************************/
+const SMS_VERIFICATION = {
+  enabled: true,
+  requireVerificationForAll: true, // Force SMS verification for all phone numbers
+  apiTimeout: 5000,
   verificationCodeLength: 6,
   verificationExpiryMinutes: 10,
 };
@@ -90,7 +103,8 @@ const state = {
     email: false, 
     phone: false, 
     ageVerification: false,
-    emailVerification: false
+    emailVerification: false,
+    smsVerification: false
   },
   emailVerification: {
     isRequired: false,
@@ -98,6 +112,15 @@ const state = {
     verificationId: null,
     attempts: 0,
     maxAttempts: 3,
+  },
+  smsVerification: {
+    isRequired: false,
+    isVerified: false,
+    verificationId: null,
+    phoneNumber: null,
+    attempts: 0,
+    maxAttempts: 3,
+    isCountdownActive: false,
   }
 };
 
@@ -426,6 +449,114 @@ async function verifyCode(verificationId, code) {
   }
 }
 
+/***********************************
+ *  SMS Verification Functions
+ ***********************************/
+
+/**
+ * Send SMS verification code to phone number
+ */
+async function sendSMSVerificationCode(phoneNumber, countryCode) {
+  try {
+    // Clean phone number (remove any non-digits)
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+
+    // Real Laaffic SMS API call - send phone without country code
+    const res = await fetch(CONFIG.SMS_VERIFICATION_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'send-code',
+        phone: cleanPhone, // Send clean phone number without country code
+        countryCode: countryCode,
+        language: 'es'
+      })
+    });
+    
+    const raw = await res.text(); 
+    let data = {}; 
+    try { 
+      data = JSON.parse(raw); 
+    } catch {}
+    
+    debugLog('SMS API Response:', { status: res.status, data });
+    
+    if (!res.ok || data?.success === false) {
+      return { 
+        success: false, 
+        error: data?.details || data?.error || `HTTP ${res.status}` 
+      };
+    }
+    
+    return {
+      success: true,
+      verificationId: data.verificationId,
+      expiresAt: data.expiresAt,
+      phoneNumber: data.phoneNumber || `${countryCode.replace('+', '')}${cleanPhone}`,
+      message: data.message
+    };
+  } catch (error) {
+    debugLog('Send SMS verification code error:', error);
+    return { 
+      success: false, 
+      error: 'No se pudo enviar el código SMS' 
+    };
+  }
+}
+
+/**
+ * Verify SMS code
+ */
+async function verifySMSCode(verificationId, code) {
+  try {
+    // Use the original phone number entered by the user (without country code)
+    const phoneNumber = qs('phone').value.trim().replace(/\D/g, '');
+    const countryCode = qs('countryCode').value;
+
+    console.log('Verifying SMS code:', { verificationId, code, phoneNumber, countryCode });
+
+    // Send the phone number in the same format as when it was originally entered
+    const res = await fetch(CONFIG.SMS_VERIFICATION_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'verify-code',
+        verificationId,
+        code,
+        phone: phoneNumber, // Send original phone number without country code
+        countryCode: countryCode
+      }),
+    });
+
+    const txt = await res.text();
+    let data = {};
+    try {
+      data = JSON.parse(txt);
+    } catch {}
+
+    console.log('SMS Verification Response:', { status: res.status, data, txt });
+    debugLog('SMS Verification Response:', { status: res.status, data });
+
+    if (!res.ok) {
+      return { 
+        success: false, 
+        error: data?.error || `HTTP ${res.status}` 
+      };
+    }
+
+    return {
+      success: !!data.valid || !!data.success, // Check both valid and success
+      error: (data.valid || data.success) ? null : (data?.error || 'Código SMS incorrecto'),
+    };
+  } catch (error) {
+    debugLog('Verify SMS code error:', error);
+    return { 
+      success: false, 
+      error: 'Error al verificar el código SMS' 
+    };
+  }
+}
+
 async function checkDuplicateEmailAndSource(email, source) {
   try {
     const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
@@ -451,6 +582,161 @@ async function checkDuplicateEmailAndSource(email, source) {
   } catch (error) {
     debugLog('Source duplicate check error:', error);
     return false; // Allow if check fails
+  }
+}
+
+async function checkDuplicatePhoneAndCampaign(phoneNumber, campaign) {
+  try {
+    console.log('Checking duplicates for phone + campaign:', { phoneNumber, campaign });
+
+    // Use the proxy for duplicate checking to avoid CORS issues
+    if (CONFIG.PROXY_URL && CONFIG.PROXY_URL.trim() !== '') {
+      const response = await fetch(CONFIG.PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'check-duplicate',
+          phoneNumber,
+          campaign
+        })
+      });
+
+      if (!response.ok) {
+        console.log('Proxy duplicate check failed, allowing submission');
+        return false; // Allow submission on API failure
+      }
+
+      const data = await response.json();
+      console.log('Proxy duplicate check result:', data);
+      return data.isDuplicate || false;
+    }
+
+    // Fallback to direct API (may have CORS issues)
+    const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
+    const formula = `AND({Phone Number}="${phoneNumber}", {Campaign}="${campaign}")`;
+    const url = `${endpoint}?filterByFormula=${encodeURIComponent(formula)}`;
+
+    console.log('Direct duplicate check URL:', url);
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log('Direct duplicate check failed, allowing submission');
+      debugLog('Duplicate check failed', { status: response.status });
+      return false; // Allow submission on API failure
+    }
+
+    const data = await response.json();
+    const isDuplicate = data.records && data.records.length > 0;
+
+    console.log('Direct duplicate check result:', { phoneNumber, campaign, isDuplicate, recordsFound: data.records?.length });
+    debugLog('Duplicate check result', { phoneNumber, campaign, isDuplicate, recordsFound: data.records?.length });
+
+    return isDuplicate;
+  } catch (error) {
+    console.log('Duplicate check error, allowing submission:', error);
+    debugLog('Duplicate check error', error);
+    return false; // Allow submission on error
+  }
+}
+
+/**
+ * New duplicate rule implementation:
+ * ✅ Allows: Same phone + same campaign (retry scenarios)
+ * ✅ Allows: Same phone + different source + any campaign
+ * ❌ Blocks: Same phone + same source + any campaign
+ *
+ * This prevents promoters from inviting the same person to multiple campaigns,
+ * while allowing retries within the same campaign.
+ */
+async function checkDuplicatePhoneAndSource(phoneNumber, source, currentCampaign) {
+  try {
+    console.log('Checking duplicates for phone + source (any campaign):', { phoneNumber, source, currentCampaign });
+
+    // Require phone and source to apply this rule
+    if (!phoneNumber || !source) {
+      console.log('Missing phone or source; skipping source duplicate check');
+      return false;
+    }
+
+    // Prefer proxy to avoid CORS and to centralize formula logic
+    if (CONFIG.PROXY_URL && CONFIG.PROXY_URL.trim() !== '') {
+      const response = await fetch(CONFIG.PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'check-duplicate-phone-source',
+          phoneNumber,
+          source,
+          currentCampaign
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Proxy phone + source duplicate check result:', data);
+        return data.isDuplicate || false;
+      } else {
+        console.log('Proxy phone + source duplicate check failed, trying direct Airtable fallback');
+      }
+    }
+
+    // Direct Airtable fallback (may have CORS issues in browsers)
+    const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
+
+    // Case-insensitive compare for source
+    // Formula: AND(
+    //   {Phone Number} = "<phone>",
+    //   LOWER({Traffic Source}) = LOWER("<source>")
+    // )
+    // This blocks ANY existing record with same phone + same source, regardless of campaign
+    const formula = `AND({Phone Number}=\"${phoneNumber}\", LOWER({Traffic Source})=LOWER(\"${source}\"))`;
+    const url = `${endpoint}?filterByFormula=${encodeURIComponent(formula)}`;
+
+    console.log('Direct phone + source duplicate check URL:', url);
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${CONFIG.AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log('Direct phone + source duplicate check failed, allowing submission');
+      debugLog('Phone + source duplicate check failed', { status: response.status });
+      return false; // Allow submission on API failure
+    }
+
+    const data = await response.json();
+    const isDuplicate = data.records && data.records.length > 0;
+
+    if (isDuplicate) {
+      // Log the existing record details for debugging
+      const existingRecord = data.records[0];
+      console.log('Found existing record with same phone + source:', {
+        phoneNumber,
+        source,
+        currentCampaign,
+        existingCampaign: existingRecord.fields?.Campaign,
+        existingEmail: existingRecord.fields?.Email,
+        recordsFound: data.records.length
+      });
+    }
+
+    console.log('Direct phone + source duplicate check result:', { phoneNumber, source, currentCampaign, isDuplicate, recordsFound: data.records?.length });
+    debugLog('Phone + source duplicate check result', { phoneNumber, source, currentCampaign, isDuplicate, recordsFound: data.records?.length });
+
+    return isDuplicate;
+  } catch (error) {
+    console.log('Phone + source duplicate check error, allowing submission:', error);
+    debugLog('Phone + source duplicate check error', error);
+    return false; // Allow submission on error
   }
 }
 
@@ -626,15 +912,13 @@ async function handleCodeVerification(code) {
     // Update field UI with green border
     updateFieldUI('email', true, '¡Email verificado!', 'success');
     updateProgress();
-    
-    // Hide the OTP card completely after a delay
-    setTimeout(() => {
-      const host = document.querySelector('.email-verification-host');
-      if (host) {
-        host.innerHTML = '';
-        host.style.display = 'none';
-      }
-    }, 1500);
+
+    // Hide the OTP card immediately
+    const host = document.querySelector('.email-verification-host');
+    if (host) {
+      host.innerHTML = '';
+      host.style.display = 'none';
+    }
     
     debugLog('Email verification completed successfully');
   } else {
@@ -656,21 +940,296 @@ async function handleCodeVerification(code) {
 function showEmailVerificationUI(result, inputElement) {
   const group = inputElement.closest('.form-group');
   if (!group) return;
-  
-  const inputWrapper = group.querySelector('.input-wrapper') || group;
-  let host = group.querySelector('.email-verification-host');
-  
-  if (!host) {
-    host = document.createElement('div');
-    host.className = 'email-verification-host';
-    inputWrapper.parentNode.insertBefore(host, inputWrapper.nextSibling);
+
+  // Don't show UI if email is already verified
+  if (state.emailVerification.isVerified) {
+    return;
   }
-  
+
+  // Remove any existing email verification hosts to prevent duplication
+  const existingHosts = group.querySelectorAll('.email-verification-host');
+  existingHosts.forEach(host => host.remove());
+
   if (result && result.isValid) {
+    // Create new host with proper spacing
+    const host = document.createElement('div');
+    host.className = 'email-verification-host';
+    host.style.marginTop = '12px'; // Add space between email input and verification
+
+    // Insert after the validation message
+    const validationMessage = group.querySelector('.validation-message');
+    if (validationMessage) {
+      validationMessage.parentNode.insertBefore(host, validationMessage.nextSibling);
+    } else {
+      group.appendChild(host);
+    }
+
     state.emailVerification.isRequired = true;
     mountOtpUI(host, inputElement.value.trim());
+  }
+}
+
+/***********************************
+ *  SMS Verification UI Functions
+ ***********************************/
+
+/**
+ * Render SMS OTP UI block
+ */
+function renderSMSOtpBlock(phoneNumber) {
+  const card = document.createElement('div'); 
+  card.className = 'otp-card sms-otp-card';
+  card.innerHTML = `
+    <div class="otp-head">
+      <div class="otp-title">Código de Verificación SMS</div>
+      <div class="otp-to">Se envió a <strong>${phoneNumber}</strong></div>
+    </div>
+    <div class="otp-inputs" role="group" aria-label="Código de verificación SMS de 6 dígitos">
+      ${Array.from({length: 6}).map(() => 
+        `<input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input sms-otp-input"/>
+      `).join('')}
+    </div>
+    <div class="otp-actions">
+      <button type="button" class="otp-btn otp-btn-send" id="btnSendSMSCode">Enviar SMS</button>
+      <button type="button" class="otp-btn otp-btn-resend" id="btnResendSMS" disabled>Reenviar (30s)</button>
+    </div>
+    <div class="otp-msg" id="smsOtpMsg" style="color:#9ca3af">Ingresa el código de 6 dígitos recibido por SMS</div>
+  `;
+  return card;
+}
+
+/**
+ * Mount SMS OTP UI
+ */
+function mountSMSOtpUI(container, phoneNumber) {
+  // Clear any existing SMS OTP card
+  const old = container.querySelector('.sms-otp-card');
+  if (old) old.remove();
+
+  const card = renderSMSOtpBlock(phoneNumber);
+  container.appendChild(card);
+
+  const inputs = [...card.querySelectorAll('.sms-otp-input')];
+  const sendBtn = card.querySelector('#btnSendSMSCode');
+  const resendBtn = card.querySelector('#btnResendSMS');
+  const msg = card.querySelector('#smsOtpMsg');
+
+  const getCode = () => inputs.map(i => i.value).join('');
+  const clearCode = () => {
+    inputs.forEach(i => (i.value = ''));
+    inputs[0]?.focus();
+  };
+
+  // Input handling
+  inputs.forEach((el, idx) => {
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/\D/g, '');
+      if (el.value && idx < inputs.length - 1) {
+        inputs[idx + 1].focus();
+      }
+      
+      const code = getCode();
+      if (code.length === 6) {
+        handleSMSCodeVerification(code);
+      }
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !el.value && idx > 0) {
+        inputs[idx - 1].focus();
+        inputs[idx - 1].value = '';
+      }
+      if (e.key === 'Enter') {
+        const code = getCode();
+        if (code.length === 6) {
+          handleSMSCodeVerification(code);
+        }
+      }
+    });
+
+    el.addEventListener('paste', (e) => {
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      if (/^\d{6}$/.test(text)) {
+        e.preventDefault();
+        text.split('').forEach((ch, i) => {
+          if (inputs[i]) inputs[i].value = ch;
+        });
+        handleSMSCodeVerification(text);
+      }
+    });
+  });
+
+  // Countdown timer
+  let countdown = 30;
+  let timer = null;
+
+  const tick = () => {
+    countdown--;
+    resendBtn.textContent = countdown > 0 ? `Reenviar (${countdown}s)` : 'Reenviar';
+    resendBtn.disabled = countdown > 0;
+    if (countdown <= 0) {
+      clearInterval(timer);
+      state.smsVerification.isCountdownActive = false;
+    }
+  };
+
+  const startCountdown = () => {
+    clearInterval(timer);
+    countdown = 30;
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Reenviar (30s)';
+    state.smsVerification.isCountdownActive = true;
+    timer = setInterval(tick, 1000);
+  };
+
+  // Send SMS code function
+  async function doSendSMS() {
+    sendBtn.disabled = true;
+    resendBtn.disabled = true;
+    msg.className = 'otp-msg';
+    msg.textContent = 'Enviando código SMS...';
+
+    const phoneNumber = qs('phone').value.trim();
+    const countryCode = qs('countryCode').value;
+    
+    const result = await sendSMSVerificationCode(phoneNumber, countryCode);
+    
+    if (result.success) {
+      msg.className = 'otp-msg ok';
+      msg.textContent = 'SMS enviado. Revisa tu teléfono.';
+      state.smsVerification.verificationId = result.verificationId;
+      state.smsVerification.phoneNumber = result.phoneNumber;
+      state.smsVerification.isRequired = true;
+      clearCode();
+      startCountdown();
+    } else {
+      msg.className = 'otp-msg err';
+      msg.textContent = result.error || 'No se pudo enviar el SMS';
+    }
+    
+    sendBtn.disabled = false;
+  }
+
+  sendBtn.addEventListener('click', doSendSMS);
+  resendBtn.addEventListener('click', doSendSMS);
+
+  // Auto-send SMS if not already sent and countdown not active
+  if (!state.smsVerification.verificationId && !state.smsVerification.isCountdownActive) {
+    // Start countdown state immediately to prevent multiple sends
+    state.smsVerification.isCountdownActive = true;
+    doSendSMS();
+  }
+}
+
+/**
+ * Handle SMS code verification
+ */
+async function handleSMSCodeVerification(code) {
+  const host = document.querySelector('.sms-verification-host');
+  const msg = host ? host.querySelector('#smsOtpMsg') : null;
+  
+  if (!state.smsVerification.verificationId) {
+    if (msg) {
+      msg.className = 'otp-msg err';
+      msg.textContent = 'Primero envía el código SMS';
+    }
+    return;
+  }
+
+  if (msg) {
+    msg.className = 'otp-msg';
+    msg.textContent = 'Verificando código SMS...';
+  }
+
+  const result = await verifySMSCode(state.smsVerification.verificationId, code);
+
+  if (result.success) {
+    // Mark SMS as verified
+    state.smsVerification.isVerified = true;
+    state.validationState.smsVerification = true;
+    state.validationState.phone = true;
+
+    debugLog('SMS verification successful - updating UI');
+
+    // Update UI to show success
+    if (msg) {
+      msg.className = 'otp-msg ok';
+      msg.textContent = '¡Código SMS verificado!';
+    }
+
+    // Update field UI with green border and re-validate phone field
+    updateFieldUI('phone', true, '¡Teléfono verificado!', 'success');
+    updateProgress();
+
+    // Re-validate phone field to ensure state is properly set
+    validateField('phone');
+
+    // Hide the SMS OTP card immediately
+    const host = document.querySelector('.sms-verification-host');
+    if (host) {
+      host.innerHTML = '';
+      host.style.display = 'none';
+    }
+    
+    debugLog('SMS verification completed successfully');
   } else {
-    host.innerHTML = '';
+    if (msg) {
+      msg.className = 'otp-msg err';
+      msg.textContent = result.error || 'Código SMS incorrecto';
+    }
+
+    console.error('SMS verification failed:', result);
+    debugLog('SMS verification failed:', result);
+
+    // Focus on the first empty input or last input
+    const inputs = [...document.querySelectorAll('.sms-otp-input')];
+    const emptyInput = inputs.find(i => !i.value);
+    (emptyInput || inputs[inputs.length - 1])?.focus();
+  }
+}
+
+/**
+ * Show SMS verification UI
+ */
+function showSMSVerificationUI(inputElement) {
+  const group = inputElement.closest('.form-group');
+  if (!group) return;
+
+  // Don't show SMS UI if already verified
+  if (state.smsVerification.isVerified) {
+    return;
+  }
+
+  // Don't re-create UI if it already exists and has a verification ID
+  const existingHost = group.querySelector('.sms-verification-host');
+  if (existingHost && state.smsVerification.verificationId) {
+    return; // SMS UI already exists and SMS was sent
+  }
+
+  // Remove any existing SMS verification hosts to prevent duplication
+  const existingHosts = group.querySelectorAll('.sms-verification-host');
+  existingHosts.forEach(host => host.remove());
+
+  const phoneNumber = qs('phone').value.trim();
+  const countryCode = qs('countryCode').value;
+  const fullPhoneNumber = `${countryCode}${phoneNumber.replace(/\D/g, '')}`;
+
+  if (SMS_VERIFICATION.enabled && phoneNumber && countryCode) {
+    // Create new host with proper spacing
+    const host = document.createElement('div');
+    host.className = 'sms-verification-host';
+    host.style.marginTop = '12px'; // Add space between phone input and SMS verification
+
+    // Insert after the validation message
+    const validationMessage = group.querySelector('.validation-message');
+    if (validationMessage) {
+      validationMessage.parentNode.insertBefore(host, validationMessage.nextSibling);
+    } else {
+      group.appendChild(host);
+    }
+
+    state.smsVerification.isRequired = true;
+    mountSMSOtpUI(host, fullPhoneNumber);
   }
 }
 
@@ -747,9 +1306,29 @@ async function validateField(fieldName) {
       } else if (phone.length > 15) {
         message = 'El número no puede tener más de 15 dígitos';
       } else {
-        isValid = true;
-        message = '¡Teléfono válido!';
-        messageType = 'success';
+        // Phone format is valid, now check SMS verification
+        if (SMS_VERIFICATION.enabled) {
+          // Only show SMS UI if not already verified
+          if (!state.smsVerification.isVerified) {
+            showSMSVerificationUI(qs('phone'));
+          }
+
+          if (state.smsVerification.isRequired) {
+            isValid = state.smsVerification.isVerified;
+            message = isValid ? '¡Teléfono verificado!' : 'Requiere verificación por SMS';
+            messageType = isValid ? 'success' : 'error';
+          } else {
+            // SMS verification not yet required
+            isValid = true;
+            message = '¡Formato válido - enviando SMS!';
+            messageType = 'success';
+          }
+        } else {
+          // SMS verification disabled
+          isValid = true;
+          message = '¡Teléfono válido!';
+          messageType = 'success';
+        }
       }
       
       state.validationState.phone = isValid;
@@ -848,9 +1427,16 @@ function updateProgress() {
     completedFields++;
   }
   
-  // Check phone
-  if (qs('phone').value.replace(/\D/g, '').length >= 6) {
-    completedFields++;
+  // Check phone (must be valid AND verified if SMS verification is required)
+  const phoneValue = qs('phone').value.replace(/\D/g, '');
+  if (phoneValue.length >= 6) {
+    if (SMS_VERIFICATION.enabled && state.smsVerification.isRequired) {
+      if (state.smsVerification.isVerified) {
+        completedFields++;
+      }
+    } else {
+      completedFields++;
+    }
   }
   
   // Check age verification
@@ -1047,7 +1633,8 @@ function initializeTracking() {
   // Only use click_id parameter (with underscore) - standardized
   const clickId = p.get('click_id') || p.get('clickid') || p.get('payload') || '';
   const campaign = p.get('campaign') || '';
-  const source = p.get('source') || '';
+  // Broaden source detection to support common UTM aliases
+  const source = p.get('source') || p.get('utm_source') || p.get('src') || p.get('traffic_source') || '';
   const redirEnc = p.get('redir_enc') || '';
   const redirectRaw = p.get('redirect') || '';
   const decodedRedirect = redirEnc ? b64urlDecode(redirEnc) : redirectRaw;
@@ -1112,34 +1699,79 @@ async function handleSubmit(evt) {
   evt.preventDefault();
   if (state.isSubmitting) return;
 
+  console.log('=== FORM SUBMISSION START ===');
+  console.log('Form submission triggered');
+
+  // Hide all verification UIs during submission
+  const emailVerificationHost = document.querySelector('.email-verification-host');
+  const smsVerificationHost = document.querySelector('.sms-verification-host');
+  if (emailVerificationHost) {
+    emailVerificationHost.innerHTML = '';
+    emailVerificationHost.style.display = 'none';
+  }
+  if (smsVerificationHost) {
+    smsVerificationHost.innerHTML = '';
+    smsVerificationHost.style.display = 'none';
+  }
+
   // Disable button immediately to prevent multiple clicks
   const submitBtn = qs('submitBtn');
   if (submitBtn) submitBtn.disabled = true;
 
+  console.log('Current state before validation:', {
+    emailVerification: state.emailVerification,
+    smsVerification: state.smsVerification,
+    validationState: state.validationState,
+    isSubmitting: state.isSubmitting
+  });
+
   try {
     const clickId = state.trackingData.clickId || '';
-    
+
+    console.log('Click ID check:', { clickId, submittedClickIds: Array.from(state.submittedClickIds) });
+
     // Prevent duplicate submissions of same click_id
     if (clickId && state.submittedClickIds.has(clickId)) {
+      console.error('Duplicate submission prevented for clickId:', clickId);
       showError('Esta solicitud ya fue enviada');
       return;
     }
 
     // Validate all fields
+    console.log('Starting field validation...');
     const okName = await validateField('fullName');
     const okEmail = await validateField('email');
     const okPhone = await validateField('phone');
     const okAge = await validateField('ageVerification');
-    
+
+    console.log('Field validation results:', { okName, okEmail, okPhone, okAge });
+
     // Additional check for email verification if required
     if (state.emailVerification.isRequired && !state.emailVerification.isVerified) {
+      console.error('Email verification required but not completed');
       showError('Por favor verifica tu email antes de continuar');
       const firstOtpInput = document.querySelector('.otp-input');
       if (firstOtpInput) firstOtpInput.focus();
       return;
     }
-    
+
+    // Additional check for SMS verification if required
+    if (state.smsVerification.isRequired && !state.smsVerification.isVerified) {
+      console.error('SMS verification required but not completed');
+      showError('Por favor verifica tu teléfono con el código SMS');
+      const firstSmsInput = document.querySelector('.sms-otp-input');
+      if (firstSmsInput) firstSmsInput.focus();
+      return;
+    }
+
+    console.log('Verification checks passed. Email required/verified:',
+      state.emailVerification.isRequired, '/', state.emailVerification.isVerified,
+      'SMS required/verified:', state.smsVerification.isRequired, '/', state.smsVerification.isVerified);
+
     if (!okName || !okEmail || !okPhone || !okAge) {
+      console.error('Field validation failed. Invalid fields:', {
+        name: !okName, email: !okEmail, phone: !okPhone, age: !okAge
+      });
       // Focus on first invalid field
       if (!okName) qs('fullName').focus();
       else if (!okEmail) qs('email').focus();
@@ -1149,6 +1781,7 @@ async function handleSubmit(evt) {
     }
     
     // Collect form data
+    console.log('Collecting form data...');
     state.formData = {
       fullName: qs('fullName').value.trim(),
       email: qs('email').value.trim(),
@@ -1156,43 +1789,59 @@ async function handleSubmit(evt) {
       ageVerification: qs('ageVerification').checked,
       promoConsent: qs('promoConsent').checked,
       emailVerified: state.emailVerification.isVerified,
+      smsVerified: state.smsVerification.isVerified,
     };
 
-    // Check for email + source duplicates ACROSS ALL CAMPAIGNS
-    const email = state.formData.email;
-    const source = state.trackingData.source || 'Direct';
-    
-    debugLog('Checking for source duplicates across all campaigns:', { email, source });
-    
-    // Only check source duplicates (blocks same email from same source regardless of campaign)
-    if (source && source !== 'Direct') {
-      const sourceDuplicate = await checkDuplicateEmailAndSource(email, source);
-      
-      if (sourceDuplicate) {
-        debugLog('Source duplicate found:', { email, source });
-        showError('Este correo electrónico ya ha sido registrado.');
+    console.log('Form data collected:', state.formData);
+
+    // New rule: Block duplicates for same phone + same source (any campaign)
+    // This prevents promoters from inviting the same person to multiple campaigns
+    const phoneNumber = state.formData.phone;
+    const campaign = state.trackingData.promo || state.trackingData.campaign || 'Direct';
+    const source = state.trackingData.source || '';
+
+    console.log('Checking phone + source duplicates...', { phoneNumber, campaign, source, trackingData: state.trackingData });
+    debugLog('Checking phone + source duplicates:', { phoneNumber, campaign, source });
+
+    if (phoneNumber && source) {
+      const phoneSourceDuplicate = await checkDuplicatePhoneAndSource(phoneNumber, source, campaign);
+      if (phoneSourceDuplicate) {
+        console.error('Phone + source duplicate found, blocking submission');
+        debugLog('Phone + source duplicate found:', { phoneNumber, source, campaign });
+        showError('Este número ya ha sido registrado.');
         return;
       }
+      console.log('No phone + source duplicates found');
+    } else {
+      console.log('Skipping phone + source duplicate check (missing phone or source)');
     }
-    
+
+    console.log('Starting Airtable submission...');
     debugLog('Form data', state.formData);
     toggleLoading(true);
-    
+
+    console.log('Calling submitToAirtable...');
     await submitToAirtable();
-    
+
+    console.log('Airtable submission completed, tracking conversion...');
+
     // Track lead conversion in RedTrack after successful Airtable submission
     trackLeadConversion(clickId);
-    
+
     // Mark this click_id as submitted
     if (clickId) {
       state.submittedClickIds.add(clickId);
+      console.log('Marked clickId as submitted:', clickId);
     }
-    
+
+    console.log('=== FORM SUBMISSION SUCCESS ===');
     debugLog('Submission successful');
     performRedirect();
-    
+
   } catch (error) {
+    console.error('=== FORM SUBMISSION ERROR ===');
     console.error('Submission error:', error);
+    console.error('Error stack:', error.stack);
     showError('Algo salió mal. Por favor intenta de nuevo.');
   } finally {
     toggleLoading(false);
@@ -1235,6 +1884,9 @@ function trackLeadConversion(clickId) {
 }
 
 async function submitToAirtable() {
+  console.log('=== AIRTABLE SUBMISSION START ===');
+  console.log('Building Airtable record...');
+
   const record = {
     'Full Name': state.formData.fullName,
     'Email': state.formData.email,
@@ -1242,6 +1894,7 @@ async function submitToAirtable() {
     'Age Verification': state.formData.ageVerification ? 'Yes' : 'No',
     'Promotional Consent': state.formData.promoConsent ? 'Yes' : 'No',
     'Email Verified': state.formData.emailVerified ? 'Yes' : 'No',
+    'Phone Verified': state.formData.smsVerified ? 'Yes' : 'No',
     'Click ID': state.trackingData.clickId || '',
     'Campaign': state.trackingData.promo || state.trackingData.campaign || '',
     'IP Address': state.geoData.ip || '',
@@ -1254,26 +1907,46 @@ async function submitToAirtable() {
     'Timestamp': state.trackingData.timestamp || '',
   };
   
+  console.log('Airtable record built:', record);
+
   const payload = { records: [{ fields: record }], typecast: true };
+  console.log('Airtable payload:', payload);
   debugLog('Airtable payload', payload);
 
-  if (CONFIG.PROXY_URL) {
+  console.log('CONFIG.PROXY_URL:', CONFIG.PROXY_URL);
+  console.log('PROXY_URL is empty, will use direct Airtable API');
+
+  if (CONFIG.PROXY_URL && CONFIG.PROXY_URL.trim() !== '') {
+    console.log('Using proxy URL for submission...');
     const response = await fetch(CONFIG.PROXY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'create', payload })
     });
-    
+
+    console.log('Proxy response status:', response.status);
+
     if (!response.ok) {
       let errorData = {};
       try { errorData = await response.json(); } catch {}
+      console.error('Proxy submission failed:', response.status, errorData);
       throw new Error(`Proxy HTTP ${response.status}: ${JSON.stringify(errorData)}`);
     }
-    
-    return response.json();
+
+    const result = await response.json();
+    console.log('Proxy submission successful:', result);
+    return result;
   }
 
+  console.log('Using direct Airtable API...');
   const endpoint = `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`;
+  console.log('Airtable endpoint:', endpoint);
+  console.log('Airtable config:', {
+    baseId: CONFIG.AIRTABLE_BASE_ID,
+    tableName: CONFIG.AIRTABLE_TABLE_NAME,
+    hasApiKey: !!CONFIG.AIRTABLE_API_KEY
+  });
+
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -1282,15 +1955,42 @@ async function submitToAirtable() {
     },
     body: JSON.stringify(payload)
   });
-  
+
+  console.log('Direct Airtable response status:', response.status);
+
   if (!response.ok) {
     let errorData = {};
-    try { errorData = await response.json(); } catch {}
+    let errorText = '';
+    try {
+      errorText = await response.text();
+      errorData = JSON.parse(errorText);
+    } catch {
+      errorData = { rawError: errorText };
+    }
+    console.error('Direct Airtable submission failed:', {
+      status: response.status,
+      statusText: response.statusText,
+      errorData,
+      headers: Object.fromEntries(response.headers.entries())
+    });
     debugLog('Airtable error', { status: response.status, errorData });
-    throw new Error(`HTTP ${response.status}`);
+
+    // Provide more specific error messages
+    if (response.status === 0) {
+      throw new Error('Network error - likely CORS issue. Direct Airtable API calls may be blocked.');
+    } else if (response.status === 401) {
+      throw new Error('Airtable authentication failed. Check API key.');
+    } else if (response.status === 404) {
+      throw new Error('Airtable base or table not found. Check base ID and table name.');
+    } else if (response.status === 422) {
+      throw new Error('Invalid data format for Airtable. Check field names and data types.');
+    } else {
+      throw new Error(`Airtable API error ${response.status}: ${response.statusText}`);
+    }
   }
   
   const jsonResponse = await response.json();
+  console.log('Direct Airtable submission successful:', jsonResponse);
   debugLog('Airtable response', jsonResponse);
   return jsonResponse;
 }
@@ -1580,7 +2280,19 @@ window.debugEmailVerification = function (email = 'test@gmail.com') {
   }
 };
 
+window.debugSMSVerification = function (phone = '56936280109', countryCode = '+56') {
+  console.log('=== DEBUG SMS VERIFICATION ===');
+  const phoneInput = qs('phone');
+  const countryInput = qs('countryCode');
+  if (phoneInput && countryInput) {
+    countryInput.value = countryCode;
+    phoneInput.value = phone;
+    validateField('phone');
+  }
+};
+
 console.log('=== LEAD FORM LOADED ===');
 console.log('TIP: Use debugSubmit() to test form submission');
 console.log('TIP: Use debugState() to view current state');
 console.log('TIP: Use debugEmailVerification() to test email verification');
+console.log('TIP: Use debugSMSVerification() to test SMS verification');
