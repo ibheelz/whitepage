@@ -8,7 +8,6 @@ const CONFIG = {
   LAAFFIC_APP_ID: process.env.LAAFFIC_APP_ID || 'wqceXTJa',
   LAAFFIC_API_KEY: process.env.LAAFFIC_API_KEY || 'uj26EVWQ',
   LAAFFIC_API_SECRET: process.env.LAAFFIC_API_SECRET || 'jVuVHQ0b',
-  LAAFFIC_SENDER_ID: process.env.LAAFFIC_SENDER_ID || 'Todo al Rojo',
   LAAFFIC_BASE_URL: 'https://api.laaffic.com/v3',
   EXP_MIN: Number(process.env.VERIFICATION_EXPIRY_MINUTES || 10),
   SECRET: process.env.VERIFICATION_SECRET || process.env.PHONE_VERIFICATION_SECRET || 'todoalrojo-secret-key-2024-verification-12345',
@@ -135,11 +134,6 @@ async function sendSMS(to, message) {
     content: message,
     orderId: `verify_${Date.now()}`
   };
-  
-  // Only add senderId if it's provided and not empty
-  if (CONFIG.LAAFFIC_SENDER_ID && CONFIG.LAAFFIC_SENDER_ID.trim()) {
-    requestBody.senderId = CONFIG.LAAFFIC_SENDER_ID;
-  }
   
   console.log("Laaffic Debug:");
   console.log("API Key:", CONFIG.LAAFFIC_API_KEY);

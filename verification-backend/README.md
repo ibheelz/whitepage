@@ -11,7 +11,6 @@ Configure these environment variables in your Vercel deployment:
 LAAFFIC_APP_ID=wqceXTJa
 LAAFFIC_API_KEY=uj26EVWQ
 LAAFFIC_API_SECRET=jVuVHQ0b
-LAAFFIC_SENDER_ID=Todo al Rojo
 PHONE_VERIFICATION_SECRET=346b3kjbl3i4u5fi3yf7802945tbkljbv98svdbv0
 VERIFICATION_SECRET=todoalrojo-secret-key-2024-verification-12345
 VERIFICATION_EXPIRY_MINUTES=10

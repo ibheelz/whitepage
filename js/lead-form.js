@@ -18,7 +18,7 @@ const CONFIG = {
   // Email verification service endpoint
   EMAIL_VERIFICATION_API: 'https://email-verification-backend-psi.vercel.app/api/email-verify',
   // SMS verification service endpoint - Real Laaffic SMS service
-  SMS_VERIFICATION_API: 'https://verification-backend-4nneqcojm-miela-digitals-projects.vercel.app/api/phone-verify',
+  SMS_VERIFICATION_API: 'https://verification-backend-gp9n5xldp-miela-digitals-projects.vercel.app/api/phone-verify',
 };
 
 /***********************************
@@ -213,22 +213,27 @@ function toggleLoading(isLoading) {
     
     .otp-inputs {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
       margin: 6px 0;
+      max-width: 100%;
+      overflow: hidden;
+      flex-wrap: nowrap;
     }
     
     .otp-input {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
+      min-width: 32px;
       border-radius: 10px;
       background: rgba(0,0,0,.25) !important;
       border: 1px solid rgba(255,255,255,.08);
       outline: none;
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       color: #e5e7eb;
       transition: transform .08s ease;
+      flex-shrink: 0;
     }
     
     .otp-input:focus {
@@ -289,6 +294,17 @@ function toggleLoading(isLoading) {
       opacity: .25;
       pointer-events: none;
       transition: opacity .25s ease;
+    }
+
+    @media (max-width: 480px) {
+      .otp-input {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+      }
+      .otp-inputs {
+        gap: 6px !important;
+      }
     }
   `;
   
@@ -744,23 +760,23 @@ async function checkDuplicatePhoneAndSource(phoneNumber, source, currentCampaign
  *  OTP UI Functions - FIXED
  ***********************************/
 function renderOtpBlock(email) {
-  const card = document.createElement('div'); 
-  card.className = 'otp-card';
+  const card = document.createElement('div');
+  card.className = 'otp-card email-otp-card';
   card.innerHTML = `
     <div class="otp-head">
-      <div class="otp-title">Código de Verificación</div>
+      <div class="otp-title">Código de Verificación Email</div>
       <div class="otp-to">Se envió a <strong>${email}</strong></div>
     </div>
     <div class="otp-inputs" role="group" aria-label="Código de verificación de 6 dígitos">
-      ${Array.from({length: 6}).map(() => 
-        `<input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input"/>
+      ${Array.from({length: 6}).map(() =>
+        `<input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input email-otp-input"/>
       `).join('')}
     </div>
     <div class="otp-actions">
-      <button type="button" class="otp-btn otp-btn-send" id="btnSendCode">Enviar código</button>
-      <button type="button" class="otp-btn otp-btn-resend" id="btnResend" disabled>Reenviar (30s)</button>
+      <button type="button" class="otp-btn otp-btn-send" id="btnSendEmailCode">Enviar Email</button>
+      <button type="button" class="otp-btn otp-btn-resend" id="btnResendEmail" disabled>Reenviar (30s)</button>
     </div>
-    <div class="otp-msg" id="otpMsg" style="color:#9ca3af">Ingresa el código de 6 dígitos</div>
+    <div class="otp-msg" id="emailOtpMsg" style="color:#9ca3af">Ingresa el código de 6 dígitos recibido por email</div>
   `;
   return card;
 }
@@ -773,10 +789,10 @@ function mountOtpUI(container, email) {
   const card = renderOtpBlock(email);
   container.appendChild(card);
 
-  const inputs = [...card.querySelectorAll('.otp-input')];
-  const sendBtn = card.querySelector('#btnSendCode');
-  const resendBtn = card.querySelector('#btnResend');
-  const msg = card.querySelector('#otpMsg');
+  const inputs = [...card.querySelectorAll('.email-otp-input')];
+  const sendBtn = card.querySelector('#btnSendEmailCode');
+  const resendBtn = card.querySelector('#btnResendEmail');
+  const msg = card.querySelector('#emailOtpMsg');
 
   const getCode = () => inputs.map(i => i.value).join('');
   const clearCode = () => {
@@ -880,7 +896,7 @@ function mountOtpUI(container, email) {
  ***********************************/
 async function handleCodeVerification(code) {
   const host = document.querySelector('.email-verification-host');
-  const msg = host ? host.querySelector('#otpMsg') : null;
+  const msg = host ? host.querySelector('#emailOtpMsg') : null;
   
   if (!state.emailVerification.verificationId) {
     if (msg) {
@@ -928,7 +944,7 @@ async function handleCodeVerification(code) {
     }
     
     // Focus on the first empty input or last input
-    const inputs = [...document.querySelectorAll('.otp-input')];
+    const inputs = [...document.querySelectorAll('.email-otp-input')];
     const emptyInput = inputs.find(i => !i.value);
     (emptyInput || inputs[inputs.length - 1])?.focus();
   }
@@ -1750,7 +1766,7 @@ async function handleSubmit(evt) {
     if (state.emailVerification.isRequired && !state.emailVerification.isVerified) {
       console.error('Email verification required but not completed');
       showError('Por favor verifica tu email antes de continuar');
-      const firstOtpInput = document.querySelector('.otp-input');
+      const firstOtpInput = document.querySelector('.email-otp-input');
       if (firstOtpInput) firstOtpInput.focus();
       return;
     }
@@ -2113,22 +2129,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     .otp-inputs {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
       margin: 6px 0;
+      max-width: 100%;
+      overflow: hidden;
+      flex-wrap: nowrap;
     }
     
     .otp-input {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
+      min-width: 32px;
       border-radius: 10px;
       background: rgba(0,0,0,.25) !important;
       border: 1px solid rgba(255,255,255,.08);
       outline: none;
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       color: #e5e7eb;
       transition: transform .08s ease;
+      flex-shrink: 0;
     }
     
     .otp-input:focus {
@@ -2189,6 +2210,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       opacity: .25;
       pointer-events: none;
       transition: opacity .25s ease;
+    }
+
+    @media (max-width: 480px) {
+      .otp-input {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+      }
+      .otp-inputs {
+        gap: 6px !important;
+      }
     }
   `;
   

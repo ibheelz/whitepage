@@ -3,7 +3,6 @@ console.log('=== ENVIRONMENT VARIABLES DEBUG ===');
 console.log('LAAFFIC_APP_ID:', process.env.LAAFFIC_APP_ID ? 'Set (' + process.env.LAAFFIC_APP_ID + ')' : 'Missing');
 console.log('LAAFFIC_API_KEY:', process.env.LAAFFIC_API_KEY ? 'Set (' + process.env.LAAFFIC_API_KEY + ')' : 'Missing');
 console.log('LAAFFIC_API_SECRET:', process.env.LAAFFIC_API_SECRET ? 'Set (' + process.env.LAAFFIC_API_SECRET + ')' : 'Missing');
-console.log('LAAFFIC_SENDER_ID:', process.env.LAAFFIC_SENDER_ID ? 'Set (' + process.env.LAAFFIC_SENDER_ID + ')' : 'Missing');
 console.log('VERIFICATION_SECRET:', process.env.VERIFICATION_SECRET ? 'Set (' + process.env.VERIFICATION_SECRET + ')' : 'Missing');
 
 const crypto = require("crypto");

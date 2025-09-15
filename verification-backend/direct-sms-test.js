@@ -5,7 +5,6 @@ const CONFIG = {
   LAAFFIC_APP_ID: process.env.LAAFFIC_APP_ID || 'wqceXTJa',
   LAAFFIC_API_KEY: process.env.LAAFFIC_API_KEY || 'uj26EVWQ',
   LAAFFIC_API_SECRET: process.env.LAAFFIC_API_SECRET || 'jVuVHQ0b',
-  LAAFFIC_SENDER_ID: process.env.LAAFFIC_SENDER_ID || 'Todo al Rojo',
   LAAFFIC_BASE_URL: 'https://api.laaffic.com/v3'
 };
 
@@ -27,8 +26,7 @@ async function sendDirectSMS(phone, message) {
   const requestBody = {
     appId: CONFIG.LAAFFIC_APP_ID,
     numbers: phone,
-    content: message,
-    senderId: CONFIG.LAAFFIC_SENDER_ID
+    content: message
   };
 
   console.log('\n🚀 Direct SMS Test');

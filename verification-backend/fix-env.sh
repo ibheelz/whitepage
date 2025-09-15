@@ -5,7 +5,6 @@ echo "Removing all existing environment variables..."
 vercel env rm LAAFFIC_APP_ID production --yes 2>/dev/null || true
 vercel env rm LAAFFIC_API_KEY production --yes 2>/dev/null || true
 vercel env rm LAAFFIC_API_SECRET production --yes 2>/dev/null || true
-vercel env rm LAAFFIC_SENDER_ID production --yes 2>/dev/null || true
 vercel env rm VERIFICATION_SECRET production --yes 2>/dev/null || true
 vercel env rm PHONE_VERIFICATION_SECRET production --yes 2>/dev/null || true
 vercel env rm VERIFICATION_EXPIRY_MINUTES production --yes 2>/dev/null || true
@@ -18,7 +17,6 @@ echo "Adding new environment variables without newlines..."
 printf "wqceXTJa" | vercel env add LAAFFIC_APP_ID production
 printf "uj26EVWQ" | vercel env add LAAFFIC_API_KEY production
 printf "jVuVHQ0b" | vercel env add LAAFFIC_API_SECRET production
-printf "Todo al Rojo" | vercel env add LAAFFIC_SENDER_ID production
 printf "todoalrojo-secret-key-2024-verification-12345" | vercel env add VERIFICATION_SECRET production
 printf "346b3kjbl3i4u5fi3yf7802945tbkljbv98svdbv0" | vercel env add PHONE_VERIFICATION_SECRET production
 printf "10" | vercel env add VERIFICATION_EXPIRY_MINUTES production
