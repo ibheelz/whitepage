@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, Edit, Trash2, Grid3X3, List } from 'lucide-react'
+import { Search, Edit, Trash2, Grid3X3, List, Plus, X } from 'lucide-react'
 import { ExportIcon, ImportIcon, PlusIcon } from '@/components/ui/icons'
+import CustomerModal from '@/components/ui/customer-modal'
 
 // Hook to detect screen size
 const useScreenSize = () => {
@@ -99,6 +100,9 @@ export default function CustomersPage() {
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
   const [sortField, setSortField] = useState<string>('')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
   const isSmallScreen = useScreenSize()
 
   // Force cards view on small screens
@@ -644,6 +648,30 @@ export default function CustomersPage() {
           aValue = new Date(a.createdAt).getTime()
           bValue = new Date(b.createdAt).getTime()
           break
+        case 'ip':
+          aValue = (a.leads?.[0]?.ip || a.clicks?.[0]?.ip || '').toLowerCase()
+          bValue = (b.leads?.[0]?.ip || b.clicks?.[0]?.ip || '').toLowerCase()
+          break
+        case 'location':
+          aValue = `${a.city || ''} ${a.country || ''}`.toLowerCase().trim()
+          bValue = `${b.city || ''} ${b.country || ''}`.toLowerCase().trim()
+          break
+        case 'language':
+          aValue = a.language || ''
+          bValue = b.language || ''
+          break
+        case 'verification':
+          const aEmailVerified = a.identifiers?.find(id => id.type === 'EMAIL')?.isVerified || false
+          const aPhoneVerified = a.identifiers?.find(id => id.type === 'PHONE')?.isVerified || false
+          const bEmailVerified = b.identifiers?.find(id => id.type === 'EMAIL')?.isVerified || false
+          const bPhoneVerified = b.identifiers?.find(id => id.type === 'PHONE')?.isVerified || false
+          aValue = (aEmailVerified ? 1 : 0) + (aPhoneVerified ? 1 : 0)
+          bValue = (bEmailVerified ? 1 : 0) + (bPhoneVerified ? 1 : 0)
+          break
+        case 'landing':
+          aValue = (a.leads?.[0]?.landingPage || a.clicks?.[0]?.landingPage || '').toLowerCase()
+          bValue = (b.leads?.[0]?.landingPage || b.clicks?.[0]?.landingPage || '').toLowerCase()
+          break
         default:
           return 0
       }
@@ -764,6 +792,92 @@ export default function CustomersPage() {
     } else {
       setSortField(field)
       setSortDirection('asc')
+    }
+  }
+
+  // Modal handlers
+  const handleAddCustomer = async (customerData: any) => {
+    try {
+      const response = await fetch('/api/customers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customerData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create customer')
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        await fetchCustomerData() // Refresh the customers list
+        setIsAddModalOpen(false)
+      }
+    } catch (error) {
+      console.error('Error adding customer:', error)
+      throw error
+    }
+  }
+
+  const handleEditCustomer = async (customerData: any) => {
+    if (!editingCustomer) return
+
+    try {
+      const response = await fetch(`/api/customers?id=${editingCustomer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customerData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update customer')
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        await fetchCustomerData() // Refresh the customers list
+        setIsEditModalOpen(false)
+        setEditingCustomer(null)
+      }
+    } catch (error) {
+      console.error('Error updating customer:', error)
+      throw error
+    }
+  }
+
+  const openEditModal = (customer: Customer) => {
+    setEditingCustomer(customer)
+    setIsEditModalOpen(true)
+  }
+
+  const handleDeleteCustomer = async (customerId: string) => {
+    if (!confirm('Are you sure you want to delete this customer? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/customers?id=${customerId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete customer')
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        await fetchCustomerData() // Refresh the customers list
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error)
+      alert('Failed to delete customer. Please try again.')
     }
   }
 
@@ -939,6 +1053,22 @@ export default function CustomersPage() {
             />
           </div>
 
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(253, 198, 0, 0.3)',
+              boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              color: '#0a0a0a'
+            }}
+          >
+            <Plus className="h-4 w-4" />
+            Add Customer
+          </button>
+
           {selectedCustomers.size > 0 && (
             <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
               <span className="text-xs sm:text-sm text-muted-foreground text-center xs:text-left">
@@ -1046,7 +1176,7 @@ export default function CustomersPage() {
                     className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
                     onClick={() => handleSort('name')}
                   >
-                    Full Name
+                    FULL NAME
                     <SortIcon field="name" sortField={sortField} sortDirection={sortDirection} />
                   </button>
                 </th>
@@ -1055,7 +1185,7 @@ export default function CustomersPage() {
                     className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
                     onClick={() => handleSort('email')}
                   >
-                    Email
+                    EMAIL
                     <SortIcon field="email" sortField={sortField} sortDirection={sortDirection} />
                   </button>
                 </th>
@@ -1064,7 +1194,7 @@ export default function CustomersPage() {
                     className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
                     onClick={() => handleSort('phone')}
                   >
-                    Phone
+                    PHONE
                     <SortIcon field="phone" sortField={sortField} sortDirection={sortDirection} />
                   </button>
                 </th>
@@ -1073,7 +1203,7 @@ export default function CustomersPage() {
                     className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
                     onClick={() => handleSort('source')}
                   >
-                    Traffic Source
+                    TRAFFIC SOURCE
                     <SortIcon field="source" sortField={sortField} sortDirection={sortDirection} />
                   </button>
                 </th>
@@ -1082,26 +1212,66 @@ export default function CustomersPage() {
                     className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
                     onClick={() => handleSort('campaign')}
                   >
-                    Campaign
+                    CAMPAIGN
                     <SortIcon field="campaign" sortField={sortField} sortDirection={sortDirection} />
                   </button>
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">IP Address</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[160px]">Location</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[80px]">Language</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[250px]">User Agent</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('ip')}
+                  >
+                    IP ADDRESS
+                    <SortIcon field="ip" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[160px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('location')}
+                  >
+                    LOCATION
+                    <SortIcon field="location" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[80px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('language')}
+                  >
+                    LANGUAGE
+                    <SortIcon field="language" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[250px]">USER AGENT</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[130px]">
                   <button
                     className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
                     onClick={() => handleSort('timestamp')}
                   >
-                    Timestamp
+                    TIMESTAMP
                     <SortIcon field="timestamp" sortField={sortField} sortDirection={sortDirection} />
                   </button>
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">Verifications</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[200px]">Landing Page</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[100px]">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('verification')}
+                  >
+                    VERIFICATIONS
+                    <SortIcon field="verification" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[200px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('landing')}
+                  >
+                    LANDING PAGE
+                    <SortIcon field="landing" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[100px]">ACTIONS</th>
               </tr>
             </thead>
             <tbody style={{ backgroundColor: 'transparent' }}>
@@ -1270,14 +1440,16 @@ export default function CustomersPage() {
                   </td>
                   <td className="px-6 py-3 w-[100px]">
                     <div className="flex items-center gap-2">
-                      <button className="p-2 rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
+                      <button
+                        onClick={() => openEditModal(customer)}
+                        className="p-2 rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
                         background: 'rgba(255, 255, 255, 0.05)',
                         border: '1px solid rgba(255, 255, 255, 0.1)'
                       }}>
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => customer.isRealData && deleteCustomer(customer.id)}
+                        onClick={() => customer.isRealData && handleDeleteCustomer(customer.id)}
                         disabled={!customer.isRealData}
                         className="p-2 rounded-xl transition-all duration-200 text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" style={{
                         background: 'rgba(255, 255, 255, 0.05)',
@@ -1395,14 +1567,16 @@ export default function CustomersPage() {
                     #{(currentPage - 1) * customersPerPage + index + 1}
                   </span>
                   <div className="flex items-center gap-2">
-                    <button className="p-1.5 rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
+                    <button
+                      onClick={() => openEditModal(customer)}
+                      className="p-1.5 rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
                       background: 'rgba(255, 255, 255, 0.05)',
                       border: '1px solid rgba(255, 255, 255, 0.1)'
                     }}>
                       <Edit className="h-3 w-3" />
                     </button>
                     <button
-                      onClick={() => customer.isRealData && deleteCustomer(customer.id)}
+                      onClick={() => customer.isRealData && handleDeleteCustomer(customer.id)}
                       disabled={!customer.isRealData}
                       className="p-1.5 rounded-lg transition-all duration-200 text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" style={{
                       background: 'rgba(255, 255, 255, 0.05)',
@@ -1608,14 +1782,16 @@ export default function CustomersPage() {
                   #{(currentPage - 1) * customersPerPage + index + 1}
                 </span>
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <button className="p-1 sm:p-1.5 rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
+                  <button
+                    onClick={() => openEditModal(customer)}
+                    className="p-1 sm:p-1.5 rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
                     background: 'rgba(255, 255, 255, 0.05)',
                     border: '1px solid rgba(255, 255, 255, 0.1)'
                   }}>
                     <Edit className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </button>
                   <button
-                    onClick={() => customer.isRealData && deleteCustomer(customer.id)}
+                    onClick={() => customer.isRealData && handleDeleteCustomer(customer.id)}
                     disabled={!customer.isRealData}
                     className="p-1 sm:p-1.5 rounded-lg transition-all duration-200 text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" style={{
                     background: 'rgba(255, 255, 255, 0.05)',
@@ -1713,6 +1889,26 @@ export default function CustomersPage() {
           </div>
         </div>
       </div>
+
+      {/* Add Customer Modal */}
+      <CustomerModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddCustomer}
+        title="Add New Customer"
+      />
+
+      {/* Edit Customer Modal */}
+      <CustomerModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setEditingCustomer(null)
+        }}
+        onSave={handleEditCustomer}
+        customer={editingCustomer}
+        title="Edit Customer"
+      />
     </div>
   )
 }

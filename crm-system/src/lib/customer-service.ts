@@ -402,4 +402,55 @@ export class CustomerService {
       totalPages: Math.ceil(total / limit)
     }
   }
+
+  static async updateCustomer(customerId: string, updateData: Partial<CustomerContextData>) {
+    const updatedCustomer = await prisma.customer.update({
+      where: { id: customerId },
+      data: {
+        ...updateData,
+        updatedAt: new Date()
+      },
+      include: {
+        identifiers: true,
+        leads: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            campaign: true,
+            source: true,
+            medium: true,
+            userAgent: true,
+            ip: true,
+            landingPage: true,
+            createdAt: true
+          }
+        },
+        clicks: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            clickId: true,
+            campaign: true,
+            source: true,
+            medium: true,
+            userAgent: true,
+            ip: true,
+            landingPage: true,
+            createdAt: true
+          }
+        },
+        _count: {
+          select: {
+            clicks: true,
+            leads: true,
+            events: true
+          }
+        }
+      }
+    })
+
+    return updatedCustomer
+  }
 }
