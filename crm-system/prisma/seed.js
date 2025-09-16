@@ -71,13 +71,16 @@ async function main() {
 
   console.log('✅ Created campaigns:', campaign1.name, campaign2.name)
 
-  // Create sample users with full journey
-  const user1 = await prisma.user.create({
+  // Create sample customers with full journey
+  const customer1 = await prisma.customer.create({
     data: {
       masterEmail: 'john.doe@example.com',
       masterPhone: '+1234567890',
       firstName: 'John',
       lastName: 'Doe',
+      company: 'TechCorp Inc',
+      source: 'LinkedIn',
+      assignedTeam: ['team1', 'team2'],
       country: 'US',
       region: 'California',
       city: 'San Francisco',
@@ -191,14 +194,17 @@ async function main() {
     },
   })
 
-  console.log('✅ Created sample user with full journey:', user1.masterEmail)
+  console.log('✅ Created sample customer with full journey:', customer1.masterEmail)
 
-  // Create another user
-  const user2 = await prisma.user.create({
+  // Create another customer
+  const customer2 = await prisma.customer.create({
     data: {
       masterEmail: 'jane.smith@example.com',
       firstName: 'Jane',
       lastName: 'Smith',
+      company: 'InnovateMedia',
+      source: 'Referral',
+      assignedTeam: ['team1'],
       country: 'UK',
       region: 'England',
       city: 'London',
@@ -278,7 +284,7 @@ async function main() {
     },
   })
 
-  console.log('✅ Created second user:', user2.masterEmail)
+  console.log('✅ Created second customer:', customer2.masterEmail)
 
   console.log('🎉 Database seeded successfully!')
 }

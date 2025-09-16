@@ -552,3 +552,186 @@
     border-radius: 18px;
   }
 }
+
+/* Custom responsive breakpoints for customer management */
+@layer utilities {
+  /* Extra small devices (phones, less than 576px) */
+  @media (max-width: 575.98px) {
+    .xs\:hidden {
+      display: none;
+    }
+    .xs\:inline {
+      display: inline;
+    }
+    .xs\:flex {
+      display: flex;
+    }
+    .xs\:flex-row {
+      flex-direction: row;
+    }
+    .xs\:flex-none {
+      flex: none;
+    }
+    .xs\:text-left {
+      text-align: left;
+    }
+    .xs\:grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+
+  /* Extra small devices and up (phones, 576px and up) */
+  @media (min-width: 576px) {
+    .xs\:inline {
+      display: inline;
+    }
+    .xs\:flex {
+      display: flex;
+    }
+    .xs\:flex-row {
+      flex-direction: row;
+    }
+    .xs\:flex-none {
+      flex: none;
+    }
+    .xs\:text-left {
+      text-align: left;
+    }
+    .xs\:grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+
+  /* Ultra-wide displays (1920px and up) */
+  @media (min-width: 1920px) {
+    .\32xl\:grid-cols-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  /* Super ultra-wide displays (2560px and up) */
+  @media (min-width: 2560px) {
+    .\33xl\:grid-cols-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+}
+
+/* Custom scrollbar for better mobile experience */
+@layer components {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Mobile-optimized table */
+  .mobile-table {
+    @apply overflow-x-auto custom-scrollbar;
+  }
+
+  .mobile-table table {
+    @apply min-w-full;
+  }
+}
+
+/* Mobile-first utilities */
+@layer utilities {
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .safe-area-inset {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Better mobile text selection */
+  .select-text {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* Hide scrollbars but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Ultra-small screen utilities for screens < 350px */
+  @media (max-width: 349px) {
+    .xxs\:hidden {
+      display: none;
+    }
+
+    .xxs\:block {
+      display: block;
+    }
+
+    .xxs\:flex {
+      display: flex;
+    }
+
+    .xxs\:p-1 {
+      padding: 0.25rem;
+    }
+
+    .xxs\:px-1 {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+    }
+
+    .xxs\:py-1 {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .xxs\:text-xs {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+
+    .xxs\:w-8 {
+      width: 2rem;
+    }
+
+    .xxs\:h-8 {
+      height: 2rem;
+    }
+
+    .xxs\:min-w-0 {
+      min-width: 0;
+    }
+
+    .xxs\:gap-1 {
+      gap: 0.25rem;
+    }
+
+    .xxs\:space-y-1 > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0.25rem;
+    }
+  }
+}

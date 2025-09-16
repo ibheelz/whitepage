@@ -4,15 +4,15 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     // Get basic counts
-    const [totalUsers, totalLeads, totalClicks, totalEvents] = await Promise.all([
-      prisma.user.count(),
+    const [totalCustomers, totalLeads, totalClicks, totalEvents] = await Promise.all([
+      prisma.customer.count(),
       prisma.lead.count(),
       prisma.click.count(),
       prisma.event.count()
     ])
 
     // Get total revenue
-    const revenueResult = await prisma.user.aggregate({
+    const revenueResult = await prisma.customer.aggregate({
       _sum: {
         totalRevenue: true
       }
@@ -20,8 +20,8 @@ export async function GET() {
 
     const totalRevenue = Number(revenueResult._sum.totalRevenue || 0)
 
-    // Get recent users (last 10)
-    const recentUsers = await prisma.user.findMany({
+    // Get recent customers (last 10)
+    const recentCustomers = await prisma.customer.findMany({
       orderBy: { createdAt: 'desc' },
       take: 10,
       select: {
@@ -30,6 +30,8 @@ export async function GET() {
         masterPhone: true,
         firstName: true,
         lastName: true,
+        company: true,
+        source: true,
         country: true,
         city: true,
         createdAt: true,
@@ -53,12 +55,14 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      totalUsers,
+      totalUsers: totalCustomers, // Keep backward compatibility for now
+      totalCustomers,
       totalLeads,
       totalClicks,
       totalEvents,
       totalRevenue,
-      recentUsers,
+      recentUsers: recentCustomers, // Keep backward compatibility for now
+      recentCustomers,
       recentLeads
     })
 

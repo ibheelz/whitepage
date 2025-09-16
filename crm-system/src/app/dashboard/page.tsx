@@ -270,7 +270,7 @@ export default function DashboardPage() {
               <div className="text-lg sm:text-xl lg:text-2xl font-bold text-primary truncate">
                 {stats.totalUsers.toLocaleString()}
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground font-medium">Total Users</div>
+              <div className="text-xs sm:text-sm text-muted-foreground font-medium">Total Customers</div>
               <div className="text-xs text-green-500 font-semibold">+12.5% growth</div>
             </div>
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">

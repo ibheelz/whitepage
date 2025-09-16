@@ -7,45 +7,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String       @id @default(cuid())
-  masterEmail   String?      @unique
-  masterPhone   String?      @unique
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  firstSeen     DateTime     @default(now())
-  lastSeen      DateTime     @default(now())
-  firstName     String?
-  lastName      String?
-  country       String?
-  region        String?
-  city          String?
-  timezone      String?
-  language      String?
-  totalClicks   Int          @default(0)
-  totalLeads    Int          @default(0)
-  totalEvents   Int          @default(0)
-  totalRevenue  Decimal      @default(0) @db.Decimal(10, 2)
-  isActive      Boolean      @default(true)
-  isFraud       Boolean      @default(false)
-  isBlacklisted Boolean      @default(false)
-  clicks        Click[]
-  events        Event[]
-  identifiers   Identifier[]
-  leads         Lead[]
-  mergedUsers   UserMerge[]  @relation("MergedUser")
+model Customer {
+  id              String         @id @default(cuid())
+  masterEmail     String?        @unique
+  masterPhone     String?        @unique
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  firstSeen       DateTime       @default(now())
+  lastSeen        DateTime       @default(now())
+  firstName       String?
+  lastName        String?
+  company         String?
+  jobTitle        String?
+  source          String?        // LinkedIn, Referral, Paid Ad, etc.
+  country         String?
+  region          String?
+  city            String?
+  timezone        String?
+  language        String?
+  profileImage    String?
+  totalClicks     Int            @default(0)
+  totalLeads      Int            @default(0)
+  totalEvents     Int            @default(0)
+  totalRevenue    Decimal        @default(0) @db.Decimal(10, 2)
+  isActive        Boolean        @default(true)
+  isFraud         Boolean        @default(false)
+  isBlacklisted   Boolean        @default(false)
+  assignedTeam    String[]       // Team member IDs assigned to this customer
+  clicks          Click[]
+  events          Event[]
+  identifiers     Identifier[]
+  leads           Lead[]
+  mergedCustomers CustomerMerge[] @relation("MergedCustomer")
 
   @@index([masterEmail])
   @@index([masterPhone])
   @@index([country])
+  @@index([source])
+  @@index([company])
   @@index([createdAt])
   @@index([isFraud])
-  @@map("users")
+  @@map("customers")
 }
 
 model Identifier {
   id          String         @id @default(cuid())
-  userId      String
+  customerId  String
   type        IdentifierType
   value       String
   isVerified  Boolean        @default(false)
@@ -56,10 +63,10 @@ model Identifier {
   source      String?
   campaign    String?
   medium      String?
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer    Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@unique([type, value])
-  @@index([userId])
+  @@index([customerId])
   @@index([type, value])
   @@index([value])
   @@map("identifiers")
@@ -67,7 +74,7 @@ model Identifier {
 
 model Click {
   id          String   @id @default(cuid())
-  userId      String?
+  customerId  String?
   clickId     String?  @unique
   sessionId   String?
   deviceId    String?
@@ -101,9 +108,9 @@ model Click {
   isFraud     Boolean  @default(false)
   createdAt   DateTime @default(now())
   clickTime   DateTime @default(now())
-  user        User?    @relation(fields: [userId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
 
-  @@index([userId])
+  @@index([customerId])
   @@index([clickId])
   @@index([campaign])
   @@index([ip])
@@ -115,7 +122,7 @@ model Click {
 
 model Lead {
   id           String   @id @default(cuid())
-  userId       String
+  customerId   String
   email        String?
   phone        String?
   firstName    String?
@@ -143,9 +150,9 @@ model Lead {
   currency     String?  @default("USD")
   createdAt    DateTime @default(now())
   submittedAt  DateTime @default(now())
-  user         User     @relation(fields: [userId], references: [id])
+  customer     Customer @relation(fields: [customerId], references: [id])
 
-  @@index([userId])
+  @@index([customerId])
   @@index([email])
   @@index([phone])
   @@index([campaign])
@@ -157,7 +164,7 @@ model Lead {
 
 model Event {
   id          String   @id @default(cuid())
-  userId      String
+  customerId  String
   eventType   String
   eventName   String?
   category    String?
@@ -180,9 +187,9 @@ model Event {
   isFraud     Boolean  @default(false)
   createdAt   DateTime @default(now())
   eventTime   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  customer    Customer @relation(fields: [customerId], references: [id])
 
-  @@index([userId])
+  @@index([customerId])
   @@index([eventType])
   @@index([campaign])
   @@index([clientId])
@@ -191,20 +198,20 @@ model Event {
   @@map("events")
 }
 
-model UserMerge {
-  id           String   @id @default(cuid())
-  masterUserId String
-  mergedUserId String
-  reason       String
-  confidence   Int      @default(100)
-  mergedAt     DateTime @default(now())
-  mergedBy     String?
-  mergedData   Json?
-  masterUser   User     @relation("MergedUser", fields: [masterUserId], references: [id])
+model CustomerMerge {
+  id               String   @id @default(cuid())
+  masterCustomerId String
+  mergedCustomerId String
+  reason           String
+  confidence       Int      @default(100)
+  mergedAt         DateTime @default(now())
+  mergedBy         String?
+  mergedData       Json?
+  masterCustomer   Customer @relation("MergedCustomer", fields: [masterCustomerId], references: [id])
 
-  @@unique([masterUserId, mergedUserId])
-  @@index([masterUserId])
-  @@map("user_merges")
+  @@unique([masterCustomerId, mergedCustomerId])
+  @@index([masterCustomerId])
+  @@map("customer_merges")
 }
 
 model Campaign {
@@ -267,7 +274,7 @@ model AdminUser {
 
 model AuditLog {
   id         String   @id @default(cuid())
-  userId     String?
+  customerId String?
   entityType String
   entityId   String
   action     String
@@ -279,7 +286,7 @@ model AuditLog {
   createdAt  DateTime @default(now())
 
   @@index([entityType, entityId])
-  @@index([userId])
+  @@index([customerId])
   @@index([createdAt])
   @@map("audit_logs")
 }

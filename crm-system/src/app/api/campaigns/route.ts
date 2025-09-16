@@ -9,14 +9,6 @@ export async function GET(request: NextRequest) {
     if (includeStats) {
       // Get campaigns with detailed analytics
       const campaigns = await prisma.campaign.findMany({
-        include: {
-          _count: {
-            select: {
-              // Note: These would be available if we had direct campaign relations
-              // For now we'll calculate them separately
-            }
-          }
-        },
         orderBy: { createdAt: 'desc' }
       })
 
