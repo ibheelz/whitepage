@@ -61,6 +61,7 @@ interface Customer {
   region?: string
   city?: string
   createdAt: Date
+  isRealData?: boolean // Flag to identify real vs sample data
   // Additional fields for comprehensive data
   clicks?: { clickId: string; campaign: string; ip: string; userAgent?: string; landingPage?: string }[]
   leads?: { campaign: string; ip: string; userAgent?: string; landingPage?: string; ageVerified?: boolean; promotionalConsent?: boolean }[]
@@ -93,9 +94,68 @@ export default function CustomersPage() {
     return `https://api.dicebear.com/7.x/${selectedStyle}/svg?seed=${encodeURIComponent(seed)}&size=32&backgroundColor=374151`
   }
 
-  useEffect(() => {
-    // Use sample data with all required fields (20 users)
-    const loadSampleData = () => {
+  // Add verbose debugging state
+  const [debugInfo, setDebugInfo] = useState<string[]>([])
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+  const [liveUpdatesEnabled, setLiveUpdatesEnabled] = useState(true)
+
+  // Function to add debug information
+  const addDebugInfo = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString()
+    const debugMessage = `[${timestamp}] ${message}`
+    console.log('🔍 [CUSTOMERS DEBUG]', debugMessage)
+    setDebugInfo(prev => [debugMessage, ...prev.slice(0, 19)]) // Keep last 20 messages
+  }
+
+  // Function to fetch real customer data
+  const fetchCustomerData = async (showLoading = true) => {
+    try {
+      if (showLoading) {
+        setLoading(true)
+        addDebugInfo('🔄 Starting customer data fetch...')
+      } else {
+        addDebugInfo('🔄 Refreshing customer data (background)...')
+      }
+
+      const response = await fetch('/api/customers?limit=50')
+      const data = await response.json()
+
+      if (data.success) {
+        addDebugInfo(`✅ Fetched ${data.customers.length} real customers from API`)
+
+        // Combine real data with sample data to maintain the 20 sample customers
+        const realCustomers = data.customers.map((customer: any) => ({
+          ...customer,
+          isRealData: true, // Flag to identify real data
+          lastSeen: new Date(customer.lastSeen),
+          createdAt: new Date(customer.createdAt)
+        }))
+
+        // Add sample data as backup/demo data
+        const sampleCustomers = getSampleCustomers()
+
+        // Combine real customers first, then sample customers
+        const combinedCustomers = [...realCustomers, ...sampleCustomers]
+
+        setCustomers(combinedCustomers)
+        setLastRefresh(new Date())
+        addDebugInfo(`📊 Total customers displayed: ${combinedCustomers.length} (${realCustomers.length} real + ${sampleCustomers.length} sample)`)
+      } else {
+        addDebugInfo('❌ Failed to fetch real customers, using sample data only')
+        setCustomers(getSampleCustomers())
+      }
+    } catch (error) {
+      addDebugInfo(`❌ Error fetching customers: ${error}`)
+      console.error('Error fetching customers:', error)
+      // Fallback to sample data
+      setCustomers(getSampleCustomers())
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Function to get sample data
+  const getSampleCustomers = (): Customer[] => {
         // Generate diverse last seen times
         const generateLastSeen = (index: number) => {
           const timeRanges = [
@@ -111,7 +171,7 @@ export default function CustomersPage() {
           return new Date(Date.now() - timeRanges[index % timeRanges.length])
         }
 
-        setCustomers([
+        return [
           {
             id: '1',
             firstName: 'John',
@@ -432,12 +492,95 @@ export default function CustomersPage() {
             leads: [{ campaign: 'japan-gaming', ip: '198.51.100.100', userAgent: 'Mozilla/5.0 (Nintendo Switch; WebApplet)', landingPage: 'https://example.com/japan', ageVerified: true, promotionalConsent: false }],
             identifiers: [{ type: 'EMAIL', isVerified: true }, { type: 'PHONE', isVerified: true }]
           }
-        ])
-        setLoading(false)
+        ]
+  }
+
+  // Delete functions
+  const deleteCustomer = async (customerId: string) => {
+    try {
+      const response = await fetch(`/api/customers?id=${customerId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        // Remove from local state
+        setCustomers(prev => prev.filter(customer => customer.id !== customerId))
+        setSelectedCustomers(prev => {
+          const newSelected = new Set(prev)
+          newSelected.delete(customerId)
+          return newSelected
+        })
+        addDebugInfo(`✅ Deleted customer ${customerId}`)
+      } else {
+        addDebugInfo(`❌ Failed to delete customer ${customerId}`)
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error)
+      addDebugInfo(`❌ Error deleting customer: ${error}`)
+    }
+  }
+
+  const deleteSelectedCustomers = async () => {
+    const customerIds = Array.from(selectedCustomers)
+
+    // Filter out sample customers (those without isRealData flag)
+    const realCustomerIds = customerIds.filter(id => {
+      const customer = customers.find(c => c.id === id)
+      return customer?.isRealData
+    })
+
+    if (realCustomerIds.length === 0) {
+      addDebugInfo('⚠️ Cannot delete sample customers')
+      return
     }
 
-    loadSampleData()
+    if (!confirm(`Are you sure you want to delete ${realCustomerIds.length} customer(s)?`)) {
+      return
+    }
+
+    try {
+      for (const customerId of realCustomerIds) {
+        await deleteCustomer(customerId)
+      }
+
+      setSelectedCustomers(new Set())
+      addDebugInfo(`✅ Deleted ${realCustomerIds.length} customer(s)`)
+    } catch (error) {
+      console.error('Error deleting customers:', error)
+      addDebugInfo(`❌ Error deleting customers: ${error}`)
+    }
+  }
+
+  // Initial data load
+  useEffect(() => {
+    addDebugInfo('🚀 Initializing customer data...')
+    fetchCustomerData()
   }, [])
+
+  // Live updates polling
+  useEffect(() => {
+    if (!liveUpdatesEnabled) {
+      addDebugInfo('⏸️ Live updates disabled')
+      return
+    }
+
+    addDebugInfo('⚡ Setting up live updates (every 10 seconds)...')
+    const interval = setInterval(() => {
+      addDebugInfo('🔄 Live update triggered')
+      fetchCustomerData(false) // Background refresh without loading spinner
+    }, 10000) // Poll every 10 seconds
+
+    return () => {
+      clearInterval(interval)
+      addDebugInfo('⏹️ Live updates stopped')
+    }
+  }, [liveUpdatesEnabled])
+
+  // Add manual refresh function
+  const handleManualRefresh = () => {
+    addDebugInfo('🔄 Manual refresh triggered')
+    fetchCustomerData()
+  }
 
   // Filter customers based on search query
   const filteredCustomers = customers.filter(customer =>
@@ -453,15 +596,91 @@ export default function CustomersPage() {
   const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer)
   const totalPages = Math.ceil(filteredCustomers.length / customersPerPage)
 
-  // Helper function to get country flag emoji from country code
-  const getCountryFlag = (countryCode?: string) => {
-    const flags: { [key: string]: string } = {
+  // Helper function to get country flag emoji from country name or code
+  const getCountryFlag = (country?: string) => {
+    if (!country) return '🌍'
+
+    const countryUpper = country.toUpperCase()
+
+    // Map full country names to flags
+    const countryFlags: { [key: string]: string } = {
+      // Full country names
+      'UNITED STATES': '🇺🇸', 'USA': '🇺🇸', 'AMERICA': '🇺🇸',
+      'UNITED KINGDOM': '🇬🇧', 'UK': '🇬🇧', 'BRITAIN': '🇬🇧', 'ENGLAND': '🇬🇧',
+      'CANADA': '🇨🇦',
+      'SPAIN': '🇪🇸',
+      'CHINA': '🇨🇳',
+      'AUSTRALIA': '🇦🇺',
+      'FRANCE': '🇫🇷',
+      'MEXICO': '🇲🇽',
+      'SOUTH KOREA': '🇰🇷', 'KOREA': '🇰🇷',
+      'RUSSIA': '🇷🇺', 'RUSSIAN FEDERATION': '🇷🇺',
+      'BRAZIL': '🇧🇷',
+      'UNITED ARAB EMIRATES': '🇦🇪', 'UAE': '🇦🇪',
+      'GERMANY': '🇩🇪',
+      'INDIA': '🇮🇳',
+      'ITALY': '🇮🇹',
+      'JAPAN': '🇯🇵',
+      'NIGERIA': '🇳🇬',
+      'SOUTH AFRICA': '🇿🇦',
+      'NETHERLANDS': '🇳🇱', 'HOLLAND': '🇳🇱',
+      'SWITZERLAND': '🇨🇭',
+      'SWEDEN': '🇸🇪',
+      'NORWAY': '🇳🇴',
+      'DENMARK': '🇩🇰',
+      'FINLAND': '🇫🇮',
+      'POLAND': '🇵🇱',
+      'PORTUGAL': '🇵🇹',
+      'GREECE': '🇬🇷',
+      'TURKEY': '🇹🇷',
+      'ISRAEL': '🇮🇱',
+      'EGYPT': '🇪🇬',
+      'SAUDI ARABIA': '🇸🇦',
+      'THAILAND': '🇹🇭',
+      'SINGAPORE': '🇸🇬',
+      'MALAYSIA': '🇲🇾',
+      'INDONESIA': '🇮🇩',
+      'PHILIPPINES': '🇵🇭',
+      'VIETNAM': '🇻🇳',
+      'ARGENTINA': '🇦🇷',
+      'CHILE': '🇨🇱',
+      'COLOMBIA': '🇨🇴',
+      'PERU': '🇵🇪',
+      'VENEZUELA': '🇻🇪',
+      'UKRAINE': '🇺🇦',
+      'ROMANIA': '🇷🇴',
+      'CZECH REPUBLIC': '🇨🇿', 'CZECHIA': '🇨🇿',
+      'HUNGARY': '🇭🇺',
+      'AUSTRIA': '🇦🇹',
+      'BELGIUM': '🇧🇪',
+      'IRELAND': '🇮🇪',
+      'NEW ZEALAND': '🇳🇿',
+      'KENYA': '🇰🇪',
+      'GHANA': '🇬🇭',
+      'MOROCCO': '🇲🇦',
+      'LEBANON': '🇱🇧',
+      'JORDAN': '🇯🇴',
+      'KUWAIT': '🇰🇼',
+      'QATAR': '🇶🇦',
+      'BAHRAIN': '🇧🇭',
+      'OMAN': '🇴🇲',
+
+      // Country codes (for backwards compatibility)
       'US': '🇺🇸', 'CA': '🇨🇦', 'GB': '🇬🇧', 'ES': '🇪🇸', 'CN': '🇨🇳',
       'AU': '🇦🇺', 'FR': '🇫🇷', 'MX': '🇲🇽', 'KR': '🇰🇷', 'RU': '🇷🇺',
       'BR': '🇧🇷', 'AE': '🇦🇪', 'DE': '🇩🇪', 'IN': '🇮🇳', 'IT': '🇮🇹',
-      'JP': '🇯🇵'
+      'JP': '🇯🇵', 'NG': '🇳🇬', 'ZA': '🇿🇦', 'NL': '🇳🇱', 'CH': '🇨🇭',
+      'SE': '🇸🇪', 'NO': '🇳🇴', 'DK': '🇩🇰', 'FI': '🇫🇮', 'PL': '🇵🇱',
+      'PT': '🇵🇹', 'GR': '🇬🇷', 'TR': '🇹🇷', 'IL': '🇮🇱', 'EG': '🇪🇬',
+      'SA': '🇸🇦', 'TH': '🇹🇭', 'SG': '🇸🇬', 'MY': '🇲🇾', 'ID': '🇮🇩',
+      'PH': '🇵🇭', 'VN': '🇻🇳', 'AR': '🇦🇷', 'CL': '🇨🇱', 'CO': '🇨🇴',
+      'PE': '🇵🇪', 'VE': '🇻🇪', 'UA': '🇺🇦', 'RO': '🇷🇴', 'CZ': '🇨🇿',
+      'HU': '🇭🇺', 'AT': '🇦🇹', 'BE': '🇧🇪', 'IE': '🇮🇪', 'NZ': '🇳🇿',
+      'KE': '🇰🇪', 'GH': '🇬🇭', 'MA': '🇲🇦', 'LB': '🇱🇧', 'JO': '🇯🇴',
+      'KW': '🇰🇼', 'QA': '🇶🇦', 'BH': '🇧🇭', 'OM': '🇴🇲'
     }
-    return flags[countryCode || ''] || '🌍'
+
+    return countryFlags[countryUpper] || '🌍'
   }
 
   // Helper function to get language from country
@@ -552,6 +771,76 @@ export default function CustomersPage() {
         </div>
       </div>
 
+      {/* Live Updates & Debug Panel */}
+      <div className="mb-4 space-y-3" style={{
+        background: 'rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: '12px',
+        padding: '16px'
+      }}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${liveUpdatesEnabled ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
+              <span className="text-sm font-medium text-foreground">
+                Live Updates: {liveUpdatesEnabled ? 'ON' : 'OFF'}
+              </span>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Last refresh: {lastRefresh.toLocaleTimeString()}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLiveUpdatesEnabled(!liveUpdatesEnabled)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-300"
+              style={{
+                background: liveUpdatesEnabled ? 'rgba(34, 197, 94, 0.2)' : 'rgba(107, 114, 128, 0.2)',
+                border: `1px solid ${liveUpdatesEnabled ? 'rgba(34, 197, 94, 0.3)' : 'rgba(107, 114, 128, 0.3)'}`,
+                color: liveUpdatesEnabled ? '#22c55e' : '#6b7280'
+              }}
+            >
+              {liveUpdatesEnabled ? 'Disable' : 'Enable'} Live Updates
+            </button>
+
+            <button
+              onClick={handleManualRefresh}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-300 hover:scale-105"
+              style={{
+                background: 'rgba(253, 198, 0, 0.2)',
+                border: '1px solid rgba(253, 198, 0, 0.3)',
+                color: '#fdc700'
+              }}
+            >
+              🔄 Refresh Now
+            </button>
+          </div>
+        </div>
+
+        {/* Debug Information */}
+        <details className="group">
+          <summary className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            🔍 Debug Information ({debugInfo.length} messages)
+          </summary>
+          <div className="mt-2 max-h-40 overflow-y-auto space-y-1 p-2 rounded-lg" style={{
+            background: 'rgba(0, 0, 0, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+            {debugInfo.map((info, index) => (
+              <div key={index} className="text-xs font-mono text-muted-foreground">
+                {info}
+              </div>
+            ))}
+            {debugInfo.length === 0 && (
+              <div className="text-xs text-muted-foreground italic">No debug information yet...</div>
+            )}
+          </div>
+        </details>
+      </div>
+
       <div className="mb-4 sm:mb-6 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
           <div className="relative flex-1 sm:flex-none">
@@ -577,7 +866,9 @@ export default function CustomersPage() {
               <span className="text-xs sm:text-sm text-muted-foreground text-center xs:text-left">
                 {selectedCustomers.size} selected
               </span>
-              <button className="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2" style={{
+              <button
+                onClick={deleteSelectedCustomers}
+                className="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2" style={{
                 background: 'rgba(255, 255, 255, 0.08)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
@@ -848,7 +1139,10 @@ export default function CustomersPage() {
                       }}>
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="p-2 rounded-xl transition-all duration-200 text-red-400 hover:text-red-300" style={{
+                      <button
+                        onClick={() => customer.isRealData && deleteCustomer(customer.id)}
+                        disabled={!customer.isRealData}
+                        className="p-2 rounded-xl transition-all duration-200 text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" style={{
                         background: 'rgba(255, 255, 255, 0.05)',
                         border: '1px solid rgba(255, 255, 255, 0.1)'
                       }}>
@@ -966,7 +1260,10 @@ export default function CustomersPage() {
                     }}>
                       <Edit className="h-3 w-3" />
                     </button>
-                    <button className="p-1.5 rounded-lg transition-all duration-200 text-red-400 hover:text-red-300" style={{
+                    <button
+                      onClick={() => customer.isRealData && deleteCustomer(customer.id)}
+                      disabled={!customer.isRealData}
+                      className="p-1.5 rounded-lg transition-all duration-200 text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" style={{
                       background: 'rgba(255, 255, 255, 0.05)',
                       border: '1px solid rgba(255, 255, 255, 0.1)'
                     }}>
@@ -1172,7 +1469,10 @@ export default function CustomersPage() {
                   }}>
                     <Edit className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </button>
-                  <button className="p-1 sm:p-1.5 rounded-lg transition-all duration-200 text-red-400 hover:text-red-300" style={{
+                  <button
+                    onClick={() => customer.isRealData && deleteCustomer(customer.id)}
+                    disabled={!customer.isRealData}
+                    className="p-1 sm:p-1.5 rounded-lg transition-all duration-200 text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed" style={{
                     background: 'rgba(255, 255, 255, 0.05)',
                     border: '1px solid rgba(255, 255, 255, 0.1)'
                   }}>

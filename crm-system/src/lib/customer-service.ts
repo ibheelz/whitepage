@@ -258,6 +258,35 @@ export class CustomerService {
       },
       include: {
         identifiers: true,
+        leads: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            campaign: true,
+            source: true,
+            medium: true,
+            userAgent: true,
+            ip: true,
+            landingPage: true,
+            createdAt: true
+          }
+        },
+        clicks: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            clickId: true,
+            campaign: true,
+            source: true,
+            medium: true,
+            userAgent: true,
+            ip: true,
+            landingPage: true,
+            createdAt: true
+          }
+        },
         _count: {
           select: {
             clicks: true,
@@ -289,6 +318,31 @@ export class CustomerService {
     })
   }
 
+  static async deleteCustomer(customerId: string) {
+    // Delete in order: identifiers, related records (leads, clicks, events), then customer
+    await prisma.identifier.deleteMany({
+      where: { customerId }
+    })
+
+    await prisma.lead.deleteMany({
+      where: { customerId }
+    })
+
+    await prisma.click.deleteMany({
+      where: { customerId }
+    })
+
+    await prisma.event.deleteMany({
+      where: { customerId }
+    })
+
+    const deletedCustomer = await prisma.customer.delete({
+      where: { id: customerId }
+    })
+
+    return deletedCustomer
+  }
+
   static async listCustomers(page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit
 
@@ -298,6 +352,36 @@ export class CustomerService {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
+          identifiers: true,
+          leads: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            select: {
+              id: true,
+              campaign: true,
+              source: true,
+              medium: true,
+              userAgent: true,
+              ip: true,
+              landingPage: true,
+              createdAt: true
+            }
+          },
+          clicks: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            select: {
+              id: true,
+              clickId: true,
+              campaign: true,
+              source: true,
+              medium: true,
+              userAgent: true,
+              ip: true,
+              landingPage: true,
+              createdAt: true
+            }
+          },
           _count: {
             select: {
               clicks: true,

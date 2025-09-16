@@ -1,6 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { CustomerService } from '@/lib/customer-service'
 
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const customerId = searchParams.get('id')
+
+    if (!customerId) {
+      return NextResponse.json({
+        success: false,
+        error: 'Customer ID is required'
+      }, { status: 400 })
+    }
+
+    const deletedCustomer = await CustomerService.deleteCustomer(customerId)
+
+    return NextResponse.json({
+      success: true,
+      message: 'Customer deleted successfully',
+      deletedCustomer
+    })
+
+  } catch (error) {
+    console.error('Delete customer error:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to delete customer'
+    }, { status: 500 })
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
