@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Lead Form - CRM Integration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .phone-container {
+      display: flex;
+      gap: 10px;
+    }
+
+    .phone-container select {
+      flex: 0 0 30%;
+    }
+
+    .phone-container input {
+      flex: 1;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Test Lead Form - CRM Integration</h1>
+
+    <form id="testLeadForm">
+      <div class="form-group">
+        <label for="fullName">Full Name *</label>
+        <input type="text" id="fullName" name="fullName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number *</label>
+        <div class="phone-container">
+          <select id="countryCode" name="countryCode" required>
+            <option value="+1">🇺🇸 +1 (US)</option>
+            <option value="+56">🇨🇱 +56 (Chile)</option>
+            <option value="+34">🇪🇸 +34 (Spain)</option>
+            <option value="+44">🇬🇧 +44 (UK)</option>
+            <option value="+49">🇩🇪 +49 (Germany)</option>
+            <option value="+33">🇫🇷 +33 (France)</option>
+          </select>
+          <input type="tel" id="phone" name="phone" placeholder="123456789" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="campaign">Campaign</label>
+        <input type="text" id="campaign" name="campaign" placeholder="summer-2024">
+      </div>
+
+      <div class="form-group">
+        <label for="source">Traffic Source</label>
+        <input type="text" id="source" name="source" placeholder="google">
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-container">
+          <input type="checkbox" id="ageVerification" name="ageVerification" required>
+          <label for="ageVerification">I confirm I am over 18 years old *</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-container">
+          <input type="checkbox" id="promoConsent" name="promoConsent">
+          <label for="promoConsent">I agree to receive promotional emails</label>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn">Submit Lead</button>
+    </form>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    // Configuration
+    const CRM_API_URL = 'http://localhost:3005/api/ingest/lead';
+
+    // Helper function to detect user language
+    function detectUserLanguage() {
+      const browserLang = navigator.language || navigator.userLanguage || 'en';
+      const langCode = browserLang.split('-')[0].toLowerCase();
+
+      const languageMap = {
+        'es': 'Spanish',
+        'en': 'English',
+        'pt': 'Portuguese',
+        'fr': 'French',
+        'de': 'German',
+        'it': 'Italian'
+      };
+
+      return languageMap[langCode] || 'English';
+    }
+
+    // Get geo data
+    async function getGeoData() {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        return {
+          ip: data.ip || '',
+          country: data.country_name || '',
+          city: data.city || '',
+          region: data.region || '',
+          countryCode: data.country_code || ''
+        };
+      } catch (error) {
+        console.error('Failed to get geo data:', error);
+        return {};
+      }
+    }
+
+    // Show status message
+    function showStatus(message, isError = false) {
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = message;
+      statusEl.className = `status ${isError ? 'error' : 'success'}`;
+      statusEl.style.display = 'block';
+    }
+
+    // Handle form submission
+    document.getElementById('testLeadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.textContent;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        // Get form data
+        const formData = new FormData(e.target);
+        const geoData = await getGeoData();
+
+        // Build lead data
+        const leadData = {
+          // Required fields
+          email: formData.get('email'),
+          phone: `${formData.get('countryCode')} ${formData.get('phone')}`,
+          ip: geoData.ip || '127.0.0.1',
+
+          // Personal data
+          firstName: formData.get('fullName').split(' ')[0] || '',
+          lastName: formData.get('fullName').split(' ').slice(1).join(' ') || '',
+
+          // Custom fields
+          customFields: {
+            ageVerification: formData.get('ageVerification') === 'on',
+            promoConsent: formData.get('promoConsent') === 'on',
+            emailVerified: false,
+            smsVerified: false,
+            language: detectUserLanguage()
+          },
+
+          // Attribution
+          clickId: `test-${Date.now()}`,
+          campaign: formData.get('campaign') || 'test-campaign',
+          source: formData.get('source') || 'test-form',
+          medium: 'web',
+
+          // Technical
+          userAgent: navigator.userAgent,
+          referrer: document.referrer || 'direct',
+          landingPage: window.location.href,
+          formUrl: window.location.href,
+
+          // Geographic
+          country: geoData.country || '',
+          region: geoData.region || '',
+          city: geoData.city || '',
+
+          // Timing
+          submittedAt: new Date().toISOString()
+        };
+
+        console.log('Submitting lead data:', leadData);
+
+        // Submit to CRM API
+        const response = await fetch(CRM_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(leadData)
+        });
+
+        const result = await response.json();
+        console.log('CRM API response:', result);
+
+        if (response.ok && result.success) {
+          showStatus(`✅ Lead submitted successfully! Customer ID: ${result.customerId}, Lead ID: ${result.leadId}`, false);
+          e.target.reset();
+        } else {
+          showStatus(`❌ Error: ${result.error || 'Submission failed'}`, true);
+        }
+
+      } catch (error) {
+        console.error('Submission error:', error);
+        showStatus(`❌ Network error: ${error.message}`, true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+
+    // Phone number formatting
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '');
+    });
+  </script>
+</body>
+</html>

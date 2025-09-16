@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { EmailIcon, PhoneIcon } from '@/components/ui/icons'
+import { EmailIcon, PhoneIcon, ExportIcon, ImportIcon } from '@/components/ui/icons'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -178,9 +178,28 @@ export default function LeadsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Lead Management</h1>
           <p className="text-gray-600">Manage and analyze lead submissions</p>
         </div>
-        <Button onClick={handleExport}>
-          Export Leads
-        </Button>
+        <div className="flex gap-3">
+          <button className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+          }}>
+            <ImportIcon size={16} />
+            Import Leads
+          </button>
+          <button onClick={handleExport} className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+          }}>
+            <ExportIcon size={16} />
+            Export Leads
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -336,16 +355,16 @@ export default function LeadsPage() {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Lead</th>
-                    <th>Contact</th>
-                    <th>Campaign</th>
-                    <th>Source</th>
-                    <th>Location</th>
-                    <th>Quality</th>
-                    <th>Value</th>
-                    <th>User Stats</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th className="text-white font-bold">Lead</th>
+                    <th className="text-white font-bold">Contact</th>
+                    <th className="text-white font-bold">Campaign</th>
+                    <th className="text-white font-bold">Source</th>
+                    <th className="text-white font-bold">Location</th>
+                    <th className="text-white font-bold">Quality</th>
+                    <th className="text-white font-bold">Value</th>
+                    <th className="text-white font-bold">User Stats</th>
+                    <th className="text-white font-bold">Date</th>
+                    <th className="text-white font-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>

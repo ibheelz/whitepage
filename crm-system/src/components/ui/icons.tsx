@@ -91,7 +91,7 @@ export const ManageIcon = ({ size = 20, className = '' }: IconProps) => (
 
 export const ExportIcon = ({ size = 20, className = '' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+    <path d="M12 2l-4 4h3v6h2V6h3l-4-4zm-6 8v8c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-8h-2v8H8v-8H6z"/>
   </svg>
 )
 
@@ -231,5 +231,11 @@ export const NotificationIcon = ({ size = 20, className = '' }: IconProps) => (
 export const FilterIcon = ({ size = 20, className = '' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
     <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+  </svg>
+)
+
+export const ImportIcon = ({ size = 20, className = '' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12 22l4-4h-3V8h-2v10H8l4 4zM6 2v8h2V4h8v8h2V2c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2z"/>
   </svg>
 )

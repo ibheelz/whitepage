@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, Download, Plus, Edit, Trash2, Grid3X3, List } from 'lucide-react'
+import { Search, Edit, Trash2, Grid3X3, List } from 'lucide-react'
+import { ExportIcon, ImportIcon, PlusIcon } from '@/components/ui/icons'
 
 // Hook to detect screen size
 const useScreenSize = () => {
@@ -516,13 +517,25 @@ export default function CustomersPage() {
         <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground">Customer Management</h1>
         <div className="flex flex-row gap-1 xxs:gap-1 xs:gap-1.5 sm:gap-2 w-full sm:w-auto min-w-0">
           <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            color: 'var(--foreground)'
+            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            color: '#080708',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
           }}>
-            <Download className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
+            <ImportIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
+            <span className="hidden xs:inline text-xs sm:text-sm truncate">Import</span>
+          </button>
+          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
+            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            color: '#080708',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+          }}>
+            <ExportIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
             <span className="hidden xs:inline text-xs sm:text-sm truncate">Export</span>
           </button>
           <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[140px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
@@ -533,7 +546,7 @@ export default function CustomersPage() {
             color: '#080708',
             boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
           }}>
-            <Plus className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
+            <PlusIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
             <span className="hidden xs:inline text-xs sm:text-sm truncate">Add Customer</span>
           </button>
         </div>
@@ -657,21 +670,21 @@ export default function CustomersPage() {
                     }}
                   />
                 </th>
-                <th className="px-3 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-12">#</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[100px]">Click ID</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[200px]">Full Name</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[180px]">Email</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[120px]">Phone</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[120px]">Traffic Source</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[120px]">Campaign</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[100px]">IP Address</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[100px]">Location</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[80px]">Language</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[300px]">User Agent</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[120px]">Timestamp</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[120px]">Verifications</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[200px]">Landing Page</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider min-w-[100px]">Actions</th>
+                <th className="px-3 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-12">#</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">Click ID</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[200px]">Full Name</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[180px]">Email</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Phone</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Traffic Source</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Campaign</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">IP Address</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">Location</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[80px]">Language</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[300px]">User Agent</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Timestamp</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Verifications</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[200px]">Landing Page</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">Actions</th>
               </tr>
             </thead>
             <tbody style={{ backgroundColor: 'transparent' }}>
@@ -713,9 +726,9 @@ export default function CustomersPage() {
                     {(currentPage - 1) * customersPerPage + index + 1}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm font-mono text-foreground px-2 py-1 rounded" style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)'
+                    <span className="text-sm font-mono text-yellow-400 px-2 py-1 rounded" style={{
+                      background: 'rgba(253, 198, 0, 0.1)',
+                      border: '1px solid rgba(253, 198, 0, 0.3)'
                     }}>
                       {customer.clicks?.[0]?.clickId || 'N/A'}
                     </span>
@@ -769,9 +782,9 @@ export default function CustomersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm font-mono text-muted-foreground px-2 py-1 rounded" style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    <span className="text-sm font-mono text-green-400 px-2 py-1 rounded" style={{
+                      background: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)'
                     }}>
                       {customer.leads?.[0]?.ip || customer.clicks?.[0]?.ip || 'N/A'}
                     </span>
@@ -1001,7 +1014,7 @@ export default function CustomersPage() {
                     <h3 className="font-semibold text-foreground text-sm sm:text-base lg:text-lg truncate">
                       {customer.firstName} {customer.lastName}
                     </h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                    <p className="text-xs sm:text-sm text-yellow-400 truncate font-mono">
                       {customer.clicks?.[0]?.clickId || 'N/A'}
                     </p>
                   </div>
@@ -1092,7 +1105,7 @@ export default function CustomersPage() {
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs text-muted-foreground flex-shrink-0">IP Address</span>
-                  <span className="text-xs font-mono text-foreground truncate">
+                  <span className="text-xs font-mono text-green-400 truncate">
                     {customer.leads?.[0]?.ip || customer.clicks?.[0]?.ip || 'N/A'}
                   </span>
                 </div>

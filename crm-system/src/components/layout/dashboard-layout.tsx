@@ -177,22 +177,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {sidebarCollapsed ? (
               <div className="flex flex-col items-center">
                 <div className="relative" ref={compactUserMenuRef}>
-                  {/* Only bright yellow circular avatar when compact */}
+                  {/* Compact avatar using same API as expanded */}
                   <button
                     onClick={() => setCompactUserMenuOpen(!compactUserMenuOpen)}
-                    className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-primary/80 transition-all duration-300 shadow-lg"
+                    className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
                     title="User menu"
                   >
-                    {/* Cartoon avatar for app user (Abiola) */}
-                    <svg width="16" height="16" viewBox="0 0 32 32" fill="none" className="text-black">
-                      <circle cx="16" cy="16" r="16" fill="#FFB800"/>
-                      <circle cx="16" cy="14" r="10" fill="#FDD835"/>
-                      <circle cx="13" cy="12" r="1.5" fill="#333"/>
-                      <circle cx="19" cy="12" r="1.5" fill="#333"/>
-                      <path d="M12 16c0 2 1.8 3 4 3s4-1 4-3" stroke="#333" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-                      <circle cx="16" cy="8" r="6" fill="#8D6E63"/>
-                      <path d="M10 6c0-3 2.7-6 6-6s6 3 6 6" fill="#6D4C41"/>
-                    </svg>
+                    <img
+                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=40&backgroundColor=374151"
+                      alt="Abiola"
+                      className="w-full h-full object-cover"
+                    />
                   </button>
 
                   {/* Simple logout modal */}
@@ -318,18 +313,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="border-t border-border/10 p-4 relative">
             <div className="premium-card hover:shadow-lg transition-all duration-300">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                  {/* Cartoon avatar for app user (Abiola) */}
-                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none" className="text-black">
-                    <circle cx="16" cy="16" r="16" fill="#FFB800"/>
-                    <circle cx="16" cy="14" r="10" fill="#FDD835"/>
-                    <circle cx="13" cy="12" r="1.5" fill="#333"/>
-                    <circle cx="19" cy="12" r="1.5" fill="#333"/>
-                    <path d="M12 16c0 2 1.8 3 4 3s4-1 4-3" stroke="#333" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-                    <circle cx="16" cy="8" r="6" fill="#8D6E63"/>
-                    <path d="M10 6c0-3 2.7-6 6-6s6 3 6 6" fill="#6D4C41"/>
-                  </svg>
-                </div>
+                <img
+                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=48&backgroundColor=374151"
+                  alt="Abiola"
+                  className="w-12 h-12 rounded-full ring-2 ring-white/10"
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-foreground truncate">
                     Abiola

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { AnalyticsIcon, CheckIcon, PendingIcon, ClicksIcon, SearchIcon } from '@/components/ui/icons'
+import { AnalyticsIcon, CheckIcon, PendingIcon, ClicksIcon, SearchIcon, ExportIcon, ImportIcon } from '@/components/ui/icons'
 
 export default function ClicksPage() {
   const [clicks, setClicks] = useState([])
@@ -95,10 +95,28 @@ export default function ClicksPage() {
             Monitor and analyze user click behavior across campaigns
           </p>
         </div>
-        <button className="premium-button-primary">
-          <AnalyticsIcon size={16} className="mr-2" />
-          Export Data
-        </button>
+        <div className="flex gap-3">
+          <button className="px-6 py-3 rounded-2xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+          }}>
+            <ImportIcon size={16} />
+            Import Data
+          </button>
+          <button className="px-6 py-3 rounded-2xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+          }}>
+            <ExportIcon size={16} />
+            Export Data
+          </button>
+        </div>
       </div>
 
       {/* Stats Overview */}
@@ -173,12 +191,12 @@ export default function ClicksPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border/20">
-                  <th className="text-left p-6 font-black text-foreground">Click Details</th>
-                  <th className="text-left p-6 font-black text-foreground">Source</th>
-                  <th className="text-left p-6 font-black text-foreground">Campaign</th>
-                  <th className="text-left p-6 font-black text-foreground">Value</th>
-                  <th className="text-left p-6 font-black text-foreground">Status</th>
-                  <th className="text-left p-6 font-black text-foreground">Actions</th>
+                  <th className="text-left p-6 font-black text-white">Click Details</th>
+                  <th className="text-left p-6 font-black text-white">Source</th>
+                  <th className="text-left p-6 font-black text-white">Campaign</th>
+                  <th className="text-left p-6 font-black text-white">Value</th>
+                  <th className="text-left p-6 font-black text-white">Status</th>
+                  <th className="text-left p-6 font-black text-white">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,8 +212,8 @@ export default function ClicksPage() {
                           <ClicksIcon size={24} />
                         </div>
                         <div>
-                          <div className="font-bold text-foreground">{click.clickId}</div>
-                          <div className="text-sm text-muted-foreground">{click.ip} • {click.country}</div>
+                          <div className="font-bold text-yellow-400 font-mono">{click.clickId}</div>
+                          <div className="text-sm text-muted-foreground"><span className="text-green-400 font-mono">{click.ip}</span> • {click.country}</div>
                           <div className="text-xs text-muted-foreground">{click.createdAt.toLocaleString()}</div>
                         </div>
                       </div>
