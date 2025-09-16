@@ -108,11 +108,36 @@
     .checkbox-container input[type="checkbox"] {
       width: auto;
     }
+
+    .debug-message {
+      margin: 2px 0;
+      padding: 2px 5px;
+      border-left: 3px solid #007bff;
+      background: #f8f9fa;
+      font-family: monospace;
+      font-size: 11px;
+      color: #495057;
+    }
+
+    .debug-message:nth-child(even) {
+      background: #e9ecef;
+    }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h1>Test Lead Form - CRM Integration</h1>
+
+    <!-- Debug Panel -->
+    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+      <h3 style="margin-top: 0; color: #495057; font-size: 14px;">🔍 Debug Information</h3>
+      <div id="debugContainer" style="max-height: 150px; overflow-y: auto; background: #ffffff; border: 1px solid #e9ecef; border-radius: 3px; padding: 10px; font-family: monospace; font-size: 12px;">
+        <div class="debug-message"><small>Debug logs will appear here...</small></div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: #6c757d;">
+        <strong>Form Status:</strong> <span id="connectionStatus">Checking connection...</span>
+      </div>
+    </div>
 
     <form id="testLeadForm">
       <div class="form-group">
@@ -174,6 +199,28 @@
     // Configuration
     const CRM_API_URL = 'http://localhost:3005/api/ingest/lead';
 
+    // Enhanced debugging
+    const addDebugLog = (message, data = null) => {
+      const timestamp = new Date().toLocaleTimeString();
+      const logMessage = `[${timestamp}] FORM DEBUG: ${message}`;
+      console.log(logMessage, data);
+
+      // Also show in UI
+      const debugContainer = document.getElementById('debugContainer');
+      if (debugContainer) {
+        const logDiv = document.createElement('div');
+        logDiv.className = 'debug-message';
+        logDiv.innerHTML = `<small>${logMessage}${data ? ' - ' + JSON.stringify(data, null, 2) : ''}</small>`;
+        debugContainer.appendChild(logDiv);
+        debugContainer.scrollTop = debugContainer.scrollHeight;
+
+        // Keep only last 10 messages
+        while (debugContainer.children.length > 10) {
+          debugContainer.removeChild(debugContainer.firstChild);
+        }
+      }
+    };
+
     // Helper function to detect user language
     function detectUserLanguage() {
       const browserLang = navigator.language || navigator.userLanguage || 'en';
@@ -217,9 +264,35 @@
       statusEl.style.display = 'block';
     }
 
+    // Test API connection on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      addDebugLog('🚀 Form initialized, testing API connection...');
+
+      try {
+        const response = await fetch(CRM_API_URL.replace('/lead', '/lead'), {
+          method: 'GET'
+        });
+
+        if (response.ok) {
+          addDebugLog('✅ API connection successful');
+          document.getElementById('connectionStatus').textContent = '✅ Connected to CRM API';
+          document.getElementById('connectionStatus').style.color = '#28a745';
+        } else {
+          addDebugLog('⚠️ API responded with error', { status: response.status });
+          document.getElementById('connectionStatus').textContent = '⚠️ API connection issues';
+          document.getElementById('connectionStatus').style.color = '#ffc107';
+        }
+      } catch (error) {
+        addDebugLog('❌ API connection failed', error.message);
+        document.getElementById('connectionStatus').textContent = '❌ Unable to connect to CRM API';
+        document.getElementById('connectionStatus').style.color = '#dc3545';
+      }
+    });
+
     // Handle form submission
     document.getElementById('testLeadForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      addDebugLog('📝 Form submission started...');
 
       const submitBtn = document.getElementById('submitBtn');
       const originalText = submitBtn.textContent;
@@ -229,8 +302,11 @@
 
       try {
         // Get form data
+        addDebugLog('📄 Collecting form data...');
         const formData = new FormData(e.target);
+        addDebugLog('🌍 Getting geo data...');
         const geoData = await getGeoData();
+        addDebugLog('🌍 Geo data received', geoData);
 
         // Build lead data
         const leadData = {
@@ -273,33 +349,62 @@
           submittedAt: new Date().toISOString()
         };
 
-        console.log('Submitting lead data:', leadData);
+        addDebugLog('📤 Submitting lead data to CRM...', leadData);
 
         // Submit to CRM API
+        addDebugLog('🚀 Sending request to CRM API...', { url: CRM_API_URL });
+
         const response = await fetch(CRM_API_URL, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify(leadData)
         });
 
+        addDebugLog('📥 Received response from CRM API', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+
         const result = await response.json();
-        console.log('CRM API response:', result);
+        addDebugLog('📋 Parsed API response', result);
 
         if (response.ok && result.success) {
-          showStatus(`✅ Lead submitted successfully! Customer ID: ${result.customerId}, Lead ID: ${result.leadId}`, false);
-          e.target.reset();
+          const successMessage = `✅ Lead submitted successfully!\n` +
+            `Customer ID: ${result.customerId || result.userId}\n` +
+            `Lead ID: ${result.leadId}\n` +
+            `Quality Score: ${result.qualityScore}\n` +
+            `Processing Time: ${result.processingTime}ms\n` +
+            `Is Duplicate: ${result.isDuplicate ? 'Yes' : 'No'}`;
+
+          addDebugLog('🎉 Lead submission successful!', result);
+          showStatus(successMessage, false);
+
+          // Reset form after successful submission
+          setTimeout(() => {
+            e.target.reset();
+            addDebugLog('🔄 Form reset completed');
+          }, 1000);
         } else {
-          showStatus(`❌ Error: ${result.error || 'Submission failed'}`, true);
+          const errorMessage = `❌ Error: ${result.error || 'Submission failed'}`;
+          addDebugLog('❌ Lead submission failed', result);
+          showStatus(errorMessage, true);
         }
 
       } catch (error) {
+        addDebugLog('💥 Submission error occurred', {
+          message: error.message,
+          stack: error.stack
+        });
         console.error('Submission error:', error);
         showStatus(`❌ Network error: ${error.message}`, true);
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
+        addDebugLog('🏁 Form submission process completed');
       }
     });
 

@@ -1151,7 +1151,7 @@ export default function CustomersPage() {
               borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
               <tr>
-                <th className="px-3 py-4 text-left w-12">
+                <th className="px-6 py-4 text-left w-12">
                   <input
                     type="checkbox"
                     checked={selectedCustomers.size === currentCustomers.length && currentCustomers.length > 0}

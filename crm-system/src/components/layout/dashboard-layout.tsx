@@ -345,132 +345,31 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className={`transition-all duration-300 xxs:p-1 ${
         sidebarCollapsed ? 'lg:ml-20 lg:pl-4' : 'lg:ml-80 lg:pl-4'
       }`}>
-        {/* Glass Morphism Header */}
-        <header className="sticky top-0 z-20" style={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(40px)',
-          WebkitBackdropFilter: 'blur(40px)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          borderTop: 'none',
-          borderLeft: 'none',
-          borderRight: 'none',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-        }}>
-          <div className="flex h-16 items-center justify-between px-2 xxs:px-1 xs:px-4 sm:px-6 lg:justify-end lg:pl-0 lg:pr-8">
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 xxs:p-1 xs:p-2 sm:p-3 rounded-2xl hover:bg-muted/20 transition-all duration-300 text-primary hover:text-primary/80 lg:hidden"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="transition-all duration-300 xxs:w-4 xxs:h-4">
-                {mobileMenuOpen ? (
-                  <path d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
-                ) : (
-                  <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                )}
-              </svg>
-            </button>
 
-            {/* Glass Morphism Search - Hide on customers page */}
-            {!pathname.includes('/customers') && (
-              <form onSubmit={handleSearch} className="flex-1 mr-4">
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-primary group-focus-within:text-primary/80" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <input
-                  type="search"
-                  placeholder="Search customers, leads, campaigns..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="glass-search w-full pl-12 pr-20 py-3 text-sm lg:text-base rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                    color: 'white'
-                  }}
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 hidden sm:block"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(253, 198, 0, 0.3)',
-                    color: '#080708',
-                    boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
-                  }}
-                >
-                  Search
-                </button>
-              </div>
-            </form>
+        {/* Mobile menu button - floating */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="fixed top-4 left-4 z-30 lg:hidden p-3 rounded-xl transition-all duration-300 hover:scale-105"
+          style={{
+            background: 'rgba(253, 198, 0, 0.9)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(253, 198, 0, 0.3)',
+            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)',
+            color: '#080708'
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            {mobileMenuOpen ? (
+              <path d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
+            ) : (
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
             )}
+          </svg>
+        </button>
 
-            {/* Actions & Profile */}
-            <div className="flex items-center space-x-4 ml-6">
-              <div className="hidden lg:block text-right">
-                <p className="text-sm font-bold text-foreground">
-                  Welcome back, Abiola
-                </p>
-                <p className="text-xs text-muted-foreground font-medium">
-                  {new Date().toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-              </div>
-
-              {/* Enhanced Notifications */}
-              <button className="relative p-3 rounded-2xl transition-all duration-300 group" style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-              }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-primary group-hover:text-primary/80 transition-colors duration-300">
-                  <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                </svg>
-                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 group-hover:scale-110" style={{
-                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(253, 198, 0, 0.3)',
-                  color: '#080708',
-                  boxShadow: '0 4px 16px rgba(253, 198, 0, 0.4)',
-                  animation: 'pulse 2s infinite'
-                }}>
-                  3
-                </div>
-              </button>
-
-              {/* Enhanced User Avatar */}
-              <div className="relative group cursor-pointer">
-                <img
-                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=44&backgroundColor=374151"
-                  alt="Abiola"
-                  className="w-11 h-11 rounded-full ring-2 ring-white/10 transition-all duration-300 group-hover:scale-105"
-                />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background transition-all duration-300" style={{
-                  background: 'linear-gradient(135deg, #10B981, #059669)',
-                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.4)'
-                }}></div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Page content with proper spacing for header */}
-        <main className="min-h-[calc(100vh-4rem)] p-4 lg:p-6 relative pt-6 lg:pt-8">
+        {/* Page content without header spacing */}
+        <main className="min-h-screen p-4 lg:p-6 relative">
           {/* Background Elements */}
           <div className="absolute inset-0 opacity-20 pointer-events-none">
             <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />

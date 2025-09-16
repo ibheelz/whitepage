@@ -264,20 +264,42 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full">
-        <InteractiveCard className="transition-all duration-300 w-full min-h-[120px]">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <div className="flex-1 min-w-0 pr-2">
-              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-primary truncate">
-                {stats.totalUsers.toLocaleString()}
+        <Link href="/dashboard/customers">
+          <InteractiveCard className="transition-all duration-300 w-full min-h-[140px] hover:scale-105 cursor-pointer group">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="flex-1 min-w-0 pr-2">
+                <div className="text-xl sm:text-2xl lg:text-3xl font-black text-primary truncate group-hover:text-yellow-300 transition-colors">
+                  {stats.totalUsers.toLocaleString()}
+                </div>
+                <div className="text-sm sm:text-base text-muted-foreground font-bold">Total Customers</div>
+                <div className="text-xs text-green-500 font-semibold flex items-center mt-1">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                  +12.5% this month
+                </div>
+                <div className="text-xs text-blue-400 font-medium mt-1">
+                  Click to manage customers →
+                </div>
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground font-medium">Total Customers</div>
-              <div className="text-xs text-green-500 font-semibold">+12.5% growth</div>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-xl flex-shrink-0 group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300">
+                <UsersIcon size={18} className="text-black sm:w-[20px] sm:h-[20px]" />
+              </div>
             </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <UsersIcon size={16} className="text-black sm:w-[18px] sm:h-[18px]" />
+
+            {/* Customer Breakdown */}
+            <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-white/10">
+              <div className="text-center">
+                <div className="text-sm font-bold text-yellow-400">{Math.floor(stats.totalUsers * 0.78)}</div>
+                <div className="text-xs text-muted-foreground">Active</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-bold text-green-400">+{Math.floor(stats.totalUsers * 0.15)}</div>
+                <div className="text-xs text-muted-foreground">This Week</div>
+              </div>
             </div>
-          </div>
-        </InteractiveCard>
+          </InteractiveCard>
+        </Link>
 
         <InteractiveCard className="transition-all duration-300 w-full min-h-[120px]">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
