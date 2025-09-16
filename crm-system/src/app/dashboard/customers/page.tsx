@@ -48,6 +48,26 @@ const ClockIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
+const SortIcon = ({ field, sortField, sortDirection }: { field: string, sortField: string, sortDirection: 'asc' | 'desc' }) => {
+  if (sortField !== field) {
+    return (
+      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+      </svg>
+    )
+  }
+
+  return sortDirection === 'asc' ? (
+    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+    </svg>
+  ) : (
+    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  )
+}
+
 interface Customer {
   id: string
   firstName?: string
@@ -77,6 +97,8 @@ export default function CustomersPage() {
   const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
+  const [sortField, setSortField] = useState<string>('')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const isSmallScreen = useScreenSize()
 
   // Force cards view on small screens
@@ -582,13 +604,54 @@ export default function CustomersPage() {
     fetchCustomerData()
   }
 
-  // Filter customers based on search query
-  const filteredCustomers = customers.filter(customer =>
-    searchQuery === '' ||
-    `${customer.firstName} ${customer.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.masterEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.company?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  // Filter and sort customers based on search query and sort criteria
+  const filteredCustomers = customers
+    .filter(customer =>
+      searchQuery === '' ||
+      `${customer.firstName} ${customer.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.masterEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.company?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (!sortField) return 0
+
+      let aValue: any
+      let bValue: any
+
+      switch (sortField) {
+        case 'name':
+          // Sort by last seen for name column
+          aValue = a.lastSeen ? new Date(a.lastSeen).getTime() : 0
+          bValue = b.lastSeen ? new Date(b.lastSeen).getTime() : 0
+          break
+        case 'email':
+          aValue = a.masterEmail?.toLowerCase() || ''
+          bValue = b.masterEmail?.toLowerCase() || ''
+          break
+        case 'phone':
+          aValue = a.masterPhone || ''
+          bValue = b.masterPhone || ''
+          break
+        case 'source':
+          aValue = (a.leads?.[0]?.source || a.clicks?.[0]?.source || a.source || '').toLowerCase()
+          bValue = (b.leads?.[0]?.source || b.clicks?.[0]?.source || b.source || '').toLowerCase()
+          break
+        case 'campaign':
+          aValue = (a.leads?.[0]?.campaign || a.clicks?.[0]?.campaign || '').toLowerCase()
+          bValue = (b.leads?.[0]?.campaign || b.clicks?.[0]?.campaign || '').toLowerCase()
+          break
+        case 'timestamp':
+          aValue = new Date(a.createdAt).getTime()
+          bValue = new Date(b.createdAt).getTime()
+          break
+        default:
+          return 0
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
 
   // Pagination
   const indexOfLastCustomer = currentPage * customersPerPage
@@ -694,17 +757,32 @@ export default function CustomersPage() {
     }
   }
 
+  // Sorting function
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
   // Helper function to format "last seen" time
   const formatLastSeen = (lastSeen?: Date) => {
     if (!lastSeen) return 'Never'
 
-    return lastSeen.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    const now = new Date()
+    const diff = now.getTime() - lastSeen.getTime()
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    const minutes = Math.floor(diff / (1000 * 60))
+
+    if (minutes < 1) return 'Now'
+    if (minutes < 60) return `${minutes}m`
+    if (hours < 24) return `${hours}h`
+
+    // Always show days for anything older than 24 hours
+    return `${days}d`
   }
 
   if (loading) {
@@ -961,28 +1039,76 @@ export default function CustomersPage() {
                     }}
                   />
                 </th>
-                <th className="px-3 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-12">#</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">Click ID</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[200px]">Full Name</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[180px]">Email</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Phone</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Traffic Source</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Campaign</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">IP Address</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">Location</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[80px]">Language</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[300px]">User Agent</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Timestamp</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[120px]">Verifications</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[200px]">Landing Page</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[100px]">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-12">#</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">Click ID</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('name')}
+                  >
+                    Full Name
+                    <SortIcon field="name" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[200px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('email')}
+                  >
+                    Email
+                    <SortIcon field="email" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[140px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('phone')}
+                  >
+                    Phone
+                    <SortIcon field="phone" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[140px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('source')}
+                  >
+                    Traffic Source
+                    <SortIcon field="source" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[150px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('campaign')}
+                  >
+                    Campaign
+                    <SortIcon field="campaign" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">IP Address</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[160px]">Location</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[80px]">Language</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[250px]">User Agent</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[130px]">
+                  <button
+                    className="flex items-center gap-2 hover:text-yellow-400 transition-colors"
+                    onClick={() => handleSort('timestamp')}
+                  >
+                    Timestamp
+                    <SortIcon field="timestamp" sortField={sortField} sortDirection={sortDirection} />
+                  </button>
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[120px]">Verifications</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[200px]">Landing Page</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider w-[100px]">Actions</th>
               </tr>
             </thead>
             <tbody style={{ backgroundColor: 'transparent' }}>
               {currentCustomers.map((customer, index) => (
                 <tr
                   key={customer.id}
-                  className="transition-all duration-200 border-b border-white/5"
+                  className="transition-all duration-200 border-b border-white/5 h-[60px] overflow-hidden"
                   style={{
                     background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
                   }}
@@ -993,7 +1119,7 @@ export default function CustomersPage() {
                     e.currentTarget.style.background = index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
                   }}
                 >
-                  <td className="px-3 py-3">
+                  <td className="px-6 py-3 w-12">
                     <input
                       type="checkbox"
                       checked={selectedCustomers.has(customer.id)}
@@ -1013,91 +1139,102 @@ export default function CustomersPage() {
                       }}
                     />
                   </td>
-                  <td className="px-3 py-3 text-sm text-muted-foreground font-medium">
+                  <td className="px-6 py-3 text-sm text-muted-foreground font-medium w-12">
                     {(currentPage - 1) * customersPerPage + index + 1}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-mono text-yellow-400 px-2 py-1 rounded" style={{
+                  <td className="px-6 py-3 w-[120px]">
+                    <span className="text-sm font-mono text-yellow-400 px-2 py-1 rounded truncate max-w-[100px] inline-block" style={{
                       background: 'rgba(253, 198, 0, 0.1)',
                       border: '1px solid rgba(253, 198, 0, 0.3)'
-                    }}>
+                    }} title={customer.clicks?.[0]?.clickId || 'N/A'}>
                       {customer.clicks?.[0]?.clickId || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-3">
                     <div className="flex items-center gap-3">
                       <img
                         src={generateAvatarUrl(customer.firstName, customer.lastName, customer.id)}
                         alt={`${customer.firstName} ${customer.lastName}`}
                         className="w-8 h-8 rounded-full ring-2 ring-white/10"
                       />
-                      <div>
-                        <div className="font-semibold text-foreground">
-                          {customer.firstName} {customer.lastName}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          {(() => {
+                            const fullName = `${customer.firstName} ${customer.lastName}`
+                            const shouldTruncate = fullName.length > 40
+                            return shouldTruncate ? (
+                              <span className="text-sm font-semibold text-foreground truncate max-w-[120px] inline-block whitespace-nowrap" title={fullName}>{fullName}</span>
+                            ) : (
+                              <span className="text-sm font-semibold text-foreground whitespace-nowrap">{fullName}</span>
+                            )
+                          })()}
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">({formatLastSeen(customer.lastSeen)})</span>
                         </div>
-                        <div className="text-sm text-muted-foreground">Last seen: {formatLastSeen(customer.lastSeen)}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-3 w-[200px]">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-foreground">{customer.masterEmail}</span>
+                      <span className="text-sm text-foreground whitespace-nowrap">{customer.masterEmail}</span>
                       {customer.identifiers?.some(i => i.type === 'EMAIL' && i.isVerified) ? (
-                        <CheckIcon className="w-4 h-4 text-green-400" />
+                        <CheckIcon className="w-4 h-4 text-green-400 flex-shrink-0" />
                       ) : (
-                        <XIcon className="w-4 h-4 text-red-400" />
+                        <XIcon className="w-4 h-4 text-red-400 flex-shrink-0" />
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-3 w-[140px]">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-foreground">{customer.masterPhone || 'N/A'}</span>
+                      <span className="text-sm text-foreground whitespace-nowrap">{customer.masterPhone || 'N/A'}</span>
                       {customer.identifiers?.some(i => i.type === 'PHONE' && i.isVerified) ? (
-                        <CheckIcon className="w-4 h-4 text-green-400" />
+                        <CheckIcon className="w-4 h-4 text-green-400 flex-shrink-0" />
                       ) : (
-                        <XIcon className="w-4 h-4 text-red-400" />
+                        <XIcon className="w-4 h-4 text-red-400 flex-shrink-0" />
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-primary" style={{
-                      background: 'rgba(253, 198, 0, 0.1)',
-                      border: '1px solid rgba(253, 198, 0, 0.2)'
-                    }}>
-                      {customer.source}
+                  <td className="px-6 py-3 w-[140px]">
+                    <span
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-primary whitespace-nowrap"
+                      style={{
+                        background: 'rgba(253, 198, 0, 0.1)',
+                        border: '1px solid rgba(253, 198, 0, 0.2)'
+                      }}
+                    >
+                      {customer.leads?.[0]?.source || customer.clicks?.[0]?.source || customer.source || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm text-foreground">
+                  <td className="px-6 py-3 w-[150px]">
+                    <span className="text-sm text-foreground truncate max-w-[110px] inline-block" title={customer.leads?.[0]?.campaign || customer.clicks?.[0]?.campaign || 'N/A'}>
                       {customer.leads?.[0]?.campaign || customer.clicks?.[0]?.campaign || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-mono text-green-400 px-2 py-1 rounded" style={{
+                  <td className="px-6 py-3 w-[120px]">
+                    <span className="text-sm font-mono text-green-400 px-2 py-1 rounded whitespace-nowrap" style={{
                       background: 'rgba(34, 197, 94, 0.1)',
                       border: '1px solid rgba(34, 197, 94, 0.3)'
                     }}>
                       {customer.leads?.[0]?.ip || customer.clicks?.[0]?.ip || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-3 w-[160px]">
                     <div className="text-sm text-foreground flex items-center gap-2">
-                      <span className="text-lg">{getCountryFlag(customer.country)}</span>
-                      <span>{customer.city}, {customer.country}</span>
+                      <span className="text-lg flex-shrink-0">{getCountryFlag(customer.country)}</span>
+                      <span className="truncate max-w-[110px] inline-block" title={`${customer.city}, ${customer.country}`}>{customer.city}, {customer.country}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm text-foreground">
+                  <td className="px-6 py-3 w-[80px]">
+                    <span className="text-sm text-foreground truncate max-w-[60px] inline-block" title={getLanguage(customer.country)}>
                       {getLanguage(customer.country)}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="text-xs text-muted-foreground truncate max-w-[300px]" title={customer.leads?.[0]?.userAgent || customer.clicks?.[0]?.userAgent}>
+                  <td className="px-6 py-3 w-[250px]">
+                    <div className="text-xs text-muted-foreground truncate max-w-[210px] inline-block" title={customer.leads?.[0]?.userAgent || customer.clicks?.[0]?.userAgent}>
                       {customer.leads?.[0]?.userAgent || customer.clicks?.[0]?.userAgent || 'N/A'}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm text-muted-foreground">
+                  <td className="px-6 py-3 w-[130px]">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
                       {new Date(customer.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -1106,32 +1243,32 @@ export default function CustomersPage() {
                       })}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="space-y-1">
+                  <td className="px-6 py-3 w-[120px]">
+                    <div className="space-y-1 whitespace-nowrap">
                       <div className="flex items-center gap-2 text-xs">
                         <span className="text-muted-foreground">Age:</span>
                         {customer.leads?.[0]?.ageVerified ? (
-                          <CheckIcon className="w-3 h-3 text-green-400" />
+                          <CheckIcon className="w-3 h-3 text-green-400 flex-shrink-0" />
                         ) : (
-                          <XIcon className="w-3 h-3 text-red-400" />
+                          <XIcon className="w-3 h-3 text-red-400 flex-shrink-0" />
                         )}
                       </div>
                       <div className="flex items-center gap-2 text-xs">
                         <span className="text-muted-foreground">Promo:</span>
                         {customer.leads?.[0]?.promotionalConsent ? (
-                          <CheckIcon className="w-3 h-3 text-green-400" />
+                          <CheckIcon className="w-3 h-3 text-green-400 flex-shrink-0" />
                         ) : (
-                          <XIcon className="w-3 h-3 text-red-400" />
+                          <XIcon className="w-3 h-3 text-red-400 flex-shrink-0" />
                         )}
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="text-xs text-muted-foreground truncate max-w-[200px]" title={customer.leads?.[0]?.landingPage || customer.clicks?.[0]?.landingPage}>
+                  <td className="px-6 py-3 w-[200px]">
+                    <div className="text-xs text-muted-foreground truncate max-w-[160px] inline-block" title={customer.leads?.[0]?.landingPage || customer.clicks?.[0]?.landingPage}>
                       {customer.leads?.[0]?.landingPage || customer.clicks?.[0]?.landingPage || 'N/A'}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-3 w-[100px]">
                     <div className="flex items-center gap-2">
                       <button className="p-2 rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground" style={{
                         background: 'rgba(255, 255, 255, 0.05)',
@@ -1233,11 +1370,15 @@ export default function CustomersPage() {
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Source</span>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-primary" style={{
-                      background: 'rgba(253, 198, 0, 0.1)',
-                      border: '1px solid rgba(253, 198, 0, 0.2)'
-                    }}>
-                      {customer.source}
+                    <span
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-primary truncate max-w-[100px]"
+                      style={{
+                        background: 'rgba(253, 198, 0, 0.1)',
+                        border: '1px solid rgba(253, 198, 0, 0.2)'
+                      }}
+                      title={customer.leads?.[0]?.source || customer.clicks?.[0]?.source || customer.source || 'N/A'}
+                    >
+                      {customer.leads?.[0]?.source || customer.clicks?.[0]?.source || customer.source || 'N/A'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
@@ -1380,11 +1521,15 @@ export default function CustomersPage() {
 
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs text-muted-foreground uppercase tracking-wider flex-shrink-0">Source</span>
-                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium text-primary" style={{
-                    background: 'rgba(253, 198, 0, 0.1)',
-                    border: '1px solid rgba(253, 198, 0, 0.2)'
-                  }}>
-                    {customer.source}
+                  <span
+                    className="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium text-primary truncate max-w-[80px] sm:max-w-[100px]"
+                    style={{
+                      background: 'rgba(253, 198, 0, 0.1)',
+                      border: '1px solid rgba(253, 198, 0, 0.2)'
+                    }}
+                    title={customer.leads?.[0]?.source || customer.clicks?.[0]?.source || customer.source || 'N/A'}
+                  >
+                    {customer.leads?.[0]?.source || customer.clicks?.[0]?.source || customer.source || 'N/A'}
                   </span>
                 </div>
               </div>
