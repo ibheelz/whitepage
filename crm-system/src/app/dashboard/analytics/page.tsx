@@ -154,7 +154,7 @@ export default function AnalyticsPage() {
           <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-3xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-6 shadow-xl">
             <WarningIcon size={32} />
           </div>
-          <h2 className="text-2xl font-black text-foreground mb-2">Analytics Error</h2>
+          <h2 className="text-2xl font-black text-primary mb-2">Analytics Error</h2>
           <p className="text-muted-foreground mb-6">{error || 'No data available'}</p>
           <button onClick={fetchAnalytics} className="premium-button-primary">
             Retry Loading
@@ -233,7 +233,7 @@ export default function AnalyticsPage() {
 
       {/* Time Series Visualization */}
       <div className="premium-card p-8 glow-effect">
-        <h2 className="text-2xl font-black text-foreground mb-6">Performance Over Time</h2>
+        <h2 className="text-2xl font-black text-primary mb-6">Performance Over Time</h2>
         <div className="space-y-4">
           {data.timeSeries.slice(-7).map((day, index) => (
             <div key={day.date} className="flex items-center space-x-4 p-4 bg-muted/10 rounded-2xl hover:bg-muted/20 transition-all duration-300">
@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
       {/* Performance Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="premium-card p-8 glow-effect">
-          <h3 className="text-xl font-black text-foreground mb-6 flex items-center">
+          <h3 className="text-xl font-black text-primary mb-6 flex items-center">
             <WorldIcon size={20} className="mr-3" />
             Top Countries
           </h3>
@@ -284,7 +284,7 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="premium-card p-8 glow-effect">
-          <h3 className="text-xl font-black text-foreground mb-6 flex items-center">
+          <h3 className="text-xl font-black text-primary mb-6 flex items-center">
             <GraphIcon size={20} className="mr-3" />
             Traffic Sources
           </h3>
@@ -302,7 +302,7 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="premium-card p-8 glow-effect">
-          <h3 className="text-xl font-black text-foreground mb-6 flex items-center">
+          <h3 className="text-xl font-black text-primary mb-6 flex items-center">
             <DeviceIcon size={20} className="mr-3" />
             Device Types
           </h3>
@@ -323,7 +323,7 @@ export default function AnalyticsPage() {
       {/* Campaign Performance Table */}
       <div className="premium-card overflow-hidden glow-effect">
         <div className="p-8 border-b border-border/20">
-          <h2 className="text-2xl font-black text-foreground">Campaign Performance</h2>
+          <h2 className="text-2xl font-black text-primary">Campaign Performance</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -375,7 +375,7 @@ export default function AnalyticsPage() {
 
       {/* Hourly Activity Pattern */}
       <div className="premium-card p-8 glow-effect">
-        <h2 className="text-2xl font-black text-foreground mb-6">Hourly Activity Pattern</h2>
+        <h2 className="text-2xl font-black text-primary mb-6">Hourly Activity Pattern</h2>
         <div className="grid grid-cols-12 gap-4">
           {data.hourlyData.map((hour) => {
             const maxActivity = Math.max(...data.hourlyData.map(h => h.clicks))

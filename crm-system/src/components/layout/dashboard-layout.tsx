@@ -37,8 +37,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
   const { data: session } = useSession()
   const [searchQuery, setSearchQuery] = useState('')
-  const [sidebarExpanded, setSidebarExpanded] = useState(true)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [compactUserMenuOpen, setCompactUserMenuOpen] = useState(false)
   const compactUserMenuRef = useRef<HTMLDivElement>(null)
@@ -68,17 +66,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile menu overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Wider Sidebar - Collapsible on Desktop */}
-      <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-300 hidden lg:block ${
-        sidebarCollapsed ? 'w-20' : 'w-80'
+      {/* Compact Sidebar - Always visible on all screens */}
+      <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-300 ${
+        sidebarCollapsed ? 'w-16 lg:w-20' : 'w-16 lg:w-80'
       }`}>
         <div className="flex h-full flex-col overflow-hidden" style={{
           background: 'rgba(255, 255, 255, 0.08)',
@@ -99,8 +89,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             // No header when collapsed - minimal border
             <div className="border-b border-border/10 h-4"></div>
           ) : (
-            // Logo & Brand when expanded
-            <div className="flex h-20 items-center justify-between border-b border-border/10 relative px-6">
+            // Logo & Brand when expanded (only on large screens)
+            <div className="hidden lg:flex h-20 items-center justify-between border-b border-border/10 relative px-6">
               <div className="flex items-center flex-1">
                 <div className="fade-in">
                   <h1 className="text-xl font-black text-foreground">Miela CRM</h1>
@@ -121,10 +111,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           )}
 
           {/* Navigation */}
-          <nav className={`flex-1 px-4 space-y-3 relative overflow-y-auto custom-scrollbar ${sidebarCollapsed ? 'py-4' : 'py-6'}`}>
+          <nav className={`flex-1 px-4 space-y-3 relative overflow-y-auto custom-scrollbar py-4 lg:${sidebarCollapsed ? 'py-4' : 'py-6'}`}>
             {sidebarCollapsed && (
-              // Hamburger at top of nav when collapsed
-              <div className="mb-2">
+              // Hamburger at top of nav when collapsed on large screens
+              <div className="mb-2 hidden lg:block">
                 <button
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                   className="w-10 h-10 rounded-xl hover:bg-muted/20 transition-all duration-300 text-primary hover:text-primary/80 flex items-center justify-center"
@@ -142,31 +132,34 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`group relative flex items-center transition-all duration-300 rounded-xl p-3 mb-2 ${
-                    sidebarCollapsed
-                      ? (isActive ? '' : 'hover:bg-muted/20')
-                      : (isActive
-                          ? 'bg-primary/20 border border-primary/30 shadow-lg'
-                          : 'hover:bg-muted/20 hover:border-muted/30 border border-transparent')
-                  } ${sidebarCollapsed ? 'justify-center' : ''}`}
+                  className={`group relative flex items-center transition-all duration-300 rounded-xl mb-2 p-2 lg:p-3 justify-center border-transparent ${
+                    isActive
+                      ? (sidebarCollapsed ? '' : 'lg:bg-primary/20 lg:border-primary/30 lg:shadow-lg lg:justify-start')
+                      : 'hover:bg-muted/20 hover:border-muted/30 border border-transparent lg:justify-start'
+                  } ${
+                    sidebarCollapsed ? 'lg:justify-center lg:border-transparent lg:bg-transparent' : ''
+                  }`}
                   style={{ animationDelay: `${index * 50}ms` }}
-                  title={sidebarCollapsed ? item.name : ''}
+                  title={item.name}
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 shrink-0 ${
-                    sidebarCollapsed
-                      ? (isActive ? 'bg-primary shadow-lg' : 'bg-transparent hover:bg-muted/30')
-                      : (isActive ? 'bg-primary shadow-lg' : 'bg-muted/20 hover:bg-muted/30')
-                  } ${sidebarCollapsed ? 'mr-0' : 'mr-4'}`}>
-                    <item.icon size={20} className={isActive ? 'text-black' : 'text-yellow-400'} />
+                  <div className={`rounded-xl flex items-center justify-center transition-all duration-200 shrink-0 ${
+                    isActive
+                      ? 'bg-primary shadow-lg'
+                      : 'bg-muted/20 hover:bg-muted/30'
+                  } ${
+                    sidebarCollapsed ? 'w-8 h-8 lg:w-10 lg:h-10 mr-0' : 'w-8 h-8 lg:w-10 lg:h-10 mr-0 lg:mr-4'
+                  }`}>
+                    <item.icon size={16} className={`lg:w-5 lg:h-5 ${isActive ? 'text-black' : 'text-yellow-400'}`} />
                   </div>
-                  {!sidebarCollapsed && (
-                    <div className="fade-in flex-1 min-w-0">
-                      <p className={`font-bold text-sm truncate ${
-                        isActive ? 'text-primary' : 'text-white'
-                      }`}>{item.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{item.description}</p>
-                    </div>
-                  )}
+                  {/* Text only shown on large screens when not collapsed */}
+                  <div className={`flex-1 min-w-0 ${
+                    sidebarCollapsed ? 'hidden' : 'hidden lg:block'
+                  }`}>
+                    <p className={`font-bold text-sm truncate ${
+                      isActive ? 'text-primary' : 'text-white'
+                    }`}>{item.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{item.description}</p>
+                  </div>
                 </Link>
               )
             })}
@@ -174,10 +167,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* User Profile */}
           <div className="border-t border-border/10 p-4 relative">
-            {sidebarCollapsed ? (
+            {/* Always compact on small screens */}
+            <div className="lg:hidden">
               <div className="flex flex-col items-center">
-                <div className="relative" ref={compactUserMenuRef}>
-                  {/* Compact avatar using same API as expanded */}
+                <div className="relative">
+                  {/* Compact avatar for small screens - match large screen compact style */}
                   <button
                     onClick={() => setCompactUserMenuOpen(!compactUserMenuOpen)}
                     className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
@@ -189,7 +183,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                       className="w-full h-full object-cover"
                     />
                   </button>
-
                   {/* Simple logout modal */}
                   {compactUserMenuOpen && (
                     <div className="absolute bottom-4 left-16 z-50">
@@ -220,154 +213,92 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   )}
                 </div>
               </div>
-            ) : (
-              <div className="premium-card hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=48&backgroundColor=374151"
-                    alt="Abiola"
-                    className="w-12 h-12 rounded-full ring-2 ring-white/10"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-foreground truncate">
-                      Abiola
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      Business Owner
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-                    className="p-2 rounded-xl hover:bg-primary/10 text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110"
-                    title="Sign out"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9Z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 transition-all duration-300 ${
-        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-      } w-80 lg:hidden`}>
-        <div className="flex h-full flex-col overflow-hidden" style={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          borderRadius: '0 24px 24px 0',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-          position: 'relative'
-        }}>
-
-          {/* Logo & Brand */}
-          <div className="flex h-20 items-center justify-between px-6 border-b border-border/10 relative">
-            <div className="flex items-center">
-              <div className="fade-in">
-                <h1 className="text-xl font-black text-foreground">Miela CRM</h1>
-                <p className="text-xs text-primary font-bold uppercase tracking-wider">Business System</p>
-              </div>
             </div>
-          </div>
+            {/* Large screen user profile */}
+            <div className="hidden lg:block">
+              {sidebarCollapsed ? (
+                <div className="flex flex-col items-center">
+                  <div className="relative" ref={compactUserMenuRef}>
+                    {/* Compact avatar using same API as expanded */}
+                    <button
+                      onClick={() => setCompactUserMenuOpen(!compactUserMenuOpen)}
+                      className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
+                      title="User menu"
+                    >
+                      <img
+                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=40&backgroundColor=374151"
+                        alt="Abiola"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
 
-          {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-3 relative overflow-y-auto custom-scrollbar">
-            {navigation.map((item, index) => {
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`group relative flex items-center transition-all duration-300 rounded-xl p-3 mb-2 ${
-                    isActive
-                      ? 'bg-primary/20 border border-primary/30 shadow-lg'
-                      : 'hover:bg-muted/20 hover:border-muted/30 border border-transparent'
-                  }`}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 shrink-0 mr-4 ${
-                    isActive
-                      ? 'bg-primary shadow-lg'
-                      : 'bg-muted/20 hover:bg-muted/30'
-                  }`}>
-                    <item.icon size={20} className={isActive ? 'text-black' : 'text-yellow-400'} />
+                    {/* Simple logout modal */}
+                    {compactUserMenuOpen && (
+                      <div className="absolute bottom-4 left-16 z-50">
+                        <div
+                          className="bg-background border border-primary/30 rounded-lg p-2 shadow-2xl min-w-[120px]"
+                          style={{
+                            background: 'rgba(8, 7, 8, 0.95)',
+                            backdropFilter: 'blur(20px)',
+                            WebkitBackdropFilter: 'blur(20px)',
+                            border: '1px solid rgba(253, 198, 0, 0.3)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
+                          }}
+                        >
+                          <button
+                            onClick={() => {
+                              setCompactUserMenuOpen(false)
+                              signOut({ callbackUrl: '/auth/signin' })
+                            }}
+                            className="w-full flex items-center justify-center space-x-2 p-2 rounded-lg hover:bg-primary/10 text-primary hover:text-primary/80 transition-all duration-300 text-sm font-medium"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9Z"/>
+                            </svg>
+                            <span>Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="fade-in flex-1 min-w-0">
-                    <p className={`font-bold text-sm truncate ${
-                      isActive ? 'text-primary' : 'text-white'
-                    }`}>{item.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{item.description}</p>
-                  </div>
-                </Link>
-              )
-            })}
-          </nav>
-
-          {/* User Profile */}
-          <div className="border-t border-border/10 p-4 relative">
-            <div className="premium-card hover:shadow-lg transition-all duration-300">
-              <div className="flex items-center space-x-3">
-                <img
-                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=48&backgroundColor=374151"
-                  alt="Abiola"
-                  className="w-12 h-12 rounded-full ring-2 ring-white/10"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-foreground truncate">
-                    Abiola
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    Business Owner
-                  </p>
                 </div>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-                  className="p-2 rounded-xl hover:bg-primary/10 text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110"
-                  title="Sign out"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9Z"/>
-                  </svg>
-                </button>
-              </div>
+              ) : (
+                <div className="premium-card hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=48&backgroundColor=374151"
+                      alt="Abiola"
+                      className="w-12 h-12 rounded-full ring-2 ring-white/10"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-foreground truncate">
+                        Abiola
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        Business Owner
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                      className="p-2 rounded-xl hover:bg-primary/10 text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110"
+                      title="Sign out"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9Z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       {/* Main content */}
-      <div className={`transition-all duration-300 xxs:p-1 ${
-        sidebarCollapsed ? 'lg:ml-20 lg:pl-4' : 'lg:ml-80 lg:pl-4'
+      <div className={`transition-all duration-300 ${
+        sidebarCollapsed ? 'ml-16 lg:ml-20 lg:pl-4' : 'ml-16 lg:ml-80 lg:pl-4'
       }`}>
-
-        {/* Mobile menu button - floating */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="fixed top-4 left-4 z-30 lg:hidden p-3 rounded-xl transition-all duration-300 hover:scale-105"
-          style={{
-            background: 'rgba(253, 198, 0, 0.9)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(253, 198, 0, 0.3)',
-            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)',
-            color: '#080708'
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            {mobileMenuOpen ? (
-              <path d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
-            ) : (
-              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-            )}
-          </svg>
-        </button>
-
         {/* Page content without header spacing */}
         <main className="min-h-screen p-4 lg:p-6 relative">
           {/* Background Elements */}
@@ -379,7 +310,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="fade-in page-transition relative">
             {children}
           </div>
-
         </main>
       </div>
     </div>

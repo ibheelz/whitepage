@@ -255,15 +255,17 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="w-full space-y-3 md:space-y-4">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       {/* Header */}
-      <div className="w-full">
-        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">Dashboard</h1>
-        <p className="text-xs sm:text-sm text-muted-foreground">Overview of your business metrics</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 mb-2 xxs:mb-1 xs:mb-3 sm:mb-6">
+        <div>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Dashboard</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Overview of your business metrics</p>
+        </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 w-full">
         <Link href="/dashboard/customers">
           <InteractiveCard className="transition-all duration-300 w-full min-h-[140px] hover:scale-105 cursor-pointer group">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
@@ -348,13 +350,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Analytics Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 w-full">
         {/* Revenue Performance */}
         <InteractiveCard className="col-span-1 lg:col-span-2 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
             <div className="lg:col-span-1 flex flex-col justify-center">
               <div className="mb-3">
-                <h3 className="text-lg font-bold text-foreground mb-1">Revenue Performance</h3>
+                <h3 className="text-lg font-bold text-primary mb-1">Revenue Performance</h3>
                 <p className="text-xs text-muted-foreground">Monthly trends & insights</p>
               </div>
 
@@ -399,14 +401,14 @@ export default function DashboardPage() {
         {/* Key Metrics */}
         <InteractiveCard className="col-span-1 w-full">
           <div className="mb-4">
-            <h3 className="text-base sm:text-lg font-bold text-foreground mb-2">Key Metrics</h3>
+            <h3 className="text-base sm:text-lg font-bold text-primary mb-2">Key Metrics</h3>
             <p className="text-xs sm:text-sm text-muted-foreground">Performance indicators</p>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-foreground">Conversion Rate</div>
+                <div className="text-sm font-medium text-primary">Conversion Rate</div>
                 <div className="text-xs text-muted-foreground">Users to leads</div>
               </div>
               <div className="flex-shrink-0 ml-3">
@@ -416,7 +418,7 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-foreground">Engagement</div>
+                <div className="text-sm font-medium text-primary">Engagement</div>
                 <div className="text-xs text-muted-foreground">User activity</div>
               </div>
               <div className="flex-shrink-0 ml-3">
@@ -426,7 +428,7 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-foreground">Retention</div>
+                <div className="text-sm font-medium text-primary">Retention</div>
                 <div className="text-xs text-muted-foreground">30-day return</div>
               </div>
               <div className="flex-shrink-0 ml-3">
@@ -435,7 +437,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="pt-4 border-t border-border/20">
-              <div className="text-sm font-medium text-foreground mb-2">Activity Trend</div>
+              <div className="text-sm font-medium text-primary mb-2">Activity Trend</div>
               <SparklineChart data={chartData.concat([31, 28, 35, 42])} height={40} />
             </div>
           </div>
@@ -443,11 +445,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 w-full">
         {/* Mini Calendar */}
         <InteractiveCard className="col-span-1 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-foreground">Calendar</h3>
+            <h3 className="text-sm font-medium text-primary">Calendar</h3>
             <CalendarIcon size={14} />
           </div>
 
@@ -496,7 +498,7 @@ export default function DashboardPage() {
         {/* Live Activity */}
         <InteractiveCard className="col-span-1 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-foreground">Live Activity</h3>
+            <h3 className="text-sm font-medium text-primary">Live Activity</h3>
             <div className="flex items-center space-x-1">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <span className="text-xs text-green-400 font-medium">Live</span>
@@ -521,7 +523,7 @@ export default function DashboardPage() {
                     {getActivityIcon(activity.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-foreground truncate">
+                    <p className="text-xs font-medium text-primary truncate">
                       {activity.user}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -540,7 +542,7 @@ export default function DashboardPage() {
         {/* Top Quality Leads */}
         <InteractiveCard className="col-span-1 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-foreground">Top Quality Leads</h3>
+            <h3 className="text-sm font-medium text-primary">Top Quality Leads</h3>
             <Link href="/dashboard/leads" className="text-xs text-primary hover:text-primary/80">View all</Link>
           </div>
 
@@ -556,7 +558,7 @@ export default function DashboardPage() {
                       <UserIcon size={14} className="text-black" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">
+                      <p className="text-sm font-semibold text-primary truncate">
                         {lead.firstName && lead.lastName ? `${lead.firstName} ${lead.lastName}` : lead.email || lead.phone}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -590,14 +592,14 @@ export default function DashboardPage() {
       {/* System Status */}
       <InteractiveCard className="w-full">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-foreground">System Status</h3>
+          <h3 className="text-sm font-medium text-primary">System Status</h3>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-primary rounded-full"></div>
             <span className="text-xs text-primary">Online</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 w-full">
           {[
             { name: 'Database', uptime: '99.9%' },
             { name: 'API', uptime: '99.8%' },
@@ -608,7 +610,7 @@ export default function DashboardPage() {
               <div className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 bg-primary rounded-lg flex items-center justify-center">
                 <CheckIcon size={10} className="text-black sm:w-3 sm:h-3" />
               </div>
-              <p className="text-xs font-bold text-foreground mb-1 truncate">{service.name}</p>
+              <p className="text-xs font-bold text-primary mb-1 truncate">{service.name}</p>
               <p className="text-xs text-primary font-medium">{service.uptime}</p>
               <div className="flex items-center justify-center mt-1">
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-1"></div>

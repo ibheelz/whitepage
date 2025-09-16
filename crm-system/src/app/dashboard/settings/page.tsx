@@ -139,7 +139,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Settings</h1>
+          <h1 className="text-3xl font-bold text-primary">System Settings</h1>
           <p className="text-gray-600">Manage webhooks, integrations, and system configuration</p>
         </div>
         <Button onClick={() => setShowCreateForm(true)}>
@@ -175,7 +175,7 @@ export default function SettingsPage() {
             <CardTitle className="text-sm font-medium text-gray-600">API Rate Limit</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">∞</div>
+            <div className="text-2xl font-bold text-primary">∞</div>
             <div className="text-xs text-gray-500">Unlimited</div>
           </CardContent>
         </Card>
@@ -185,7 +185,7 @@ export default function SettingsPage() {
             <CardTitle className="text-sm font-medium text-gray-600">Data Retention</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">365d</div>
+            <div className="text-2xl font-bold text-primary">365d</div>
             <div className="text-xs text-gray-500">Days</div>
           </CardContent>
         </Card>

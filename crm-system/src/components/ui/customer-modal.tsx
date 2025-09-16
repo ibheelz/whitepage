@@ -24,7 +24,10 @@ interface CustomerModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: CustomerFormData) => Promise<void>
-  customer?: Partial<CustomerFormData>
+  customer?: Partial<CustomerFormData> & {
+    firstName?: string
+    lastName?: string
+  }
   title: string
   isLoading?: boolean
 }
@@ -171,7 +174,7 @@ export default function CustomerModal({
     }
   }
 
-  const handleInputChange = (field: keyof CustomerFormData, value: string | string[]) => {
+  const handleInputChange = (field: keyof CustomerFormData, value: string | string[] | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }))

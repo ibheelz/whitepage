@@ -629,12 +629,32 @@ export default function CustomersPage() {
           bValue = b.lastSeen ? new Date(b.lastSeen).getTime() : 0
           break
         case 'email':
-          aValue = a.masterEmail?.toLowerCase() || ''
-          bValue = b.masterEmail?.toLowerCase() || ''
+          // Sort by verification status first, then alphabetically
+          const aEmailSortVerified = a.identifiers?.find(id => id.type === 'EMAIL')?.isVerified || false
+          const bEmailSortVerified = b.identifiers?.find(id => id.type === 'EMAIL')?.isVerified || false
+          if (aEmailSortVerified !== bEmailSortVerified) {
+            // Verified emails come first
+            aValue = aEmailSortVerified ? 0 : 1
+            bValue = bEmailSortVerified ? 0 : 1
+          } else {
+            // Same verification status, sort alphabetically
+            aValue = a.masterEmail?.toLowerCase() || ''
+            bValue = b.masterEmail?.toLowerCase() || ''
+          }
           break
         case 'phone':
-          aValue = a.masterPhone || ''
-          bValue = b.masterPhone || ''
+          // Sort by verification status first, then alphabetically
+          const aPhoneSortVerified = a.identifiers?.find(id => id.type === 'PHONE')?.isVerified || false
+          const bPhoneSortVerified = b.identifiers?.find(id => id.type === 'PHONE')?.isVerified || false
+          if (aPhoneSortVerified !== bPhoneSortVerified) {
+            // Verified phones come first
+            aValue = aPhoneSortVerified ? 0 : 1
+            bValue = bPhoneSortVerified ? 0 : 1
+          } else {
+            // Same verification status, sort alphabetically
+            aValue = a.masterPhone || ''
+            bValue = b.masterPhone || ''
+          }
           break
         case 'source':
           aValue = (a.leads?.[0]?.source || a.clicks?.[0]?.source || a.source || '').toLowerCase()
@@ -925,7 +945,7 @@ export default function CustomersPage() {
   return (
     <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 mb-2 xxs:mb-1 xs:mb-3 sm:mb-6">
-        <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground">Customer Management</h1>
+        <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Customer Management</h1>
         <div className="flex flex-row gap-1 xxs:gap-1 xs:gap-1.5 sm:gap-2 w-full sm:w-auto min-w-0">
           <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
