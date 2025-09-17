@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { X, Save, User, Mail, Phone, MapPin, Globe, Tag, MousePointer, BarChart3, Wifi, Monitor, CheckCircle, ExternalLink } from 'lucide-react'
 
 interface CustomerFormData {
-  fullName: string
+  firstName: string
+  lastName: string
   masterEmail: string
   masterPhone: string
   source: string
@@ -66,7 +67,8 @@ export default function CustomerModal({
   isLoading = false
 }: CustomerModalProps) {
   const [formData, setFormData] = useState<CustomerFormData>({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     masterEmail: '',
     masterPhone: '',
     source: '',
@@ -88,7 +90,8 @@ export default function CustomerModal({
   useEffect(() => {
     if (customer) {
       setFormData({
-        fullName: `${customer.firstName || ''} ${customer.lastName || ''}`.trim(),
+        firstName: customer.firstName || '',
+        lastName: customer.lastName || '',
         masterEmail: customer.masterEmail || '',
         masterPhone: customer.masterPhone || '',
         source: customer.source || '',
@@ -105,7 +108,8 @@ export default function CustomerModal({
       })
     } else {
       setFormData({
-        fullName: '',
+        firstName: '',
+        lastName: '',
         masterEmail: '',
         masterPhone: '',
         source: '',
@@ -140,8 +144,11 @@ export default function CustomerModal({
   const validateForm = () => {
     const newErrors: Partial<CustomerFormData> = {}
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required'
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required'
+    }
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required'
     }
     if (!formData.masterEmail.trim()) {
       newErrors.masterEmail = 'Email is required'
@@ -246,28 +253,53 @@ export default function CustomerModal({
                 </div>
 
                 <div className="space-y-3 xs:space-y-4">
-                  <div>
-                    <label className="block text-sm xs:text-base font-medium text-gray-300 mb-2">
-                      <User className="w-4 h-4 xs:w-5 xs:h-5 inline mr-2 text-yellow-400" />
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.fullName}
-                      onChange={(e) => handleInputChange('fullName', e.target.value)}
-                      className="w-full px-3 xs:px-4 py-2.5 xs:py-3 text-sm xs:text-base text-white placeholder-gray-400 rounded-lg transition-all duration-300 focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/50"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        backdropFilter: 'blur(10px)',
-                        WebkitBackdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
-                      }}
-                      placeholder="Enter full name"
-                      disabled={saving}
-                    />
-                    {errors.fullName && (
-                      <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>
-                    )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 xs:gap-4">
+                    <div>
+                      <label className="block text-sm xs:text-base font-medium text-gray-300 mb-2">
+                        <User className="w-4 h-4 xs:w-5 xs:h-5 inline mr-2 text-yellow-400" />
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        className="w-full px-3 xs:px-4 py-2.5 xs:py-3 text-sm xs:text-base text-white placeholder-gray-400 rounded-lg transition-all duration-300 focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/50"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          backdropFilter: 'blur(10px)',
+                          WebkitBackdropFilter: 'blur(10px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)'
+                        }}
+                        placeholder="Enter first name"
+                        disabled={saving}
+                      />
+                      {errors.firstName && (
+                        <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm xs:text-base font-medium text-gray-300 mb-2">
+                        <User className="w-4 h-4 xs:w-5 xs:h-5 inline mr-2 text-yellow-400" />
+                        Last Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        className="w-full px-3 xs:px-4 py-2.5 xs:py-3 text-sm xs:text-base text-white placeholder-gray-400 rounded-lg transition-all duration-300 focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/50"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          backdropFilter: 'blur(10px)',
+                          WebkitBackdropFilter: 'blur(10px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)'
+                        }}
+                        placeholder="Enter last name"
+                        disabled={saving}
+                      />
+                      {errors.lastName && (
+                        <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>
+                      )}
+                    </div>
                   </div>
 
                   <div>
@@ -684,12 +716,12 @@ export default function CustomerModal({
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1">
                       <User className="w-3 h-3 inline mr-1 text-yellow-400" />
-                      Full Name *
+                      First Name *
                     </label>
                     <input
                       type="text"
-                      value={formData.fullName}
-                      onChange={(e) => handleInputChange('fullName', e.target.value)}
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
                       className="w-full px-3 py-2 text-white placeholder-gray-400 rounded-lg transition-all duration-300 focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/50 text-sm"
                       style={{
                         background: 'rgba(255, 255, 255, 0.05)',
@@ -697,11 +729,35 @@ export default function CustomerModal({
                         WebkitBackdropFilter: 'blur(10px)',
                         border: '1px solid rgba(255, 255, 255, 0.1)'
                       }}
-                      placeholder="Enter full name"
+                      placeholder="Enter first name"
                       disabled={saving}
                     />
-                    {errors.fullName && (
-                      <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>
+                    {errors.firstName && (
+                      <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      <User className="w-3 h-3 inline mr-1 text-yellow-400" />
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className="w-full px-3 py-2 text-white placeholder-gray-400 rounded-lg transition-all duration-300 focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/50 text-sm"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                      }}
+                      placeholder="Enter last name"
+                      disabled={saving}
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>
                     )}
                   </div>
 

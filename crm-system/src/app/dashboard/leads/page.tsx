@@ -172,11 +172,11 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Lead Management</h1>
-          <p className="text-gray-600">Manage and analyze lead submissions</p>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Lead Management</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Manage and analyze lead submissions</p>
         </div>
         <div className="flex gap-3">
           <button className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{

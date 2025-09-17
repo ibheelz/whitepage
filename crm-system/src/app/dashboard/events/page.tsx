@@ -130,16 +130,12 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-primary">
-            User Events
-          </h1>
-          <p className="text-lg text-muted-foreground font-medium mt-2">
-            Track and analyze all user interactions and behavioral events
-          </p>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">User Events</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Track and analyze all user interactions and behavioral events</p>
         </div>
         <button className="premium-button-primary">
           <AnalyticsIcon size={16} className="mr-2" />

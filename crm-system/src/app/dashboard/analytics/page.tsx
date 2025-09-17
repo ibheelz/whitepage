@@ -179,16 +179,12 @@ export default function AnalyticsPage() {
   const conversionRate = totals.clicks > 0 ? (totals.leads / totals.clicks * 100).toFixed(2) : '0.00'
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-primary">
-            Performance Insights
-          </h1>
-          <p className="text-lg text-muted-foreground font-medium mt-2">
-            Advanced analytics and data visualization dashboard
-          </p>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Performance Insights</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Advanced analytics and data visualization dashboard</p>
         </div>
         <div className="flex items-center space-x-3">
           <select

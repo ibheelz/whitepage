@@ -159,16 +159,12 @@ export default function CampaignsPage() {
     : 0
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-primary">
-            Campaign Management
-          </h1>
-          <p className="text-lg text-muted-foreground font-medium mt-2">
-            Create, monitor, and optimize your marketing campaigns
-          </p>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Campaign Management</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Create, monitor, and optimize your marketing campaigns</p>
         </div>
         <div className="flex items-center space-x-3">
           <button className="premium-button-secondary">

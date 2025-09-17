@@ -122,17 +122,34 @@ export class CustomerService {
       // Create new customer
       const customerData: any = {
         masterEmail: email,
-        masterPhone: phone,
         firstSeen: new Date(),
         lastSeen: new Date(),
         assignedTeam: contextData?.assignedTeam || [],
         ...contextData
       }
 
-      const newCustomer = await prisma.customer.create({
-        data: customerData,
-        include: { identifiers: true }
-      })
+      // Only set masterPhone if it doesn't already exist in the database
+      if (phone) {
+        const existingPhoneCustomer = await prisma.customer.findFirst({
+          where: { masterPhone: phone }
+        })
+
+        if (!existingPhoneCustomer) {
+          customerData.masterPhone = phone
+        }
+      }
+
+      let newCustomer
+      try {
+        newCustomer = await prisma.customer.create({
+          data: customerData,
+          include: { identifiers: true }
+        })
+      } catch (createError) {
+        console.error('Customer creation error:', createError)
+        console.error('Customer data that failed:', customerData)
+        throw createError
+      }
 
       // Add all identifiers
       await this.addMissingIdentifiers(newCustomer.id, identificationData)

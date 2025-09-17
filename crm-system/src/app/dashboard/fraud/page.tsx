@@ -144,16 +144,12 @@ export default function FraudMonitorPage() {
   const threatLevel = criticalAlerts > 0 ? 'high' : highAlerts > 0 ? 'medium' : 'low'
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-primary">
-            Fraud Monitor
-          </h1>
-          <p className="text-lg text-muted-foreground font-medium mt-2">
-            Advanced security monitoring and fraud protection system
-          </p>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Fraud Monitor</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Advanced security monitoring and fraud protection system</p>
         </div>
         <div className="flex items-center space-x-3">
           <div className={`flex items-center space-x-2 px-4 py-2 rounded-2xl ${

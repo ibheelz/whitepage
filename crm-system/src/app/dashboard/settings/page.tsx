@@ -136,11 +136,11 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-primary">System Settings</h1>
-          <p className="text-gray-600">Manage webhooks, integrations, and system configuration</p>
+          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">System Settings</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Manage webhooks, integrations, and system configuration</p>
         </div>
         <Button onClick={() => setShowCreateForm(true)}>
           Add Webhook
