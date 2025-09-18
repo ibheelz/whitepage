@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
 interface AvatarProps {
@@ -13,6 +13,7 @@ interface AvatarProps {
 
 export function Avatar({ firstName, lastName, userId, size = 'md', className }: AvatarProps) {
   const [imageError, setImageError] = useState(false)
+  const [useInitials, setUseInitials] = useState(true) // Start with initials
 
   // Generate initials fallback
   const getInitials = () => {
@@ -21,16 +22,38 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return first + last || '?'
   }
 
+  // Test if DiceBear API is accessible with timeout
+  useEffect(() => {
+    if (!firstName && !lastName && !userId) return
+
+    const testImage = new Image()
+    const seed = userId || `${firstName || ''}-${lastName || ''}`.toLowerCase().replace(/\s+/g, '-')
+    const timeout = setTimeout(() => {
+      // If image doesn't load within 2 seconds, stick with initials
+      setUseInitials(true)
+    }, 2000)
+
+    testImage.onload = () => {
+      clearTimeout(timeout)
+      setUseInitials(false) // Switch to avatar if it loads quickly
+    }
+
+    testImage.onerror = () => {
+      clearTimeout(timeout)
+      setUseInitials(true)
+    }
+
+    testImage.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&size=32&backgroundColor=374151`
+  }, [firstName, lastName, userId])
+
   // Generate avatar URL
   const generateAvatarUrl = () => {
     const seed = userId || `${firstName || ''}-${lastName || ''}`.toLowerCase().replace(/\s+/g, '-')
-    const styles = ['avataaars', 'personas', 'identicon', 'initials']
-    const selectedStyle = styles[Math.abs(seed.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % styles.length]
-
     const sizeMap = { sm: 32, md: 40, lg: 48 }
     const avatarSize = sizeMap[size]
 
-    return `https://api.dicebear.com/7.x/${selectedStyle}/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151`
+    // Use the more reliable initials style from DiceBear
+    return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151`
   }
 
   // Size classes
@@ -51,8 +74,8 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return colors[colorIndex]
   }
 
-  if (imageError) {
-    // Show initials fallback
+  if (useInitials || imageError) {
+    // Show custom initials fallback (more reliable than DiceBear)
     return (
       <div
         className={cn(
