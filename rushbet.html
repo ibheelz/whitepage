@@ -723,15 +723,7 @@
                         <label for="phone">Número de Teléfono <span class="required">*</span></label>
                         <div class="phone-container">
                             <select id="countryCode" name="countryCode">
-                                <option value="+56">🇨🇱 Chile (+56)</option>
-                                <option value="+54">🇦🇷 Argentina (+54)</option>
-                                <option value="+57">🇨🇴 Colombia (+57)</option>
                                 <option value="+51">🇵🇪 Perú (+51)</option>
-                                <option value="+58">🇻🇪 Venezuela (+58)</option>
-                                <option value="+593">🇪🇨 Ecuador (+593)</option>
-                                <option value="+591">🇧🇴 Bolivia (+591)</option>
-                                <option value="+595">🇵🇾 Paraguay (+595)</option>
-                                <option value="+598">🇺🇾 Uruguay (+598)</option>
                             </select>
                             <div class="input-wrapper" style="flex: 1;">
                                 <input
@@ -1457,12 +1449,15 @@
                             debugSuccess(`📎 Image uploaded successfully: ${screenshotUrl}`);
                         } catch (error) {
                             debugError(`📎 Image upload failed:`, error);
-                            screenshotUrl = null;
+                            this.showErrorModal('Error al subir la imagen. Por favor, intenta nuevamente con una imagen diferente.');
+                            return;
                         }
                     }
 
-                    const userIP = await this.getUserIP();
-                    debugLog(`🌐 User IP: ${userIP}`);
+                    // Get comprehensive geo data
+                    debugLog('🌍 Getting geo mapping data...');
+                    const geoData = await this.getGeoData();
+                    debugTable(geoData, '🌍 Geo Data');
 
                     const airtableData = {
                         fields: {
@@ -1471,8 +1466,19 @@
                             'Phone': this.state.formData.countryCode + this.state.formData.phone,
                             'Country': this.getCountryFromCode(this.state.formData.countryCode),
                             'Participation Date': new Date().toISOString(),
-                            'IP': userIP,
+                            'IP': geoData.ip,
+                            'ISP': geoData.isp,
+                            'Location': geoData.location,
+                            'City': geoData.city,
+                            'Region': geoData.region,
+                            'Country Code': geoData.countryCode,
+                            'Latitude': geoData.latitude,
+                            'Longitude': geoData.longitude,
+                            'Timezone': geoData.timezone,
                             'User Agent': navigator.userAgent,
+                            'Browser': geoData.browser,
+                            'OS': geoData.os,
+                            'Device': geoData.device,
                             'Timestamp': Date.now(),
                             'Email Verified': this.state.emailVerified,
                             'Screenshot': screenshotUrl ? [{
@@ -1551,73 +1557,75 @@
             }
 
             async uploadToImageHost(file) {
-                try {
-                    // Convert file to base64 for ImgBB API
-                    const base64Data = await this.fileToBase64(file);
-                    const base64Image = base64Data.split(',')[1]; // Remove data:image/... prefix
+                return new Promise((resolve, reject) => {
+                    try {
+                        debugLog('📤 Uploading directly to ImgBB (XMLHttpRequest method)...');
 
-                    debugLog('📤 Uploading to ImgBB...');
-                    const formData = new FormData();
-                    formData.append('image', base64Image);
+                        // Convert file to base64
+                        this.fileToBase64(file).then(base64Data => {
+                            const base64Image = base64Data.split(',')[1]; // Remove data:image/... prefix
 
-                    // Use your ImgBB API key with 600 second expiration
-                    const response = await fetch('https://api.imgbb.com/1/upload?expiration=600&key=93c7220f0a74234db136ceffd29db272', {
-                        method: 'POST',
-                        body: formData
-                    });
+                            // Create FormData
+                            const formData = new FormData();
+                            formData.append('image', base64Image);
 
-                    if (response.ok) {
-                        const result = await response.json();
-                        debugSuccess(`📤 ImgBB upload successful!`);
-                        debugTable(result.data, '📷 Image Details');
+                            // Create XMLHttpRequest
+                            const xhr = new XMLHttpRequest();
 
-                        if (result.data && result.data.url) {
-                            return result.data.url;
-                        }
-                    } else {
-                        const errorText = await response.text();
-                        debugError(`📤 ImgBB upload failed (${response.status}):`, errorText);
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4) {
+                                    if (xhr.status === 200) {
+                                        try {
+                                            const result = JSON.parse(xhr.responseText);
+                                            if (result.success && result.data && result.data.url) {
+                                                debugSuccess(`📤 ImgBB upload successful!`);
+                                                debugTable(result.data, '📷 ImgBB Image Details');
+                                                resolve(result.data.url);
+                                            } else {
+                                                debugError('📤 ImgBB returned invalid response:', result);
+                                                reject(new Error('ImgBB returned invalid response'));
+                                            }
+                                        } catch (parseError) {
+                                            debugError('📤 Failed to parse ImgBB response:', parseError);
+                                            reject(new Error('Failed to parse ImgBB response'));
+                                        }
+                                    } else {
+                                        debugError(`📤 ImgBB upload failed with status: ${xhr.status}`);
+                                        debugError('📤 Response:', xhr.responseText);
+                                        reject(new Error(`ImgBB upload failed: ${xhr.status}`));
+                                    }
+                                }
+                            };
+
+                            xhr.onerror = function() {
+                                debugError('📤 XMLHttpRequest error occurred');
+                                reject(new Error('Network error during upload'));
+                            };
+
+                            xhr.ontimeout = function() {
+                                debugError('📤 Upload request timed out');
+                                reject(new Error('Upload request timed out'));
+                            };
+
+                            // Configure request
+                            xhr.timeout = 30000; // 30 second timeout
+                            xhr.open('POST', `https://api.imgbb.com/1/upload?expiration=600&key=93c7220f0a74234db136ceffd29db272`, true);
+
+                            debugLog('📤 Sending to ImgBB API via XMLHttpRequest...');
+                            xhr.send(formData);
+
+                        }).catch(error => {
+                            debugError('📤 Base64 conversion failed:', error);
+                            reject(new Error('Base64 conversion failed'));
+                        });
+
+                    } catch (error) {
+                        debugError('📤 Upload initialization failed:', error);
+                        reject(new Error(`Upload initialization failed: ${error.message}`));
                     }
-
-                    debugWarning('ImgBB failed, trying fallback...');
-                    return await this.uploadToFallbackService(file);
-                } catch (error) {
-                    debugError('Image upload error:', error);
-                    return await this.uploadToFallbackService(file);
-                }
+                });
             }
 
-            async uploadToFallbackService(file) {
-                try {
-                    // Try imgbb with a working API key
-                    const base64Data = await this.fileToBase64(file);
-                    const base64Image = base64Data.split(',')[1];
-
-                    debugLog('📤 Trying imgbb.com...');
-                    const formData = new FormData();
-                    formData.append('image', base64Image);
-
-                    // Using a free public API key (limited but should work for testing)
-                    const response = await fetch('https://api.imgbb.com/1/upload?key=5b0af7ff4b3b7e4b4b4b4b4b4b4b4b4b', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.data && result.data.url) {
-                            return result.data.url;
-                        }
-                    }
-
-                    debugWarning('All upload services failed - using placeholder');
-                    // Return a placeholder image URL that will show in Airtable
-                    return 'https://via.placeholder.com/400x300/ff2400/ffffff?text=Screenshot+Uploaded';
-                } catch (error) {
-                    debugWarning('Upload fallback failed:', error);
-                    return 'https://via.placeholder.com/400x300/ff2400/ffffff?text=Screenshot+Error';
-                }
-            }
 
             async checkDuplicateEmail(email) {
                 try {
@@ -1693,30 +1701,136 @@
                 }
             }
 
-            async getUserIP() {
+            async getGeoData() {
                 try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    return data.ip;
+                    debugLog('🌍 Fetching comprehensive geo data...');
+
+                    // Get detailed IP and location info
+                    const ipResponse = await fetch('https://ipapi.co/json/');
+                    const ipData = await ipResponse.json();
+
+                    debugLog('🌍 IP data received:', ipData);
+
+                    // Get additional browser/device info
+                    const browserInfo = this.getBrowserInfo();
+
+                    // Get user's actual geolocation if available
+                    const coordinates = await this.getUserCoordinates();
+
+                    const geoData = {
+                        // IP and ISP info
+                        ip: ipData.ip || 'Unknown',
+                        isp: ipData.org || 'Unknown',
+
+                        // Location info
+                        location: `${ipData.city || 'Unknown'}, ${ipData.region || 'Unknown'}, ${ipData.country_name || 'Unknown'}`,
+                        city: ipData.city || 'Unknown',
+                        region: ipData.region || 'Unknown',
+                        countryCode: ipData.country_code || 'Unknown',
+
+                        // Coordinates
+                        latitude: coordinates.lat || ipData.latitude || 'Unknown',
+                        longitude: coordinates.lon || ipData.longitude || 'Unknown',
+
+                        // Time and locale
+                        timezone: ipData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+
+                        // Browser and device info
+                        browser: browserInfo.browser,
+                        os: browserInfo.os,
+                        device: browserInfo.device,
+
+                        // Additional data
+                        language: navigator.language || 'Unknown',
+                        screen: `${screen.width}x${screen.height}`,
+                        viewport: `${window.innerWidth}x${window.innerHeight}`
+                    };
+
+                    debugSuccess('🌍 Complete geo data collected');
+                    return geoData;
+
                 } catch (error) {
-                    debugError('Error getting IP:', error);
-                    return 'Unknown';
+                    debugError('🌍 Error getting geo data:', error);
+
+                    // Fallback basic data
+                    return {
+                        ip: 'Unknown',
+                        isp: 'Unknown',
+                        location: 'Unknown',
+                        city: 'Unknown',
+                        region: 'Unknown',
+                        countryCode: 'Unknown',
+                        latitude: 'Unknown',
+                        longitude: 'Unknown',
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        browser: this.getBrowserInfo().browser,
+                        os: this.getBrowserInfo().os,
+                        device: this.getBrowserInfo().device,
+                        language: navigator.language || 'Unknown',
+                        screen: `${screen.width}x${screen.height}`,
+                        viewport: `${window.innerWidth}x${window.innerHeight}`
+                    };
                 }
+            }
+
+            async getUserCoordinates() {
+                return new Promise((resolve) => {
+                    if (!navigator.geolocation) {
+                        debugLog('🌍 Geolocation not supported');
+                        resolve({ lat: null, lon: null });
+                        return;
+                    }
+
+                    debugLog('🌍 Requesting user coordinates...');
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            debugSuccess(`🌍 User coordinates: ${position.coords.latitude}, ${position.coords.longitude}`);
+                            resolve({
+                                lat: position.coords.latitude,
+                                lon: position.coords.longitude
+                            });
+                        },
+                        (error) => {
+                            debugLog(`🌍 Geolocation denied or failed: ${error.message}`);
+                            resolve({ lat: null, lon: null });
+                        },
+                        { timeout: 10000, enableHighAccuracy: false }
+                    );
+                });
+            }
+
+            getBrowserInfo() {
+                const ua = navigator.userAgent;
+                let browser = 'Unknown';
+                let os = 'Unknown';
+                let device = 'Desktop';
+
+                // Detect browser
+                if (ua.includes('Firefox')) browser = 'Firefox';
+                else if (ua.includes('Chrome')) browser = 'Chrome';
+                else if (ua.includes('Safari')) browser = 'Safari';
+                else if (ua.includes('Edge')) browser = 'Edge';
+                else if (ua.includes('Opera')) browser = 'Opera';
+
+                // Detect OS
+                if (ua.includes('Windows')) os = 'Windows';
+                else if (ua.includes('Mac')) os = 'macOS';
+                else if (ua.includes('Linux')) os = 'Linux';
+                else if (ua.includes('Android')) os = 'Android';
+                else if (ua.includes('iOS')) os = 'iOS';
+
+                // Detect device type
+                if (ua.includes('Mobile') || ua.includes('Android')) device = 'Mobile';
+                else if (ua.includes('Tablet') || ua.includes('iPad')) device = 'Tablet';
+
+                return { browser, os, device };
             }
 
             getCountryFromCode(code) {
                 const countries = {
-                    '+56': 'Chile',
-                    '+54': 'Argentina',
-                    '+57': 'Colombia',
-                    '+51': 'Perú',
-                    '+58': 'Venezuela',
-                    '+593': 'Ecuador',
-                    '+591': 'Bolivia',
-                    '+595': 'Paraguay',
-                    '+598': 'Uruguay'
+                    '+51': 'Perú'
                 };
-                return countries[code] || 'Unknown';
+                return countries[code] || 'Peru';
             }
 
             showEmailOtpCard() {
