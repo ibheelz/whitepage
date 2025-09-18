@@ -16,12 +16,15 @@ export async function POST() {
 
     // Create the tables if they don't exist - execute each statement separately
     const statements = [
+      // Create AdminRole enum
+      `CREATE TYPE "AdminRole" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'ANALYST', 'VIEWER')`,
+
       // Create AdminUser table
       `CREATE TABLE IF NOT EXISTS "admin_users" (
         "id" TEXT NOT NULL,
         "email" TEXT NOT NULL,
         "passwordHash" TEXT NOT NULL,
-        "role" TEXT NOT NULL DEFAULT 'ANALYST',
+        "role" "AdminRole" NOT NULL DEFAULT 'ANALYST',
         "firstName" TEXT,
         "lastName" TEXT,
         "isActive" BOOLEAN NOT NULL DEFAULT true,

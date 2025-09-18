@@ -13,7 +13,8 @@ export async function POST() {
       'DROP TABLE IF EXISTS "clicks" CASCADE',
       'DROP TABLE IF EXISTS "leads" CASCADE',
       'DROP TABLE IF EXISTS "customers" CASCADE',
-      'DROP TABLE IF EXISTS "admin_users" CASCADE'
+      'DROP TABLE IF EXISTS "admin_users" CASCADE',
+      'DROP TYPE IF EXISTS "AdminRole" CASCADE'
     ]
 
     for (const statement of dropStatements) {
