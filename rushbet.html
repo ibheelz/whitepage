@@ -761,7 +761,7 @@
                                 <div class="upload-text">Sube tu captura de apuesta</div>
                                 <div class="upload-subtext">Arrastra y suelta o haz clic para seleccionar (PNG, JPG, JPEG - Max 5MB)</div>
                             </div>
-                            <input type="file" id="fileInput" accept="image/*" required>
+                            <input type="file" id="fileInput" name="screenshot" accept="image/*" required>
                             <div class="file-preview" id="filePreview">
                                 <div class="file-info">
                                     <div class="file-name" id="fileName"></div>
@@ -951,7 +951,7 @@
                 this.config = {
                     DEBUG: true,
                     // Email verification service (same as PIN-UP)
-                    emailVerificationUrl: 'http://localhost:3001/api/email-verify',
+                    emailVerificationUrl: 'https://email-verification-backend-psi.vercel.app/api/email-verify',
 
                     // SMS verification via Real Laaffic (same as PIN-UP)
                     smsVerificationUrl: 'https://verification-backend-gp9n5xldp-miela-digitals-projects.vercel.app/api/phone-verify',
@@ -1327,9 +1327,10 @@
 
                 try {
                     const emailData = {
+                        action: 'send-code',
                         email: this.state.formData.email,
-                        name: this.state.formData.fullName,
-                        source: 'rushbet-giveaway'
+                        language: 'es',
+                        expiryMinutes: 10
                     };
 
                     debugTable(emailData, '📧 Email Verification Request');
@@ -1349,12 +1350,12 @@
                     debugTable(result, '📧 Email Verification Response');
 
                     if (result.success) {
-                        this.state.emailOtpCode = result.code;
-                        debugSuccess(`📧 Email verification sent! OTP: ${result.code}`);
+                        this.state.emailVerificationId = result.verificationId;
+                        debugSuccess(`📧 Email verification sent! ID: ${result.verificationId}`);
                         this.showEmailOtpCard();
                         this.showValidation('email', 'success', 'Código enviado a tu email');
                     } else {
-                        throw new Error(result.message || 'Error al enviar código de verificación');
+                        throw new Error(result.error || 'Error al enviar código de verificación');
                     }
                 } catch (error) {
                     debugError('📧 Email verification error:', error);
@@ -1373,35 +1374,71 @@
                 const enteredCode = Array.from(inputs).map(input => input.value).join('');
 
                 debugLog('Verifying email OTP:', enteredCode);
+                this.showLoading(true);
 
-                const verificationStatus = document.getElementById('verificationStatus');
+                try {
+                    const verifyData = {
+                        action: 'verify-code',
+                        verificationId: this.state.emailVerificationId,
+                        code: enteredCode
+                    };
 
-                if (enteredCode === this.state.emailOtpCode) {
-                    this.state.emailVerified = true;
+                    debugTable(verifyData, '📧 OTP Verification Request');
 
-                    // Show success status
-                    verificationStatus.className = 'verification-status success';
-                    verificationStatus.textContent = '✓ Email verificado correctamente';
+                    const response = await fetch(this.config.emailVerificationUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(verifyData)
+                    });
 
-                    // Update main validation
-                    this.showValidation('email', 'success', '✓ Email verificado correctamente');
+                    const result = await response.json();
+                    debugTable(result, '📧 OTP Verification Response');
 
-                    // Clear timer
-                    this.clearOtpTimer();
+                    const verificationStatus = document.getElementById('verificationStatus');
 
-                    // Submit to Airtable after successful email verification
-                    setTimeout(() => {
-                        this.hideEmailOtpCard();
-                        this.submitToAirtable();
-                    }, 1500);
-                } else {
-                    // Show error status
+                    if (result.success && result.valid) {
+                        this.state.emailVerified = true;
+
+                        // Show success status
+                        verificationStatus.className = 'verification-status success';
+                        verificationStatus.textContent = '✓ Email verificado correctamente';
+
+                        // Update main validation
+                        this.showValidation('email', 'success', '✓ Email verificado correctamente');
+
+                        // Clear timer
+                        this.clearOtpTimer();
+
+                        // Submit to Airtable after successful email verification
+                        setTimeout(() => {
+                            this.hideEmailOtpCard();
+                            this.submitToAirtable();
+                        }, 1500);
+
+                        debugSuccess('✓ Email verified successfully!');
+                    } else {
+                        // Show error status
+                        verificationStatus.className = 'verification-status error';
+                        verificationStatus.textContent = result.error || '❌ Código incorrecto. Intenta nuevamente.';
+
+                        // Clear OTP inputs
+                        inputs.forEach(input => {
+                            input.value = '';
+                            input.classList.add('error');
+                        });
+                        inputs[0].focus();
+
+                        debugError('✗ Email verification failed:', result.error);
+                    }
+                } catch (error) {
+                    debugError('📧 OTP verification error:', error);
+                    const verificationStatus = document.getElementById('verificationStatus');
                     verificationStatus.className = 'verification-status error';
-                    verificationStatus.textContent = '❌ Código incorrecto. Intenta nuevamente.';
-
-                    // Clear OTP inputs
-                    inputs.forEach(input => input.value = '');
-                    inputs[0].focus();
+                    verificationStatus.textContent = 'Error al verificar código';
+                } finally {
+                    this.showLoading(false);
                 }
             }
 
