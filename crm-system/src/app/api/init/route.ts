@@ -8,6 +8,8 @@ export async function POST() {
   // Generate a simple ID (since we can't import cuid in this context)
   const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9)
 
+  console.log('🚀 Starting database initialization v2...')
+
   try {
     console.log('🚀 Starting database initialization...')
 
