@@ -61,14 +61,14 @@ export default function SearchPage() {
     }
   }
 
-  const getDisplayName = (user: SearchResult) => {
+  const getDisplayName = (customer: SearchResult) => {
     if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`
     }
     return user.masterEmail || user.masterPhone || 'Unknown User'
   }
 
-  const getLocation = (user: SearchResult) => {
+  const getLocation = (customer: SearchResult) => {
     if (user.city && user.country) {
       return `${user.city}, ${user.country}`
     }

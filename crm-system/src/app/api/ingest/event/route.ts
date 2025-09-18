@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       updateData.totalRevenue = { increment: validatedData.value }
     }
 
-    await prisma.user.update({
+    await prisma.customer.update({
       where: { id: user.id },
       data: updateData
     })

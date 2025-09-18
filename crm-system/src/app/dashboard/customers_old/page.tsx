@@ -21,7 +21,7 @@ export default function UsersPage() {
     }, 1000)
   }, [])
 
-  const filteredUsers = users.filter((user: any) =>
+  const filteredUsers = users.filter((customer: any) =>
     user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -83,7 +83,7 @@ export default function UsersPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.map((user: any, index) => (
+          {filteredUsers.map((customer: any, index) => (
             <Link
               key={user.id}
               href={`/dashboard/users/${user.id}`}

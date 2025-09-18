@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       prisma.lead.findMany({
         where,
         include: {
-          user: {
+          customer: {
             select: {
               id: true,
               masterEmail: true,

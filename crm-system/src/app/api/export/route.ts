@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const filters = { limit }
-    let data: string | Buffer
+    let data: any
     let filename: string
     let contentType: string
 

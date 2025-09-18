@@ -24,7 +24,7 @@ interface Lead {
   value: number | null
   currency: string | null
   createdAt: string
-  user: {
+  customer: {
     id: string
     masterEmail: string | null
     masterPhone: string | null

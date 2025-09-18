@@ -27,7 +27,7 @@ export default function SignInPage() {
         setError('Invalid credentials')
       } else {
         const session = await getSession()
-        if (session?.user?.userType === 'client') {
+        if ((session?.user as any)?.userType === 'client') {
           router.push('/client/dashboard')
         } else {
           router.push('/dashboard')

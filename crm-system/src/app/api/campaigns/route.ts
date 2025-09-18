@@ -19,8 +19,7 @@ export async function GET(request: NextRequest) {
             // Clicks
             prisma.click.aggregate({
               where: { campaign: campaign.slug },
-              _count: true,
-              _sum: { userId: true } // Count unique users (approximate)
+              _count: true
             }),
             // Leads
             prisma.lead.aggregate({
@@ -37,8 +36,8 @@ export async function GET(request: NextRequest) {
             })
           ])
 
-          // Get unique users for this campaign
-          const uniqueUsers = await prisma.user.count({
+          // Get unique customers for this campaign
+          const uniqueCustomers = await prisma.customer.count({
             where: {
               OR: [
                 { clicks: { some: { campaign: campaign.slug } } },
@@ -79,7 +78,7 @@ export async function GET(request: NextRequest) {
               totalClicks,
               totalLeads,
               totalEvents,
-              uniqueUsers,
+              uniqueCustomers,
               duplicateLeads,
               fraudClicks,
               conversionRate: Math.round(conversionRate * 100) / 100,

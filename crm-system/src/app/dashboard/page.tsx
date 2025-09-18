@@ -247,11 +247,11 @@ export default function DashboardPage() {
   const revenueData = [850, 920, 1100, 980, 1250, 1400, 1320, 1450, 1520, 1380, 1620, 1750]
 
   const realtimeActivities = [
-    { type: 'user_signup', user: 'John Doe', time: '2 minutes ago', value: '+$120' },
-    { type: 'lead_converted', user: 'Sarah Smith', time: '5 minutes ago', value: '+$450' },
-    { type: 'click_event', user: 'Mike Johnson', time: '8 minutes ago', value: '+1 click' },
-    { type: 'revenue', user: 'Emma Davis', time: '12 minutes ago', value: '+$230' },
-    { type: 'user_signup', user: 'Alex Brown', time: '15 minutes ago', value: '+$95' },
+    { type: 'user_signup', customer: 'John Doe', time: '2 minutes ago', value: '+$120' },
+    { type: 'lead_converted', customer: 'Sarah Smith', time: '5 minutes ago', value: '+$450' },
+    { type: 'click_event', customer: 'Mike Johnson', time: '8 minutes ago', value: '+1 click' },
+    { type: 'revenue', customer: 'Emma Davis', time: '12 minutes ago', value: '+$230' },
+    { type: 'user_signup', customer: 'Alex Brown', time: '15 minutes ago', value: '+$95' },
   ]
 
   return (

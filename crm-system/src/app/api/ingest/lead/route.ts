@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
 
     if (validatedData.value && validatedData.value > 0) {
       updateData.totalRevenue = { increment: validatedData.value }
-      console.log('💰 [LEAD API] Adding revenue to user:', validatedData.value)
+      console.log('💰 [LEAD API] Adding revenue to customer:', validatedData.value)
     }
 
     console.log('👤 [LEAD API] User update data:', updateData)
@@ -265,7 +265,6 @@ export async function POST(request: NextRequest) {
     console.log('📤 [LEAD API] Returning success response:', {
       leadId: lead.id,
       customerId: user.id,
-      customerId: user.id,
       isDuplicate,
       qualityScore,
       processingTime
@@ -274,7 +273,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       leadId: lead.id,
-      customerId: user.id,
       customerId: user.id,
       isDuplicate,
       qualityScore,

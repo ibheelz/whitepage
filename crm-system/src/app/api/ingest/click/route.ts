@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
 
     // Update user click count
     if (user) {
-      await prisma.user.update({
+      await prisma.customer.update({
         where: { id: user.id },
         data: {
           totalClicks: { increment: 1 },

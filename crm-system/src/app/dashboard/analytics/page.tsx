@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { RefreshIcon, WorldIcon, GraphIcon, DeviceIcon, WarningIcon } from '@/components/ui/icons'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface AnalyticsData {
   timeSeries: Array<{
