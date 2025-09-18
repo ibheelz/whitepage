@@ -16,6 +16,7 @@ import {
   FlashIcon,
   UserIcon
 } from '@/components/ui/icons'
+import { Avatar } from '@/components/ui/avatar'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -177,10 +178,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
                     title="User menu"
                   >
-                    <img
-                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=40&backgroundColor=374151"
-                      alt="Abiola"
-                      className="w-full h-full object-cover"
+                    <Avatar
+                      firstName="Abiola"
+                      lastName="Admin"
+                      size="md"
+                      className="w-full h-full"
                     />
                   </button>
                   {/* Simple logout modal */}
@@ -225,10 +227,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                       className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
                       title="User menu"
                     >
-                      <img
-                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=40&backgroundColor=374151"
-                        alt="Abiola"
-                        className="w-full h-full object-cover"
+                      <Avatar
+                        firstName="Abiola"
+                        lastName="Admin"
+                        size="md"
+                        className="w-full h-full"
                       />
                     </button>
 
@@ -265,10 +268,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               ) : (
                 <div className="premium-card hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center space-x-3">
-                    <img
-                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=abiola&size=48&backgroundColor=374151"
-                      alt="Abiola"
-                      className="w-12 h-12 rounded-full ring-2 ring-white/10"
+                    <Avatar
+                      firstName="Abiola"
+                      lastName="Admin"
+                      size="lg"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-foreground truncate">

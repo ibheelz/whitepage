@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Search, Edit, Trash2, Grid3X3, List, Plus, X } from 'lucide-react'
 import { ExportIcon, ImportIcon, PlusIcon } from '@/components/ui/icons'
 import CustomerModal from '@/components/ui/customer-modal'
+import { Avatar } from '@/components/ui/avatar'
 
 // Hook to detect screen size
 const useScreenSize = () => {
@@ -108,17 +109,7 @@ export default function CustomersPage() {
   // Force cards view on small screens
   const effectiveViewMode = isSmallScreen ? 'cards' : viewMode
 
-  // Generate avatar URL using real avatar images
-  const generateAvatarUrl = (firstName?: string, lastName?: string, customerId?: string) => {
-    // Use a deterministic seed based on name/ID to get consistent avatars
-    const seed = customerId || `${firstName || ''}-${lastName || ''}`.toLowerCase().replace(/\s+/g, '-')
-
-    // Using DiceBear API for real avatar images with various styles
-    const styles = ['avataaars', 'personas', 'bottts', 'identicon', 'initials', 'lorelei', 'micah', 'open-peeps']
-    const selectedStyle = styles[parseInt(seed.slice(-1), 36) % styles.length] || 'avataaars'
-
-    return `https://api.dicebear.com/7.x/${selectedStyle}/svg?seed=${encodeURIComponent(seed)}&size=32&backgroundColor=374151`
-  }
+  // Using custom Avatar component instead of external API
 
   // Add verbose debugging state
   const [debugInfo, setDebugInfo] = useState<string[]>([])
@@ -1342,10 +1333,11 @@ export default function CustomersPage() {
                   </td>
                   <td className="px-6 py-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={generateAvatarUrl(customer.firstName, customer.lastName, customer.id)}
-                        alt={`${customer.firstName} ${customer.lastName}`}
-                        className="w-8 h-8 rounded-full ring-2 ring-white/10"
+                      <Avatar
+                        firstName={customer.firstName}
+                        lastName={customer.lastName}
+                        userId={customer.id}
+                        size="sm"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
@@ -1515,10 +1507,12 @@ export default function CustomersPage() {
                 {/* Compact Header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <img
-                      src={generateAvatarUrl(customer.firstName, customer.lastName, customer.id)}
-                      alt={`${customer.firstName} ${customer.lastName}`}
-                      className="w-10 h-10 rounded-full ring-2 ring-white/10 flex-shrink-0"
+                    <Avatar
+                      firstName={customer.firstName}
+                      lastName={customer.lastName}
+                      userId={customer.id}
+                      size="md"
+                      className="flex-shrink-0"
                     />
                     <div className="min-w-0 flex-1">
                       <h3 className="font-semibold text-foreground text-sm truncate">
@@ -1632,10 +1626,12 @@ export default function CustomersPage() {
               <div className="flex items-start justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   <div className="relative flex-shrink-0">
-                    <img
-                      src={generateAvatarUrl(customer.firstName, customer.lastName, customer.id)}
-                      alt={`${customer.firstName} ${customer.lastName}`}
-                      className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full ring-2 ring-white/10"
+                    <Avatar
+                      firstName={customer.firstName}
+                      lastName={customer.lastName}
+                      userId={customer.id}
+                      size="md"
+                      className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12"
                     />
                     {/* Status indicator */}
                     <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white/20" style={{
