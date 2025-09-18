@@ -1515,7 +1515,7 @@ export default function CustomersPage() {
                       className="flex-shrink-0"
                     />
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-foreground text-sm truncate">
+                      <h3 className="font-semibold text-sm truncate" style={{ color: 'white !important' }}>
                         {customer.firstName} {customer.lastName}
                       </h3>
                       <p className="text-xs text-muted-foreground truncate">
@@ -1549,7 +1549,7 @@ export default function CustomersPage() {
                     <span className="text-muted-foreground">Location</span>
                     <div className="flex items-center gap-1.5 max-w-[120px]">
                       <span className="text-sm">{getCountryFlag(customer.country)}</span>
-                      <span className="text-foreground truncate">
+                      <span className="truncate" style={{ color: 'white !important' }}>
                         {customer.city}, {customer.country}
                       </span>
                     </div>
@@ -1639,7 +1639,7 @@ export default function CustomersPage() {
                     }}></div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-foreground text-sm sm:text-base lg:text-lg truncate">
+                    <h3 className="font-semibold text-sm sm:text-base lg:text-lg truncate" style={{ color: 'white !important' }}>
                       {customer.firstName} {customer.lastName}
                     </h3>
                     <p className="text-xs sm:text-sm text-muted-foreground truncate font-mono">
@@ -1703,7 +1703,7 @@ export default function CustomersPage() {
                   <span className="text-xs text-muted-foreground uppercase tracking-wider flex-shrink-0">Location</span>
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-base">{getCountryFlag(customer.country)}</span>
-                    <span className="text-xs sm:text-sm text-foreground truncate text-right">
+                    <span className="text-xs sm:text-sm truncate text-right" style={{ color: 'white !important' }}>
                       {customer.city}, {customer.country}
                     </span>
                   </div>
