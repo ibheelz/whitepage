@@ -1044,6 +1044,12 @@
 
                 input.value = value; // Normalize email
 
+                // Check if email is already verified
+                if (this.state.emailVerified && this.state.formData?.email === value) {
+                    this.showValidation('email', 'success', '✓ Email verificado correctamente');
+                    return true;
+                }
+
                 // Auto-trigger email verification for valid emails (like PIN-UP)
                 this.state.formData = this.state.formData || {};
                 this.state.formData.email = value;
@@ -1363,15 +1369,23 @@
                 const timerText = document.getElementById('timerText');
                 const resendBtn = document.getElementById('resendEmailBtn');
 
+                // Check if elements exist before starting timer
+                if (!countdown || !timerText || !resendBtn) {
+                    debugWarning('Timer elements not found, skipping timer');
+                    return;
+                }
+
                 this.otpTimer = setInterval(() => {
                     timeLeft--;
-                    countdown.textContent = timeLeft;
+                    if (countdown) countdown.textContent = timeLeft;
 
                     if (timeLeft <= 0) {
                         this.clearOtpTimer();
-                        timerText.textContent = 'Código expirado';
-                        resendBtn.disabled = false;
-                        resendBtn.textContent = 'Reenviar Código';
+                        if (timerText) timerText.textContent = 'Código expirado';
+                        if (resendBtn) {
+                            resendBtn.disabled = false;
+                            resendBtn.textContent = 'Reenviar Código';
+                        }
                     }
                 }, 1000);
             }
@@ -1408,7 +1422,7 @@
                             'Email': this.state.formData.email,
                             'Phone': this.state.formData.countryCode + this.state.formData.phone,
                             'Country': this.getCountryFromCode(this.state.formData.countryCode),
-                            'Screenshot': attachment ? [attachment] : [],
+                            'Screenshot': this.state.uploadedFile ? this.state.uploadedFile.name : 'No attachment',
                             'Participation Date': new Date().toISOString(),
                             'IP': userIP,
                             'User Agent': navigator.userAgent,
@@ -1474,15 +1488,9 @@
                             filename: this.state.uploadedFile.name
                         };
                     } else {
-                        // Fallback to base64 if direct upload fails
-                        debugLog('Direct upload failed, using base64 fallback');
-                        const base64 = await this.fileToBase64(this.state.uploadedFile);
-                        return {
-                            filename: this.state.uploadedFile.name,
-                            type: this.state.uploadedFile.type,
-                            size: this.state.uploadedFile.size,
-                            url: `data:${this.state.uploadedFile.type};base64,${base64}`
-                        };
+                        // Fallback to base64 - skip attachment for now and handle separately
+                        debugLog('Direct upload failed, will store filename only');
+                        return null;
                     }
                 } catch (error) {
                     debugError('Attachment upload error:', error);
