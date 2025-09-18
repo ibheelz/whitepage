@@ -654,8 +654,7 @@
             <!-- Main Form -->
             <div id="mainForm">
                 <div class="header">
-                    <h1>Sorteo Rushbet</h1>
-                    <p>Sube tu captura de apuesta y participa por increíbles premios</p>
+                    <p>Ingresa tus datos y sube un screenshot de tu apuesta para registrarte en nuestros próximos sorteos. ¡Buena suerte!</p>
                 </div>
 
                 <form id="rushbetForm">
@@ -750,7 +749,7 @@
 
                     <!-- Screenshot Upload -->
                     <div class="form-group">
-                        <label for="screenshot">Captura de tu Apuesta en Rushbet <span class="required">*</span></label>
+                        <label for="screenshot">Adjuntar Screenshot <span class="required">*</span></label>
                         <div class="upload-section">
                             <div class="upload-area" onclick="document.getElementById('fileInput').click()">
                                 <div class="upload-icon">
@@ -773,29 +772,9 @@
                         <div class="validation-message" id="screenshotValidation"></div>
                     </div>
 
-                    <!-- Age Verification Checkbox (Mandatory) -->
-                    <div class="form-group">
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="ageVerification" name="ageVerification" required style="margin-right: 8px;">
-                            <label for="ageVerification" style="font-size: 14px; line-height: 1.4;">
-                                Confirmo que soy mayor de 18 años. <span class="required">*</span>
-                            </label>
-                        </div>
-                        <div class="validation-message" id="ageVerificationValidation"></div>
-                    </div>
-
-                    <!-- Promotional Consent Checkbox (Optional) -->
-                    <div class="form-group">
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="promoConsent" name="promoConsent" style="margin-right: 8px;">
-                            <label for="promoConsent" style="font-size: 14px; line-height: 1.4;">
-                                Acepto recibir promociones de Rushbet y sus afiliados. Puedo cancelar este consentimiento en cualquier momento.
-                            </label>
-                        </div>
-                    </div>
 
                     <button type="submit" class="submit-btn" id="submitBtn">
-                        Participar en el Sorteo
+                        PARTICIPAR
                     </button>
                 </form>
             </div>
@@ -817,8 +796,8 @@
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                 </svg>
             </div>
-            <h2>¡Éxito! 🎉</h2>
-            <p>¡Gracias por participar! Hemos recibido tu información.</p>
+            <h2>¡Felicidades!</h2>
+            <p>¡Felicidades, ya estás participando en el evento!</p>
         </div>
     </div>
 
@@ -967,7 +946,7 @@
 
                     // Airtable configuration (same as PIN-UP leads table)
                     airtableBaseId: 'app2I0jOClbHteBNP',
-                    airtableTableName: 'Leads',
+                    airtableTableName: 'Rushbet',
                     airtableToken: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
                     airtableProxyUrl: 'https://verification-backend-isemtzpeo-miela-digitals-projects.vercel.app/api/airtable-proxy',
 
@@ -1024,10 +1003,6 @@
                 }
 
                 // Age verification validation
-                const ageVerificationInput = document.getElementById('ageVerification');
-                if (ageVerificationInput) {
-                    ageVerificationInput.addEventListener('change', () => this.validateAgeVerification());
-                }
 
                 // Resend button
                 const resendEmailBtn = document.getElementById('resendEmailBtn');
@@ -1232,17 +1207,6 @@
                 return true;
             }
 
-            validateAgeVerification() {
-                const checkbox = document.getElementById('ageVerification');
-
-                if (!checkbox.checked) {
-                    this.showValidation('ageVerification', 'error', 'Debes confirmar que eres mayor de 18 años');
-                    return false;
-                }
-
-                this.showValidation('ageVerification', 'success', 'Verificación de edad confirmada');
-                return true;
-            }
 
             handleFileSelect(e) {
                 const file = e.target.files[0];
@@ -1312,12 +1276,10 @@
                 const isValidScreenshot = this.validateScreenshot();
                 debugLog(`✅ Screenshot validation: ${isValidScreenshot}`);
 
-                const isValidAge = this.validateAgeVerification();
-                debugLog(`✅ Age verification: ${isValidAge}`);
 
-                if (!isValidName || !isValidEmail || !isValidPhone || !isValidScreenshot || !isValidAge) {
+                if (!isValidName || !isValidEmail || !isValidPhone || !isValidScreenshot) {
                     debugError('❌ Form validation failed');
-                    debugWarning(`Validation status: Name=${isValidName}, Email=${isValidEmail}, Phone=${isValidPhone}, Screenshot=${isValidScreenshot}, Age=${isValidAge}`);
+                    debugWarning(`Validation status: Name=${isValidName}, Email=${isValidEmail}, Phone=${isValidPhone}, Screenshot=${isValidScreenshot}`);
                     return;
                 }
 
@@ -1329,9 +1291,7 @@
                     email: document.getElementById('email').value.trim().toLowerCase(),
                     phone: document.getElementById('phone').value.replace(/\D/g, ''),
                     countryCode: document.getElementById('countryCode').value,
-                    screenshot: this.state.uploadedFile,
-                    ageVerification: document.getElementById('ageVerification').checked,
-                    promoConsent: document.getElementById('promoConsent').checked
+                    screenshot: this.state.uploadedFile
                 };
 
                 debugTable(this.state.formData, '📋 Form Data Collected');
@@ -1518,21 +1478,16 @@
 
                     const airtableData = {
                         fields: {
-                            'Nombre Completo': this.state.formData.fullName,
+                            'Full Name': this.state.formData.fullName,
                             'Email': this.state.formData.email,
-                            'Teléfono': this.state.formData.countryCode + this.state.formData.phone,
-                            'País': this.getCountryFromCode(this.state.formData.countryCode),
-                            'Captura de Apuesta': attachment ? [attachment] : [],
-                            'Fecha de Participación': new Date().toISOString(),
-                            'Estado': 'Email Verificado',
-                            'Source': 'rushbet-giveaway',
-                            'Campaign': 'Rushbet Giveaway',
+                            'Phone': this.state.formData.countryCode + this.state.formData.phone,
+                            'Country': this.getCountryFromCode(this.state.formData.countryCode),
+                            'Screenshot': attachment ? [attachment] : [],
+                            'Participation Date': new Date().toISOString(),
                             'IP': userIP,
                             'User Agent': navigator.userAgent,
                             'Timestamp': Date.now(),
-                            'Email Verified': this.state.emailVerified,
-                            'Age Verification': this.state.formData.ageVerification,
-                            'Promo Consent': this.state.formData.promoConsent
+                            'Email Verified': this.state.emailVerified
                         }
                     };
 
