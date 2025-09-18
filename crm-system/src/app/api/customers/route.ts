@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CustomerService } from '@/lib/customer-service'
 import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
@@ -48,7 +47,11 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const deletedCustomer = await CustomerService.deleteCustomer(customerId)
+    const { prisma } = await import('@/lib/prisma')
+
+    const deletedCustomer = await prisma.customer.delete({
+      where: { id: customerId }
+    })
 
     return NextResponse.json({
       success: true,
@@ -72,9 +75,24 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10', 10)
     const query = searchParams.get('q')
 
+    const { prisma } = await import('@/lib/prisma')
+
     if (query) {
-      // Search customers
-      const customers = await CustomerService.searchCustomers(query)
+      // Search customers with simple schema
+      const customers = await prisma.customer.findMany({
+        where: {
+          OR: [
+            { masterEmail: { contains: query, mode: 'insensitive' } },
+            { masterPhone: { contains: query } },
+            { firstName: { contains: query, mode: 'insensitive' } },
+            { lastName: { contains: query, mode: 'insensitive' } },
+            { company: { contains: query, mode: 'insensitive' } }
+          ]
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 50
+      })
+
       return NextResponse.json({
         success: true,
         customers,
@@ -85,10 +103,24 @@ export async function GET(request: NextRequest) {
       })
     } else {
       // List customers with pagination
-      const result = await CustomerService.listCustomers(page, limit)
+      const skip = (page - 1) * limit
+
+      const [customers, total] = await Promise.all([
+        prisma.customer.findMany({
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' }
+        }),
+        prisma.customer.count()
+      ])
+
       return NextResponse.json({
         success: true,
-        ...result
+        customers,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
       })
     }
 
@@ -106,27 +138,26 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = createCustomerSchema.parse(body)
 
-    // Use CustomerService to create customer with proper identity graph
-    const identificationData = {
-      email: validatedData.masterEmail,
-      phone: validatedData.masterPhone
-    }
+    const { prisma } = await import('@/lib/prisma')
 
-    const contextData = {
-      firstName: validatedData.firstName,
-      lastName: validatedData.lastName,
-      company: validatedData.company,
-      jobTitle: validatedData.jobTitle,
-      source: validatedData.source,
-      country: validatedData.country,
-      region: validatedData.region,
-      city: validatedData.city,
-      timezone: validatedData.timezone,
-      language: validatedData.language,
-      assignedTeam: validatedData.assignedTeam
-    }
-
-    const customer = await CustomerService.findOrCreateCustomer(identificationData, contextData)
+    // Simple customer creation
+    const customer = await prisma.customer.create({
+      data: {
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        masterEmail: validatedData.masterEmail,
+        masterPhone: validatedData.masterPhone || null,
+        company: validatedData.company || null,
+        jobTitle: validatedData.jobTitle || null,
+        source: validatedData.source || null,
+        country: validatedData.country || null,
+        region: validatedData.region || null,
+        city: validatedData.city || null,
+        timezone: validatedData.timezone || null,
+        language: validatedData.language || null,
+        assignedTeam: validatedData.assignedTeam || []
+      }
+    })
 
     return NextResponse.json({
       success: true,
@@ -167,7 +198,15 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const validatedData = updateCustomerSchema.parse(body)
 
-    const updatedCustomer = await CustomerService.updateCustomer(customerId, validatedData)
+    const { prisma } = await import('@/lib/prisma')
+
+    const updatedCustomer = await prisma.customer.update({
+      where: { id: customerId },
+      data: {
+        ...validatedData,
+        updatedAt: new Date()
+      }
+    })
 
     return NextResponse.json({
       success: true,
