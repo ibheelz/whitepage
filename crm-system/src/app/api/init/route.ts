@@ -16,8 +16,12 @@ export async function POST() {
 
     // Create the tables if they don't exist - execute each statement separately
     const statements = [
-      // Create AdminRole enum
-      `CREATE TYPE "AdminRole" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'ANALYST', 'VIEWER')`,
+      // Create AdminRole enum if not exists
+      `DO $$ BEGIN
+        CREATE TYPE "AdminRole" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'ANALYST', 'VIEWER');
+      EXCEPTION
+        WHEN duplicate_object THEN null;
+      END $$`,
 
       // Create AdminUser table
       `CREATE TABLE IF NOT EXISTS "admin_users" (
@@ -115,7 +119,7 @@ export async function POST() {
         await prisma.$executeRawUnsafe(statement)
       } catch (error) {
         // Ignore "already exists" errors
-        if (!error.message.includes('already exists') && !error.code === '42710') {
+        if (!error.message.includes('already exists') && error.code !== '42710') {
           throw error
         }
         console.log(`Skipped statement (already exists): ${statement.split(' ').slice(0, 4).join(' ')}...`)
