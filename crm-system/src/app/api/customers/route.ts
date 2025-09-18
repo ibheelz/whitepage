@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CustomerService } from '@/lib/customer-service'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 const createCustomerSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
