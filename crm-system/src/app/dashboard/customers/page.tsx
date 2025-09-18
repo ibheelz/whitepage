@@ -1642,7 +1642,7 @@ export default function CustomersPage() {
                     <h3 className="font-semibold text-foreground text-sm sm:text-base lg:text-lg truncate">
                       {customer.firstName} {customer.lastName}
                     </h3>
-                    <p className="text-xs sm:text-sm text-yellow-400 truncate font-mono">
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate font-mono">
                       {customer.clicks?.[0]?.clickId || 'N/A'}
                     </p>
                   </div>
