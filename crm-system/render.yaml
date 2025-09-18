@@ -3,7 +3,7 @@ services:
     name: miela-digital-crm
     env: node
     plan: starter
-    buildCommand: npm install && npm run db:generate && npm run build
+    buildCommand: npm install && npm run db:generate && npm run db:push && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
