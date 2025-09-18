@@ -57,12 +57,11 @@ export async function POST() {
         "totalClicks" INTEGER NOT NULL DEFAULT 0,
         "totalLeads" INTEGER NOT NULL DEFAULT 0,
         "totalEvents" INTEGER NOT NULL DEFAULT 0,
-        "totalRevenue" DECIMAL(65,30) NOT NULL DEFAULT 0,
-        "conversionRate" DECIMAL(65,30) NOT NULL DEFAULT 0,
-        "qualityScore" INTEGER NOT NULL DEFAULT 50,
-        "fraudScore" INTEGER NOT NULL DEFAULT 0,
-        "isVerified" BOOLEAN NOT NULL DEFAULT false,
-        "isBlocked" BOOLEAN NOT NULL DEFAULT false,
+        "totalRevenue" DECIMAL(10,2) NOT NULL DEFAULT 0,
+        "isActive" BOOLEAN NOT NULL DEFAULT true,
+        "isFraud" BOOLEAN NOT NULL DEFAULT false,
+        "isBlacklisted" BOOLEAN NOT NULL DEFAULT false,
+        "assignedTeam" TEXT[] DEFAULT ARRAY[]::TEXT[],
         CONSTRAINT "customers_pkey" PRIMARY KEY ("id")
       )`,
 
@@ -110,9 +109,17 @@ export async function POST() {
       `CREATE UNIQUE INDEX IF NOT EXISTS "customers_masterPhone_key" ON "customers"("masterPhone")`
     ]
 
-    // Execute each statement separately
+    // Execute each statement separately with error handling
     for (const statement of statements) {
-      await prisma.$executeRawUnsafe(statement)
+      try {
+        await prisma.$executeRawUnsafe(statement)
+      } catch (error) {
+        // Ignore "already exists" errors
+        if (!error.message.includes('already exists') && !error.code === '42710') {
+          throw error
+        }
+        console.log(`Skipped statement (already exists): ${statement.split(' ').slice(0, 4).join(' ')}...`)
+      }
     }
     console.log('✅ Database schema created successfully')
 
