@@ -14,10 +14,10 @@ export async function POST() {
     // First, try to create the schema using raw SQL
     console.log('📋 Creating database schema...')
 
-    // Create the tables if they don't exist
-    const createTablesSQL = `
-      -- Create AdminUser table
-      CREATE TABLE IF NOT EXISTS "admin_users" (
+    // Create the tables if they don't exist - execute each statement separately
+    const statements = [
+      // Create AdminUser table
+      `CREATE TABLE IF NOT EXISTS "admin_users" (
         "id" TEXT NOT NULL,
         "email" TEXT NOT NULL,
         "password_hash" TEXT NOT NULL,
@@ -28,10 +28,10 @@ export async function POST() {
         "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT "admin_users_pkey" PRIMARY KEY ("id")
-      );
+      )`,
 
-      -- Create Customer table
-      CREATE TABLE IF NOT EXISTS "customers" (
+      // Create Customer table
+      `CREATE TABLE IF NOT EXISTS "customers" (
         "id" TEXT NOT NULL,
         "master_email" TEXT,
         "master_phone" TEXT,
@@ -60,10 +60,10 @@ export async function POST() {
         "is_verified" BOOLEAN NOT NULL DEFAULT false,
         "is_blocked" BOOLEAN NOT NULL DEFAULT false,
         CONSTRAINT "customers_pkey" PRIMARY KEY ("id")
-      );
+      )`,
 
-      -- Create Lead table
-      CREATE TABLE IF NOT EXISTS "leads" (
+      // Create Lead table
+      `CREATE TABLE IF NOT EXISTS "leads" (
         "id" TEXT NOT NULL,
         "email" TEXT NOT NULL,
         "phone" TEXT,
@@ -75,10 +75,10 @@ export async function POST() {
         "quality_score" INTEGER NOT NULL DEFAULT 50,
         "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT "leads_pkey" PRIMARY KEY ("id")
-      );
+      )`,
 
-      -- Create Click table
-      CREATE TABLE IF NOT EXISTS "clicks" (
+      // Create Click table
+      `CREATE TABLE IF NOT EXISTS "clicks" (
         "id" TEXT NOT NULL,
         "ip" TEXT NOT NULL,
         "click_id" TEXT,
@@ -89,25 +89,27 @@ export async function POST() {
         "landing_page" TEXT,
         "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT "clicks_pkey" PRIMARY KEY ("id")
-      );
+      )`,
 
-      -- Create Event table
-      CREATE TABLE IF NOT EXISTS "events" (
+      // Create Event table
+      `CREATE TABLE IF NOT EXISTS "events" (
         "id" TEXT NOT NULL,
         "type" TEXT NOT NULL,
         "data" JSONB,
         "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT "events_pkey" PRIMARY KEY ("id")
-      );
+      )`,
 
-      -- Create indexes
-      CREATE UNIQUE INDEX IF NOT EXISTS "admin_users_email_key" ON "admin_users"("email");
-      CREATE UNIQUE INDEX IF NOT EXISTS "customers_master_email_key" ON "customers"("master_email");
-      CREATE UNIQUE INDEX IF NOT EXISTS "customers_master_phone_key" ON "customers"("master_phone");
-    `
+      // Create indexes
+      `CREATE UNIQUE INDEX IF NOT EXISTS "admin_users_email_key" ON "admin_users"("email")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "customers_master_email_key" ON "customers"("master_email")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "customers_master_phone_key" ON "customers"("master_phone")`
+    ]
 
-    // Execute the schema creation
-    await prisma.$executeRawUnsafe(createTablesSQL)
+    // Execute each statement separately
+    for (const statement of statements) {
+      await prisma.$executeRawUnsafe(statement)
+    }
     console.log('✅ Database schema created successfully')
 
     // Now check if admin user exists
