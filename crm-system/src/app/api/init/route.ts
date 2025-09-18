@@ -21,10 +21,11 @@ export async function POST() {
         "id" TEXT NOT NULL,
         "email" TEXT NOT NULL,
         "passwordHash" TEXT NOT NULL,
-        "role" TEXT NOT NULL DEFAULT 'ADMIN',
+        "role" TEXT NOT NULL DEFAULT 'ANALYST',
         "firstName" TEXT,
         "lastName" TEXT,
         "isActive" BOOLEAN NOT NULL DEFAULT true,
+        "lastLogin" TIMESTAMP(3),
         "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT "admin_users_pkey" PRIMARY KEY ("id")
