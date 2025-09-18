@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
 interface AvatarProps {
@@ -12,8 +12,9 @@ interface AvatarProps {
 }
 
 export function Avatar({ firstName, lastName, userId, size = 'md', className }: AvatarProps) {
-  // Always use initials to avoid DiceBear API timeouts completely
-  const useInitials = true
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const [imageUrl, setImageUrl] = useState<string>('')
 
   // Generate initials fallback
   const getInitials = () => {
@@ -22,7 +23,44 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return first + last || '?'
   }
 
-  // No external API calls - use custom initials only
+  // Generate DiceBear avatar URL with robust fallback
+  useEffect(() => {
+    if (!firstName && !lastName && !userId) return
+
+    const seed = userId || `${firstName || ''}-${lastName || ''}`.toLowerCase().replace(/\s+/g, '-')
+    const sizeMap = { sm: 32, md: 40, lg: 48 }
+    const avatarSize = sizeMap[size]
+
+    // Use more reliable DiceBear styles
+    const styles = ['avataaars', 'personas', 'initials']
+    const selectedStyle = styles[Math.abs(seed.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % styles.length]
+
+    const url = `https://api.dicebear.com/7.x/${selectedStyle}/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151&radius=50`
+
+    // Test image load with timeout
+    const img = new Image()
+    const timeout = setTimeout(() => {
+      setImageError(true)
+    }, 3000) // 3 second timeout
+
+    img.onload = () => {
+      clearTimeout(timeout)
+      setImageUrl(url)
+      setImageLoaded(true)
+      setImageError(false)
+    }
+
+    img.onerror = () => {
+      clearTimeout(timeout)
+      setImageError(true)
+    }
+
+    img.src = url
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [firstName, lastName, userId, size])
 
   // Size classes
   const sizeClasses = {
@@ -42,7 +80,24 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return colors[colorIndex]
   }
 
-  // Always show custom initials (no external API calls)
+  // Show DiceBear image if loaded, otherwise show initials
+  if (imageLoaded && imageUrl && !imageError) {
+    return (
+      <img
+        src={imageUrl}
+        alt={`${firstName || ''} ${lastName || ''}`.trim() || 'User avatar'}
+        className={cn(
+          'rounded-full ring-2 ring-white/10 object-cover',
+          sizeClasses[size],
+          className
+        )}
+        onError={() => setImageError(true)}
+        loading="lazy"
+      />
+    )
+  }
+
+  // Fallback to initials
   return (
     <div
       className={cn(
