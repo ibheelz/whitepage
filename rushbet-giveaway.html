@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteo Rushbet - Participa y Gana</title>
+    <meta name="description" content="Participa en nuestro sorteo exclusivo de Rushbet. Sube tu captura de apuesta y compite por increíbles premios.">
+
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="Sorteo Rushbet - Participa y Gana">
+    <meta property="og:description" content="Participa en nuestro sorteo exclusivo de Rushbet. Sube tu captura de apuesta y compite por increíbles premios.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: url('Rushbet-BG.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 12px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #4A90C2;
+        }
+
+        .header p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .phone-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        select {
+            flex: 0 0 140px;
+            padding: 16px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .upload-area:hover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .upload-area.dragover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            opacity: 0.7;
+        }
+
+        .upload-text {
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .upload-subtext {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-preview {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .remove-file {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .validation-message {
+            margin-top: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .validation-message.error {
+            color: #ef4444;
+        }
+
+        .validation-message.success {
+            color: #10b981;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            margin-top: 2px;
+            accent-color: #ff6600;
+            cursor: pointer;
+        }
+
+        .checkbox-container label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .otp-card {
+            display: none;
+            margin-top: 16px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+        }
+
+        .otp-input:focus {
+            border-color: #10b981;
+            outline: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: -16px;
+            padding-top: 0px;
+            border-top: none;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        .footer a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .success-modal-content {
+            background: linear-gradient(to bottom, rgba(42,48,60,0.95), rgba(11,12,16,0.95));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .success-modal .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .success-modal h2 {
+            color: #ffffff;
+            margin-bottom: 16px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .success-modal p {
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+                min-height: auto;
+            }
+
+            .container {
+                padding: 0;
+                margin: 0 auto;
+            }
+
+            .footer {
+                margin-top: 0px;
+                padding-top: 2px;
+            }
+
+            .otp-inputs {
+                gap: 8px;
+            }
+
+            .otp-input {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+        }
+
+        /* Rushbet Theme Styles */
+        .rushbet-theme {
+            /* Background removed */
+        }
+
+        .glass-card {
+            position: relative;
+            overflow: hidden;
+            padding: 24px;
+            background: linear-gradient(to bottom, rgba(42,48,60,0.65), rgba(11,12,16,0.65));
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+
+        .glass-gloss {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.18), rgba(255,255,255,0));
+            pointer-events: none;
+            border-top-left-radius: 19px;
+            border-top-right-radius: 19px;
+        }
+
+        .glass-edge {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            pointer-events: none;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255,255,255,.35), rgba(255,255,255,.14), rgba(255,255,255,.08), rgba(255,255,255,.18));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        /* Rushbet Compact Spacing */
+        .header { margin-bottom: 12px !important; }
+        .form-group { margin-bottom: 12px !important; }
+        label { margin-bottom: 6px !important; }
+        .footer { margin-top: 12px !important; padding-top: 12px !important; }
+        .submit-btn { margin-top: 12px !important; }
+        .upload-section { margin-bottom: 0 !important; }
+
+        /* Rushbet Input Styles */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+            background: rgba(31,41,55,0.55) !important;
+            border: 2px solid #265f92 !important;
+            border-radius: 20px !important;
+        }
+
+        select {
+            background: rgba(31,41,55,0.55) !important;
+            border: 2px solid #265f92 !important;
+            border-radius: 20px !important;
+        }
+
+        .form-group.success input,
+        .form-group.success select {
+            border-color: #4ec65a !important;
+        }
+
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #265f92 !important;
+        }
+
+        .submit-btn {
+            background: linear-gradient(to bottom, #265f92, #0b2e4c) !important;
+            border-radius: 20px !important;
+            border: 2px solid transparent !important;
+        }
+
+        /* OTP Card styling */
+        .otp-card {
+            background: rgba(255,102,0,0.05) !important;
+            border-color: rgba(255,102,0,0.2) !important;
+        }
+
+        .otp-input:focus {
+            border-color: #265f92 !important;
+            box-shadow: 0 0 0 2px rgba(38,95,146,0.25) !important;
+        }
+
+        /* Upload area specific styles */
+        .upload-area {
+            border-color: rgba(38,95,146,0.3) !important;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #265f92 !important;
+            background: rgba(38,95,146,0.1) !important;
+        }
+
+        .file-preview {
+            background: rgba(38,95,146,0.1) !important;
+            border-color: rgba(38,95,146,0.3) !important;
+        }
+    </style>
+</head>
+<body class="rushbet-theme">
+    <div class="container">
+        <div class="glass-card">
+            <!-- Glass effects -->
+            <div class="glass-gloss"></div>
+            <div class="glass-edge"></div>
+
+            <!-- Logo -->
+            <div class="logo">
+                <img src="https://www.rushbet.co/cms/promotions/appreview_logo.png" alt="RUSHBET" style="width: 160px; height: 64px; object-fit: contain;">
+            </div>
+
+            <!-- Main Form -->
+            <div id="mainForm">
+                <div class="header">
+                    <h1>Sorteo Rushbet</h1>
+                    <p>Sube tu captura de apuesta y participa por increíbles premios</p>
+                </div>
+
+                <form id="rushbetForm">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="fullName">Nombre Completo <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input
+                                type="text"
+                                id="fullName"
+                                name="fullName"
+                                placeholder="Ingresa tu nombre completo"
+                                required
+                            >
+                        </div>
+                        <div class="validation-message" id="fullNameValidation"></div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="ejemplo@correo.com"
+                                required
+                            >
+                        </div>
+                        <div class="validation-message" id="emailValidation"></div>
+
+                        <!-- Email OTP Card -->
+                        <div class="otp-card" id="emailOtpCard">
+                            <h3>Verificación por Email</h3>
+                            <p>Hemos enviado un código de 6 dígitos a tu correo</p>
+                            <div class="otp-inputs">
+                                <input type="text" class="otp-input" maxlength="1" data-index="0">
+                                <input type="text" class="otp-input" maxlength="1" data-index="1">
+                                <input type="text" class="otp-input" maxlength="1" data-index="2">
+                                <input type="text" class="otp-input" maxlength="1" data-index="3">
+                                <input type="text" class="otp-input" maxlength="1" data-index="4">
+                                <input type="text" class="otp-input" maxlength="1" data-index="5">
+                            </div>
+                            <button type="button" id="resendEmailBtn">Reenviar Código</button>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="form-group">
+                        <label for="phone">Número de Teléfono <span class="required">*</span></label>
+                        <div class="phone-container">
+                            <select id="countryCode" name="countryCode">
+                                <option value="+56">🇨🇱 Chile (+56)</option>
+                                <option value="+54">🇦🇷 Argentina (+54)</option>
+                                <option value="+57">🇨🇴 Colombia (+57)</option>
+                                <option value="+51">🇵🇪 Perú (+51)</option>
+                                <option value="+58">🇻🇪 Venezuela (+58)</option>
+                                <option value="+593">🇪🇨 Ecuador (+593)</option>
+                                <option value="+591">🇧🇴 Bolivia (+591)</option>
+                                <option value="+595">🇵🇾 Paraguay (+595)</option>
+                                <option value="+598">🇺🇾 Uruguay (+598)</option>
+                            </select>
+                            <div class="input-wrapper" style="flex: 1;">
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="912345678"
+                                    required
+                                >
+                            </div>
+                        </div>
+                        <div class="validation-message" id="phoneValidation"></div>
+
+                        <!-- SMS OTP Card -->
+                        <div class="otp-card" id="smsOtpCard">
+                            <h3>Verificación por SMS</h3>
+                            <p>Hemos enviado un código de 6 dígitos a tu teléfono</p>
+                            <div class="otp-inputs">
+                                <input type="text" class="otp-input" maxlength="1" data-index="0">
+                                <input type="text" class="otp-input" maxlength="1" data-index="1">
+                                <input type="text" class="otp-input" maxlength="1" data-index="2">
+                                <input type="text" class="otp-input" maxlength="1" data-index="3">
+                                <input type="text" class="otp-input" maxlength="1" data-index="4">
+                                <input type="text" class="otp-input" maxlength="1" data-index="5">
+                            </div>
+                            <button type="button" id="resendSmsBtn">Reenviar Código</button>
+                        </div>
+                    </div>
+
+                    <!-- Screenshot Upload -->
+                    <div class="form-group">
+                        <label for="screenshot">Captura de tu Apuesta en Rushbet <span class="required">*</span></label>
+                        <div class="upload-section">
+                            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                                <div class="upload-icon">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div class="upload-text">Sube tu captura de apuesta</div>
+                                <div class="upload-subtext">Arrastra y suelta o haz clic para seleccionar (PNG, JPG, JPEG - Max 5MB)</div>
+                            </div>
+                            <input type="file" id="fileInput" accept="image/*" required>
+                            <div class="file-preview" id="filePreview">
+                                <div class="file-info">
+                                    <div class="file-name" id="fileName"></div>
+                                    <div class="file-size" id="fileSize"></div>
+                                </div>
+                                <button type="button" class="remove-file" onclick="removeFile()">Eliminar</button>
+                            </div>
+                        </div>
+                        <div class="validation-message" id="screenshotValidation"></div>
+                    </div>
+
+                    <!-- Age Verification Checkbox (Mandatory) -->
+                    <div class="form-group">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="ageVerification" name="ageVerification" required style="margin-right: 8px;">
+                            <label for="ageVerification" style="font-size: 14px; line-height: 1.4;">
+                                Confirmo que soy mayor de 18 años. <span class="required">*</span>
+                            </label>
+                        </div>
+                        <div class="validation-message" id="ageVerificationValidation"></div>
+                    </div>
+
+                    <!-- Promotional Consent Checkbox (Optional) -->
+                    <div class="form-group">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="promoConsent" name="promoConsent" style="margin-right: 8px;">
+                            <label for="promoConsent" style="font-size: 14px; line-height: 1.4;">
+                                Acepto recibir promociones de Rushbet y sus afiliados. Puedo cancelar este consentimiento en cualquier momento.
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Participar en el Sorteo
+                    </button>
+                </form>
+            </div>
+
+            <div class="footer">
+                <p>
+                    Al hacer clic en "Participar en el Sorteo", aceptas recibir información promocional a través de correo electrónico y SMS.
+                    <br />Nunca compartiremos tu información sin tu permiso.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="success-modal">
+        <div class="success-modal-content">
+            <div class="success-icon">
+                <svg fill="white" viewBox="0 0 20 20" style="width: 40px; height: 40px;">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <h2>¡Éxito! 🎉</h2>
+            <p>¡Gracias por participar! Hemos recibido tu información.</p>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Rushbet Giveaway Form Handler - Complete embedded version
+        // Includes email/SMS verification, file upload, and Airtable integration
+
+        /***********************************
+         *  Debug & Console Output
+         ***********************************/
+        function debugLog(...args) {
+            console.log('%c[RUSHBET-FORM]', 'color: #4A90C2; font-weight: bold;', ...args);
+        }
+
+        function debugTable(data, title = 'Debug Table') {
+            console.group(`%c[RUSHBET-FORM] ${title}`, 'color: #4A90C2; font-weight: bold;');
+            console.table(data);
+            console.groupEnd();
+        }
+
+        function debugError(...args) {
+            console.error('%c[RUSHBET-FORM ERROR]', 'color: #ef4444; font-weight: bold;', ...args);
+        }
+
+        class RushbetGiveawayForm {
+            constructor() {
+                debugLog('Initializing Rushbet Giveaway Form...');
+
+                this.config = {
+                    DEBUG: true,
+                    // Email verification service (same as PIN-UP)
+                    emailVerificationUrl: 'https://email-verification-backend-psi.vercel.app/api/email-verify',
+
+                    // SMS verification via Real Laaffic (same as PIN-UP)
+                    smsVerificationUrl: 'https://verification-backend-gp9n5xldp-miela-digitals-projects.vercel.app/api/phone-verify',
+
+                    // Airtable configuration (same as PIN-UP leads table)
+                    airtableBaseId: 'app2I0jOClbHteBNP',
+                    airtableTableName: 'Leads',
+                    airtableToken: 'patCu0mKmtp2MPQIw.a90c3234fc52abb951cdacc3725d97442bc7f364ac822eee5960ce09ce2f86cd',
+                    airtableProxyUrl: 'https://verification-backend-isemtzpeo-miela-digitals-projects.vercel.app/api/airtable-proxy',
+
+                    maxFileSize: 5 * 1024 * 1024, // 5MB
+                    allowedFileTypes: ['image/jpeg', 'image/jpg', 'image/png'],
+                };
+
+                this.state = {
+                    currentStep: 'form',
+                    emailVerified: false,
+                    smsVerified: false,
+                    uploadedFile: null,
+                    formData: {},
+                    emailOtpCode: '',
+                    smsOtpCode: ''
+                };
+
+                this.init();
+            }
+
+            init() {
+                debugLog('Initializing form events...');
+                this.bindEvents();
+                this.setupFileUpload();
+                this.setupOtpInputs();
+                this.setDefaultCountryCode();
+            }
+
+            bindEvents() {
+                const form = document.getElementById('rushbetForm');
+                if (form) {
+                    form.addEventListener('submit', (e) => this.handleSubmit(e));
+                }
+
+                // Email validation
+                const emailInput = document.getElementById('email');
+                if (emailInput) {
+                    emailInput.addEventListener('blur', () => this.validateEmail());
+                    emailInput.addEventListener('input', () => this.clearValidation('email'));
+                }
+
+                // Phone validation
+                const phoneInput = document.getElementById('phone');
+                if (phoneInput) {
+                    phoneInput.addEventListener('blur', () => this.validatePhone());
+                    phoneInput.addEventListener('input', () => this.clearValidation('phone'));
+                }
+
+                // Full name validation
+                const fullNameInput = document.getElementById('fullName');
+                if (fullNameInput) {
+                    fullNameInput.addEventListener('blur', () => this.validateFullName());
+                    fullNameInput.addEventListener('input', () => this.clearValidation('fullName'));
+                }
+
+                // Age verification validation
+                const ageVerificationInput = document.getElementById('ageVerification');
+                if (ageVerificationInput) {
+                    ageVerificationInput.addEventListener('change', () => this.validateAgeVerification());
+                }
+
+                // Resend buttons
+                const resendEmailBtn = document.getElementById('resendEmailBtn');
+                if (resendEmailBtn) {
+                    resendEmailBtn.addEventListener('click', () => this.resendEmailVerification());
+                }
+
+                const resendSmsBtn = document.getElementById('resendSmsBtn');
+                if (resendSmsBtn) {
+                    resendSmsBtn.addEventListener('click', () => this.resendSmsVerification());
+                }
+            }
+
+            setupFileUpload() {
+                const fileInput = document.getElementById('fileInput');
+                const uploadArea = document.querySelector('.upload-area');
+
+                // Click to upload
+                fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+
+                // Drag and drop
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.processFile(files[0]);
+                    }
+                });
+            }
+
+            setupOtpInputs() {
+                // Email OTP inputs
+                const emailOtpInputs = document.querySelectorAll('#emailOtpCard .otp-input');
+                this.setupOtpNavigation(emailOtpInputs, () => this.verifyEmailOtp());
+
+                // SMS OTP inputs
+                const smsOtpInputs = document.querySelectorAll('#smsOtpCard .otp-input');
+                this.setupOtpNavigation(smsOtpInputs, () => this.verifySmsOtp());
+            }
+
+            setupOtpNavigation(inputs, onComplete) {
+                inputs.forEach((input, index) => {
+                    input.addEventListener('input', (e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '');
+                        e.target.value = value;
+
+                        if (value && index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+
+                        // Check if all inputs are filled
+                        const allFilled = Array.from(inputs).every(inp => inp.value.length === 1);
+                        if (allFilled && onComplete) {
+                            setTimeout(() => onComplete(), 100);
+                        }
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                    });
+
+                    input.addEventListener('paste', (e) => {
+                        e.preventDefault();
+                        const paste = (e.clipboardData || window.clipboardData).getData('text');
+                        const numbers = paste.replace(/[^0-9]/g, '').slice(0, 6);
+
+                        numbers.split('').forEach((num, i) => {
+                            if (inputs[i]) inputs[i].value = num;
+                        });
+
+                        if (numbers.length === 6 && onComplete) {
+                            setTimeout(() => onComplete(), 100);
+                        }
+                    });
+                });
+            }
+
+            setDefaultCountryCode() {
+                const countryCode = document.getElementById('countryCode');
+                if (countryCode && !countryCode.value) {
+                    countryCode.value = '+56'; // Default to Chile
+                }
+            }
+
+            validateFullName() {
+                const input = document.getElementById('fullName');
+                const value = input.value.trim();
+
+                if (!value) {
+                    this.showValidation('fullName', 'error', 'El nombre completo es obligatorio');
+                    return false;
+                }
+
+                if (value.length < 3) {
+                    this.showValidation('fullName', 'error', 'El nombre debe tener al menos 3 caracteres');
+                    return false;
+                }
+
+                if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
+                    this.showValidation('fullName', 'error', 'El nombre solo puede contener letras');
+                    return false;
+                }
+
+                this.showValidation('fullName', 'success', 'Nombre válido');
+                return true;
+            }
+
+            validateEmail() {
+                const input = document.getElementById('email');
+                const value = input.value.trim().toLowerCase();
+
+                if (!value) {
+                    this.showValidation('email', 'error', 'El email es obligatorio');
+                    return false;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    this.showValidation('email', 'error', 'Formato de email inválido');
+                    return false;
+                }
+
+                input.value = value; // Normalize email
+                this.showValidation('email', 'success', 'Email válido - Se enviará código de verificación');
+                return true;
+            }
+
+            validatePhone() {
+                const input = document.getElementById('phone');
+                const value = input.value.replace(/\D/g, '');
+
+                if (!value) {
+                    this.showValidation('phone', 'error', 'El teléfono es obligatorio');
+                    return false;
+                }
+
+                if (value.length < 8 || value.length > 12) {
+                    this.showValidation('phone', 'error', 'Número de teléfono inválido');
+                    return false;
+                }
+
+                input.value = value; // Clean phone number
+                this.showValidation('phone', 'success', 'Teléfono válido - Se enviará código SMS');
+                return true;
+            }
+
+            validateScreenshot() {
+                if (!this.state.uploadedFile) {
+                    this.showValidation('screenshot', 'error', 'La captura de apuesta es obligatoria');
+                    return false;
+                }
+
+                this.showValidation('screenshot', 'success', 'Captura subida correctamente');
+                return true;
+            }
+
+            validateAgeVerification() {
+                const checkbox = document.getElementById('ageVerification');
+
+                if (!checkbox.checked) {
+                    this.showValidation('ageVerification', 'error', 'Debes confirmar que eres mayor de 18 años');
+                    return false;
+                }
+
+                this.showValidation('ageVerification', 'success', 'Verificación de edad confirmada');
+                return true;
+            }
+
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.processFile(file);
+                }
+            }
+
+            processFile(file) {
+                // Validate file type
+                if (!this.config.allowedFileTypes.includes(file.type)) {
+                    this.showValidation('screenshot', 'error', 'Solo se permiten archivos PNG, JPG y JPEG');
+                    return;
+                }
+
+                // Validate file size
+                if (file.size > this.config.maxFileSize) {
+                    this.showValidation('screenshot', 'error', 'El archivo no puede exceder 5MB');
+                    return;
+                }
+
+                this.state.uploadedFile = file;
+                this.showFilePreview(file);
+                this.validateScreenshot();
+            }
+
+            showFilePreview(file) {
+                const preview = document.getElementById('filePreview');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+
+                fileName.textContent = file.name;
+                fileSize.textContent = this.formatFileSize(file.size);
+                preview.style.display = 'flex';
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            removeFile() {
+                this.state.uploadedFile = null;
+                document.getElementById('fileInput').value = '';
+                document.getElementById('filePreview').style.display = 'none';
+                this.clearValidation('screenshot');
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                debugLog('Form submission started...');
+
+                // Validate all fields
+                const isValidName = this.validateFullName();
+                const isValidEmail = this.validateEmail();
+                const isValidPhone = this.validatePhone();
+                const isValidScreenshot = this.validateScreenshot();
+                const isValidAge = this.validateAgeVerification();
+
+                if (!isValidName || !isValidEmail || !isValidPhone || !isValidScreenshot || !isValidAge) {
+                    debugError('Form validation failed');
+                    return;
+                }
+
+                // Store form data
+                this.state.formData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    email: document.getElementById('email').value.trim().toLowerCase(),
+                    phone: document.getElementById('phone').value.replace(/\D/g, ''),
+                    countryCode: document.getElementById('countryCode').value,
+                    screenshot: this.state.uploadedFile,
+                    ageVerification: document.getElementById('ageVerification').checked,
+                    promoConsent: document.getElementById('promoConsent').checked
+                };
+
+                debugTable(this.state.formData, 'Form Data');
+
+                // Start email verification
+                await this.sendEmailVerification();
+            }
+
+            async sendEmailVerification() {
+                debugLog('Sending email verification...');
+                this.showLoading(true);
+
+                try {
+                    const response = await fetch(this.config.emailVerificationUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: this.state.formData.email,
+                            name: this.state.formData.fullName,
+                            source: 'rushbet-giveaway'
+                        })
+                    });
+
+                    const result = await response.json();
+                    debugLog('Email verification response:', result);
+
+                    if (result.success) {
+                        this.state.emailOtpCode = result.code;
+                        this.showEmailOtpCard();
+                        this.showValidation('email', 'success', 'Código enviado a tu email');
+                    } else {
+                        throw new Error(result.message || 'Error al enviar código de verificación');
+                    }
+                } catch (error) {
+                    debugError('Email verification error:', error);
+                    this.showValidation('email', 'error', 'Error al enviar código. Intenta nuevamente.');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async resendEmailVerification() {
+                await this.sendEmailVerification();
+            }
+
+            async verifyEmailOtp() {
+                const inputs = document.querySelectorAll('#emailOtpCard .otp-input');
+                const enteredCode = Array.from(inputs).map(input => input.value).join('');
+
+                debugLog('Verifying email OTP:', enteredCode);
+
+                if (enteredCode === this.state.emailOtpCode) {
+                    this.state.emailVerified = true;
+                    this.hideEmailOtpCard();
+                    this.showValidation('email', 'success', '✓ Email verificado correctamente');
+
+                    // Start SMS verification
+                    await this.sendSmsVerification();
+                } else {
+                    this.showValidation('email', 'error', 'Código incorrecto. Intenta nuevamente.');
+                    // Clear OTP inputs
+                    inputs.forEach(input => input.value = '');
+                    inputs[0].focus();
+                }
+            }
+
+            async sendSmsVerification() {
+                debugLog('Sending SMS verification...');
+                this.showLoading(true);
+
+                try {
+                    const fullPhone = this.state.formData.countryCode + this.state.formData.phone;
+
+                    const response = await fetch(this.config.smsVerificationUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phone: fullPhone,
+                            name: this.state.formData.fullName,
+                            source: 'rushbet-giveaway'
+                        })
+                    });
+
+                    const result = await response.json();
+                    debugLog('SMS verification response:', result);
+
+                    if (result.success) {
+                        this.state.smsOtpCode = result.code;
+                        this.showSmsOtpCard();
+                        this.showValidation('phone', 'success', 'Código SMS enviado');
+                    } else {
+                        throw new Error(result.message || 'Error al enviar SMS');
+                    }
+                } catch (error) {
+                    debugError('SMS verification error:', error);
+                    this.showValidation('phone', 'error', 'Error al enviar SMS. Intenta nuevamente.');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async resendSmsVerification() {
+                await this.sendSmsVerification();
+            }
+
+            async verifySmsOtp() {
+                const inputs = document.querySelectorAll('#smsOtpCard .otp-input');
+                const enteredCode = Array.from(inputs).map(input => input.value).join('');
+
+                debugLog('Verifying SMS OTP:', enteredCode);
+
+                if (enteredCode === this.state.smsOtpCode) {
+                    this.state.smsVerified = true;
+                    this.hideSmsOtpCard();
+                    this.showValidation('phone', 'success', '✓ Teléfono verificado correctamente');
+
+                    // Submit to Airtable
+                    await this.submitToAirtable();
+                } else {
+                    this.showValidation('phone', 'error', 'Código incorrecto. Intenta nuevamente.');
+                    // Clear OTP inputs
+                    inputs.forEach(input => input.value = '');
+                    inputs[0].focus();
+                }
+            }
+
+            async submitToAirtable() {
+                debugLog('Submitting to Airtable...');
+                this.showLoading(true);
+
+                try {
+                    // Upload screenshot to a file hosting service or base64 encode for Airtable
+                    const screenshotBase64 = await this.fileToBase64(this.state.uploadedFile);
+
+                    const airtableData = {
+                        baseId: this.config.airtableBaseId,
+                        tableName: this.config.airtableTableName,
+                        fields: {
+                            'Nombre Completo': this.state.formData.fullName,
+                            'Email': this.state.formData.email,
+                            'Teléfono': this.state.formData.countryCode + this.state.formData.phone,
+                            'País': this.getCountryFromCode(this.state.formData.countryCode),
+                            'Captura de Apuesta': screenshotBase64,
+                            'Fecha de Participación': new Date().toISOString(),
+                            'Estado': 'Verificado',
+                            'Source': 'rushbet-giveaway',
+                            'Campaign': 'Rushbet Giveaway',
+                            'IP': await this.getUserIP(),
+                            'User Agent': navigator.userAgent,
+                            'Timestamp': Date.now(),
+                            'Email Verified': this.state.emailVerified,
+                            'SMS Verified': this.state.smsVerified,
+                            'Age Verification': this.state.formData.ageVerification,
+                            'Promo Consent': this.state.formData.promoConsent
+                        }
+                    };
+
+                    const response = await fetch(this.config.airtableProxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(airtableData)
+                    });
+
+                    const result = await response.json();
+                    debugLog('Airtable submission response:', result);
+
+                    if (result.success) {
+                        this.showSuccess();
+                        debugLog('Form submitted successfully!');
+                    } else {
+                        throw new Error(result.error || 'Error al guardar en Airtable');
+                    }
+                } catch (error) {
+                    debugError('Airtable submission error:', error);
+                    alert('Hubo un error al procesar tu participación. Por favor, intenta nuevamente.');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const base64 = reader.result.split(',')[1];
+                        resolve(base64);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            async getUserIP() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    return data.ip;
+                } catch (error) {
+                    debugError('Error getting IP:', error);
+                    return 'Unknown';
+                }
+            }
+
+            getCountryFromCode(code) {
+                const countries = {
+                    '+56': 'Chile',
+                    '+54': 'Argentina',
+                    '+57': 'Colombia',
+                    '+51': 'Perú',
+                    '+58': 'Venezuela',
+                    '+593': 'Ecuador',
+                    '+591': 'Bolivia',
+                    '+595': 'Paraguay',
+                    '+598': 'Uruguay'
+                };
+                return countries[code] || 'Unknown';
+            }
+
+            showEmailOtpCard() {
+                const card = document.getElementById('emailOtpCard');
+                if (card) {
+                    card.style.display = 'block';
+                    // Focus first OTP input
+                    const firstInput = card.querySelector('.otp-input');
+                    if (firstInput) firstInput.focus();
+                }
+            }
+
+            hideEmailOtpCard() {
+                const card = document.getElementById('emailOtpCard');
+                if (card) card.style.display = 'none';
+            }
+
+            showSmsOtpCard() {
+                const card = document.getElementById('smsOtpCard');
+                if (card) {
+                    card.style.display = 'block';
+                    // Focus first OTP input
+                    const firstInput = card.querySelector('.otp-input');
+                    if (firstInput) firstInput.focus();
+                }
+            }
+
+            hideSmsOtpCard() {
+                const card = document.getElementById('smsOtpCard');
+                if (card) card.style.display = 'none';
+            }
+
+            showSuccess() {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    // Auto-close modal after 3 seconds
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 3000);
+                }
+            }
+
+            showLoading(show) {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = show ? 'flex' : 'none';
+                }
+            }
+
+            showValidation(field, type, message) {
+                const validationElement = document.getElementById(`${field}Validation`);
+                if (validationElement) {
+                    validationElement.className = `validation-message ${type}`;
+
+                    const icon = type === 'error' ? '❌' : '✅';
+                    validationElement.innerHTML = `${icon} ${message}`;
+                }
+            }
+
+            clearValidation(field) {
+                const validationElement = document.getElementById(`${field}Validation`);
+                if (validationElement) {
+                    validationElement.innerHTML = '';
+                    validationElement.className = 'validation-message';
+                }
+            }
+        }
+
+        // Global function for removing file (called from HTML)
+        function removeFile() {
+            if (window.rushbetGiveawayForm) {
+                window.rushbetGiveawayForm.removeFile();
+            }
+        }
+
+        // Initialize form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('DOM loaded, initializing form...');
+            // Set default country code to Chile
+            const countryCode = document.getElementById('countryCode');
+            if (countryCode && !countryCode.value) {
+                countryCode.value = '+56';
+            }
+
+            window.rushbetGiveawayForm = new RushbetGiveawayForm();
+        });
+
+        // Load Montserrat font
+        const font = document.createElement('link');
+        font.rel = 'stylesheet';
+        font.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap';
+        document.head.appendChild(font);
+    </script>
+</body>
+</html>
