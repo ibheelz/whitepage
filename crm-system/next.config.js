@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'crm.mieladigital.com', 'mieladigital.com'],
   },
   async headers() {
     return [
