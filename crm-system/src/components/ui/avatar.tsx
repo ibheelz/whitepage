@@ -31,30 +31,35 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     const sizeMap = { sm: 32, md: 40, lg: 48 }
     const avatarSize = sizeMap[size]
 
-    // Use more reliable DiceBear styles
-    const styles = ['avataaars', 'personas', 'initials']
-    const selectedStyle = styles[Math.abs(seed.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % styles.length]
+    // Use most reliable DiceBear style (avataaars is most stable)
+    const url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151&radius=50`
 
-    const url = `https://api.dicebear.com/7.x/${selectedStyle}/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151&radius=50`
-
-    // Test image load with timeout
+    // More aggressive loading with longer timeout
     const img = new Image()
+    img.crossOrigin = 'anonymous' // Handle CORS
+
     const timeout = setTimeout(() => {
+      console.log('DiceBear timeout for seed:', seed)
       setImageError(true)
-    }, 3000) // 3 second timeout
+    }, 8000) // 8 second timeout for production
 
     img.onload = () => {
+      console.log('DiceBear loaded successfully for seed:', seed)
       clearTimeout(timeout)
       setImageUrl(url)
       setImageLoaded(true)
       setImageError(false)
     }
 
-    img.onerror = () => {
+    img.onerror = (e) => {
+      console.log('DiceBear error for seed:', seed, e)
       clearTimeout(timeout)
       setImageError(true)
     }
 
+    // Start loading immediately
+    setImageError(false)
+    setImageLoaded(false)
     img.src = url
 
     return () => {
@@ -80,7 +85,7 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return colors[colorIndex]
   }
 
-  // Show DiceBear image if loaded, otherwise show initials
+  // Show DiceBear image if loaded, otherwise show initials or loading
   if (imageLoaded && imageUrl && !imageError) {
     return (
       <img
@@ -97,17 +102,26 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     )
   }
 
-  // Fallback to initials
+  // Show loading state briefly before falling back to initials
+  const isLoading = !imageError && !imageLoaded && (firstName || lastName || userId)
+
   return (
     <div
       className={cn(
         'rounded-full flex items-center justify-center text-white font-semibold ring-2 ring-white/10',
         sizeClasses[size],
-        getBackgroundColor(),
+        isLoading ? 'bg-gray-600 animate-pulse' : getBackgroundColor(),
         className
       )}
     >
-      {getInitials()}
+      {isLoading ? (
+        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      ) : (
+        getInitials()
+      )}
     </div>
   )
 }
