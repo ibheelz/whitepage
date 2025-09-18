@@ -822,6 +822,15 @@
         </div>
     </div>
 
+    <!-- Debug Panel -->
+    <div id="debugPanel" class="debug-panel" style="position: fixed; top: 20px; right: 20px; width: 400px; max-height: 500px; background: rgba(0,0,0,0.9); color: white; font-family: monospace; font-size: 12px; border-radius: 8px; padding: 15px; z-index: 10000; overflow-y: auto; border: 2px solid #00ff00; display: none;">
+        <div class="debug-header" style="border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #00ff00; font-weight: bold;">🐛 RUSHBET DEBUG</span>
+            <button onclick="document.getElementById('debugPanel').style.display='none'" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer;">×</button>
+        </div>
+        <div id="debugContent" class="debug-content"></div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
@@ -1139,7 +1148,7 @@
                 return true;
             }
 
-            validateEmail() {
+            async validateEmail() {
                 const input = document.getElementById('email');
                 const value = input.value.trim().toLowerCase();
 
@@ -1154,8 +1163,21 @@
                 }
 
                 input.value = value; // Normalize email
-                this.showValidation('email', 'success', 'Email válido - Se enviará código de verificación');
-                return true;
+
+                // Auto-trigger email verification for valid emails (like PIN-UP)
+                this.state.formData = this.state.formData || {};
+                this.state.formData.email = value;
+
+                debugLog('📧 Valid email detected, triggering verification...');
+                this.showValidation('email', 'info', 'Enviando código de verificación...');
+
+                try {
+                    await this.sendEmailVerification();
+                    return true;
+                } catch (error) {
+                    this.showValidation('email', 'error', 'Error al enviar código de verificación');
+                    return false;
+                }
             }
 
             validatePhone() {
@@ -1314,9 +1336,16 @@
 
                 debugTable(this.state.formData, '📋 Form Data Collected');
 
-                // Start email verification
-                debugLog('📧 Starting email verification process...');
-                await this.sendEmailVerification();
+                // Check if email is already verified
+                if (!this.state.emailVerified) {
+                    debugWarning('❌ Email not verified. User must complete email verification first.');
+                    this.showValidation('email', 'error', 'Debes verificar tu email antes de continuar');
+                    return;
+                }
+
+                debugSuccess('✅ Email verified, proceeding to submission...');
+                // Submit to Airtable
+                await this.submitToAirtable();
             }
 
             async sendEmailVerification() {
