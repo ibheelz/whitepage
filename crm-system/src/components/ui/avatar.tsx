@@ -23,7 +23,7 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return first + last || '?'
   }
 
-  // Generate DiceBear avatar URL with robust fallback
+  // Generate avatar using server-side proxy to avoid CORS issues
   useEffect(() => {
     if (!firstName && !lastName && !userId) return
 
@@ -31,20 +31,19 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     const sizeMap = { sm: 32, md: 40, lg: 48 }
     const avatarSize = sizeMap[size]
 
-    // Use most reliable DiceBear style (avataaars is most stable)
-    const url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151&radius=50`
+    // Use our server-side avatar proxy instead of direct DiceBear calls
+    const url = `/api/avatar?seed=${encodeURIComponent(seed)}&size=${avatarSize}`
 
-    // More aggressive loading with longer timeout
+    // Load avatar through our proxy
     const img = new Image()
-    img.crossOrigin = 'anonymous' // Handle CORS
 
     const timeout = setTimeout(() => {
-      console.log('DiceBear timeout for seed:', seed)
+      console.log('Avatar timeout for seed:', seed)
       setImageError(true)
-    }, 8000) // 8 second timeout for production
+    }, 10000) // 10 second timeout for server-side proxy
 
     img.onload = () => {
-      console.log('DiceBear loaded successfully for seed:', seed)
+      console.log('Avatar loaded successfully for seed:', seed)
       clearTimeout(timeout)
       setImageUrl(url)
       setImageLoaded(true)
@@ -52,7 +51,7 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     }
 
     img.onerror = (e) => {
-      console.log('DiceBear error for seed:', seed, e)
+      console.log('Avatar error for seed:', seed, e)
       clearTimeout(timeout)
       setImageError(true)
     }
