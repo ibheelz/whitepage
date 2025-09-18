@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React from 'react'
 import { cn } from '@/lib/utils'
 
 interface AvatarProps {
@@ -12,8 +12,8 @@ interface AvatarProps {
 }
 
 export function Avatar({ firstName, lastName, userId, size = 'md', className }: AvatarProps) {
-  const [imageError, setImageError] = useState(false)
-  const [useInitials, setUseInitials] = useState(true) // Start with initials
+  // Always use initials to avoid DiceBear API timeouts completely
+  const useInitials = true
 
   // Generate initials fallback
   const getInitials = () => {
@@ -22,39 +22,7 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return first + last || '?'
   }
 
-  // Test if DiceBear API is accessible with timeout
-  useEffect(() => {
-    if (!firstName && !lastName && !userId) return
-
-    const testImage = new Image()
-    const seed = userId || `${firstName || ''}-${lastName || ''}`.toLowerCase().replace(/\s+/g, '-')
-    const timeout = setTimeout(() => {
-      // If image doesn't load within 2 seconds, stick with initials
-      setUseInitials(true)
-    }, 2000)
-
-    testImage.onload = () => {
-      clearTimeout(timeout)
-      setUseInitials(false) // Switch to avatar if it loads quickly
-    }
-
-    testImage.onerror = () => {
-      clearTimeout(timeout)
-      setUseInitials(true)
-    }
-
-    testImage.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&size=32&backgroundColor=374151`
-  }, [firstName, lastName, userId])
-
-  // Generate avatar URL
-  const generateAvatarUrl = () => {
-    const seed = userId || `${firstName || ''}-${lastName || ''}`.toLowerCase().replace(/\s+/g, '-')
-    const sizeMap = { sm: 32, md: 40, lg: 48 }
-    const avatarSize = sizeMap[size]
-
-    // Use the more reliable initials style from DiceBear
-    return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&size=${avatarSize}&backgroundColor=374151`
-  }
+  // No external API calls - use custom initials only
 
   // Size classes
   const sizeClasses = {
@@ -74,33 +42,17 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
     return colors[colorIndex]
   }
 
-  if (useInitials || imageError) {
-    // Show custom initials fallback (more reliable than DiceBear)
-    return (
-      <div
-        className={cn(
-          'rounded-full flex items-center justify-center text-white font-semibold ring-2 ring-white/10',
-          sizeClasses[size],
-          getBackgroundColor(),
-          className
-        )}
-      >
-        {getInitials()}
-      </div>
-    )
-  }
-
+  // Always show custom initials (no external API calls)
   return (
-    <img
-      src={generateAvatarUrl()}
-      alt={`${firstName || ''} ${lastName || ''}`.trim() || 'User avatar'}
+    <div
       className={cn(
-        'rounded-full ring-2 ring-white/10 object-cover',
+        'rounded-full flex items-center justify-center text-white font-semibold ring-2 ring-white/10',
         sizeClasses[size],
+        getBackgroundColor(),
         className
       )}
-      onError={() => setImageError(true)}
-      loading="lazy"
-    />
+    >
+      {getInitials()}
+    </div>
   )
 }
