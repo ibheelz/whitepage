@@ -24,11 +24,11 @@ interface DashboardLayoutProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: AnalyticsIcon, description: 'Overview & Analytics' },
+  { name: 'Campaigns', href: '/dashboard/campaigns', icon: CampaignIcon, description: 'Marketing Campaigns' },
   { name: 'Customers', href: '/dashboard/customers', icon: UsersIcon, description: 'Customer Management' },
   { name: 'Leads', href: '/dashboard/leads', icon: ClicksIcon, description: 'Lead Management' },
   { name: 'Clicks', href: '/dashboard/clicks', icon: ClicksIcon, description: 'Click Tracking' },
   { name: 'Events', href: '/dashboard/events', icon: EventsIcon, description: 'User Events' },
-  { name: 'Campaigns', href: '/dashboard/campaigns', icon: CampaignIcon, description: 'Marketing Campaigns' },
   { name: 'Analytics', href: '/dashboard/analytics', icon: AnalyticsIcon, description: 'Performance Insights' },
   { name: 'Fraud Monitor', href: '/dashboard/fraud', icon: FraudIcon, description: 'Security & Fraud' },
   { name: 'Settings', href: '/dashboard/settings', icon: SettingsIcon, description: 'Configuration' },

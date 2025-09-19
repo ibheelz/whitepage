@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AnalyticsIcon, PlusIcon, GridIcon, TableIcon, TargetIcon, WarningIcon } from '@/components/ui/icons'
+import { PlusIcon, TargetIcon, WarningIcon, SearchIcon } from '@/components/ui/icons'
 
 interface CampaignStats {
   totalClicks: number
@@ -37,8 +37,6 @@ export default function CampaignsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterBy, setFilterBy] = useState('all')
-  const [viewMode, setViewMode] = useState('grid')
 
   useEffect(() => {
     fetchCampaigns()
@@ -61,24 +59,6 @@ export default function CampaignsPage() {
     }
   }
 
-  const getQualityScoreColor = (score: number) => {
-    if (score >= 80) return 'text-primary'
-    if (score >= 60) return 'text-yellow-600'
-    return 'text-red-600'
-  }
-
-  const getRateColor = (rate: number, type: 'conversion' | 'duplicate' | 'fraud') => {
-    if (type === 'conversion') {
-      if (rate >= 5) return 'text-primary'
-      if (rate >= 2) return 'text-yellow-600'
-      return 'text-red-600'
-    } else {
-      // For duplicate and fraud rates, lower is better
-      if (rate <= 5) return 'text-primary'
-      if (rate <= 15) return 'text-yellow-600'
-      return 'text-red-600'
-    }
-  }
 
   const filteredCampaigns = campaigns.filter((campaign) => {
     const matchesSearch =
@@ -86,11 +66,7 @@ export default function CampaignsPage() {
       campaign.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (campaign.description && campaign.description.toLowerCase().includes(searchQuery.toLowerCase()))
 
-    const matchesFilter = filterBy === 'all' ||
-      (filterBy === 'active' && campaign.isActive) ||
-      (filterBy === 'inactive' && !campaign.isActive)
-
-    return matchesSearch && matchesFilter
+    return matchesSearch
   })
 
   if (loading) {
@@ -142,224 +118,127 @@ export default function CampaignsPage() {
     )
   }
 
-  // Calculate overall stats
-  const overallStats = campaigns.reduce(
-    (acc, campaign) => ({
-      totalClicks: acc.totalClicks + campaign.stats.totalClicks,
-      totalLeads: acc.totalLeads + campaign.stats.totalLeads,
-      totalUsers: acc.totalUsers + campaign.stats.uniqueUsers,
-      totalRevenue: acc.totalRevenue + campaign.stats.totalRevenue,
-      totalCampaigns: acc.totalCampaigns + 1,
-    }),
-    { totalClicks: 0, totalLeads: 0, totalUsers: 0, totalRevenue: 0, totalCampaigns: 0 }
-  )
-
-  const overallConversionRate = overallStats.totalClicks > 0
-    ? Math.round((overallStats.totalLeads / overallStats.totalClicks) * 10000) / 100
-    : 0
 
   return (
-    <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Campaign Management</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">Create, monitor, and optimize your marketing campaigns</p>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-6xl mx-auto p-8">
+        {/* Simple Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-white">Campaigns</h1>
+              <p className="text-muted-foreground text-sm mt-1">Manage your marketing campaigns</p>
+            </div>
+            <button className="premium-button-primary">
+              <PlusIcon size={16} className="mr-2" />
+              New Campaign
+            </button>
+          </div>
         </div>
-        <div className="flex items-center space-x-3">
-          <button className="premium-button-secondary">
-            <AnalyticsIcon size={16} className="mr-2" />
-            Analytics
-          </button>
-          <button className="premium-button-primary">
-            <PlusIcon size={16} className="mr-2" />
-            New Campaign
-          </button>
-        </div>
-      </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <div className="premium-card p-6 text-center glow-effect">
-          <div className="text-3xl font-black text-primary mb-2">{overallStats.totalCampaigns}</div>
-          <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Active Campaigns</div>
-        </div>
-        <div className="premium-card p-6 text-center glow-effect">
-          <div className="text-3xl font-black text-foreground mb-2">{overallStats.totalClicks.toLocaleString()}</div>
-          <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Clicks</div>
-        </div>
-        <div className="premium-card p-6 text-center glow-effect">
-          <div className="text-3xl font-black text-primary mb-2">{overallStats.totalLeads.toLocaleString()}</div>
-          <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Leads</div>
-        </div>
-        <div className="premium-card p-6 text-center glow-effect">
-          <div className="text-3xl font-black text-foreground mb-2">{overallConversionRate}%</div>
-          <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Conversion Rate</div>
-        </div>
-        <div className="premium-card p-6 text-center glow-effect">
-          <div className="text-3xl font-black text-primary mb-2">${overallStats.totalRevenue.toLocaleString()}</div>
-          <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Revenue</div>
-        </div>
-      </div>
 
-      {/* Search & Controls */}
-      <div className="premium-card p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <SearchIcon size={16} className="text-muted-foreground" />
+            </div>
             <input
               type="search"
-              placeholder="Search campaigns by name, slug, or description..."
+              placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="premium-input"
+              className="premium-input pl-10 w-full"
             />
           </div>
-          <div className="flex gap-3">
-            <select
-              value={filterBy}
-              onChange={(e) => setFilterBy(e.target.value)}
-              className="premium-input min-w-32"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-            <div className="flex bg-muted/20 rounded-2xl p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
-                  viewMode === 'grid'
-                    ? 'bg-primary text-primary-foreground shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <GridIcon size={12} className="mr-1" />
-                Grid
-              </button>
-              <button
-                onClick={() => setViewMode('table')}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
-                  viewMode === 'table'
-                    ? 'bg-primary text-primary-foreground shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <TableIcon size={12} className="mr-1" />
-                Table
-              </button>
+        </div>
+
+        {/* Campaign List */}
+        {filteredCampaigns.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-muted/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <TargetIcon size={24} className="text-muted-foreground" />
             </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">No campaigns found</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchQuery ? 'No campaigns match your search' : 'Create your first campaign to get started'}
+            </p>
+            <button className="premium-button-primary">
+              <PlusIcon size={16} className="mr-2" />
+              New Campaign
+            </button>
           </div>
-        </div>
-      </div>
-
-      {/* Campaigns Display */}
-      {filteredCampaigns.length === 0 ? (
-        <div className="premium-card p-12 text-center">
-          <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-            <AnalyticsIcon size={32} />
-          </div>
-          <h2 className="text-2xl font-black text-foreground mb-2">No Campaigns Found</h2>
-          <p className="text-muted-foreground mb-6">
-            {searchQuery || filterBy !== 'all'
-              ? 'No campaigns match your search criteria'
-              : 'Get started by creating your first campaign'
-            }
-          </p>
-          <button className="premium-button-primary">
-            <PlusIcon size={16} className="mr-2" />
-            Create Campaign
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredCampaigns.map((campaign, index) => (
-            <div
-              key={campaign.id}
-              className="premium-card p-8 hover:scale-105 transition-all duration-300 glow-effect"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
-                        <TargetIcon size={24} />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-black text-foreground">{campaign.name}</h3>
-                        <p className="text-sm text-muted-foreground font-medium">Slug: {campaign.slug}</p>
-                      </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredCampaigns.map((campaign) => (
+              <div key={campaign.id} className="premium-card">
+                <div className="flex items-center justify-between">
+                  {/* Campaign Info */}
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+                      <TargetIcon size={20} className="text-primary" />
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
-                        campaign.isActive
-                          ? 'bg-green-500/20 text-primary'
-                          : 'bg-red-500/20 text-red-500'
-                      }`}>
-                        {campaign.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                      <div className="text-xs text-muted-foreground">
-                        Created: {new Date(campaign.createdAt).toLocaleDateString()}
-                      </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">{campaign.name}</h3>
+                      <p className="text-sm text-muted-foreground">/{campaign.slug}</p>
                     </div>
                   </div>
-                  <button className="premium-button-secondary px-4 py-2 text-xs">
-                    Manage
-                  </button>
-                </div>
 
-                {/* Description */}
-                {campaign.description && (
-                  <p className="text-sm text-muted-foreground">{campaign.description}</p>
-                )}
+                  {/* Metrics */}
+                  <div className="hidden md:flex items-center space-x-8">
+                    <div className="text-center">
+                      <div className="text-lg font-semibold text-foreground">{campaign.stats.totalClicks.toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">Clicks</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-semibold text-foreground">{campaign.stats.totalLeads.toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">Leads</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-semibold text-foreground">{campaign.stats.conversionRate}%</div>
+                      <div className="text-xs text-muted-foreground">CVR</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-semibold text-foreground">${campaign.stats.totalRevenue.toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">Revenue</div>
+                    </div>
+                  </div>
 
-                {/* Performance Metrics */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-black text-primary">{campaign.stats.totalLeads.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground font-bold uppercase">Leads</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-black text-foreground">{campaign.stats.totalClicks.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground font-bold uppercase">Clicks</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-black text-foreground">{campaign.stats.conversionRate}%</div>
-                    <div className="text-xs text-muted-foreground font-bold uppercase">Conv Rate</div>
-                  </div>
-                </div>
-
-                {/* Quality & Revenue */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground font-medium">Quality Score:</span>
-                    <span className={`text-sm font-bold ${getQualityScoreColor(campaign.stats.avgQualityScore)}`}>
-                      {campaign.stats.avgQualityScore}%
+                  {/* Status & Actions */}
+                  <div className="flex items-center space-x-3">
+                    <span className="px-2 py-1 rounded text-xs font-medium bg-muted/20 text-foreground">
+                      {campaign.isActive ? 'Active' : 'Paused'}
                     </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground font-medium">Revenue:</span>
-                    <span className="text-lg font-black text-primary">${campaign.stats.totalRevenue.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground font-medium">Fraud Rate:</span>
-                    <span className={`text-sm font-bold ${getRateColor(campaign.stats.fraudRate, 'fraud')}`}>
-                      {campaign.stats.fraudRate}%
-                    </span>
+                    <button className="premium-button-secondary px-3 py-1 text-xs">
+                      Edit
+                    </button>
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <button className="w-full premium-button-secondary">
-                  <AnalyticsIcon size={16} className="mr-2" />
-                  View Full Analytics
-                </button>
+                {/* Mobile Metrics */}
+                <div className="md:hidden mt-4 grid grid-cols-4 gap-4 pt-4 border-t border-muted/20">
+                  <div className="text-center">
+                    <div className="text-sm font-semibold text-foreground">{campaign.stats.totalClicks.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Clicks</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm font-semibold text-foreground">{campaign.stats.totalLeads.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Leads</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm font-semibold text-foreground">{campaign.stats.conversionRate}%</div>
+                    <div className="text-xs text-muted-foreground">CVR</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm font-semibold text-foreground">${campaign.stats.totalRevenue.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Revenue</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

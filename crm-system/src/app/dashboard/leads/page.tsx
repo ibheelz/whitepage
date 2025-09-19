@@ -404,21 +404,25 @@ export default function LeadsPage() {
                       </td>
                       <td>
                         <div className="text-sm text-gray-600">
-                          <div>{lead.user._count.clicks} clicks</div>
-                          <div>{lead.user._count.events} events</div>
-                          <div>${lead.user.totalRevenue.toLocaleString()} revenue</div>
+                          <div>{lead.user?._count?.clicks || 0} clicks</div>
+                          <div>{lead.user?._count?.events || 0} events</div>
+                          <div>${lead.user?.totalRevenue?.toLocaleString() || '0'} revenue</div>
                         </div>
                       </td>
                       <td className="text-sm">
                         {new Date(lead.createdAt).toLocaleDateString()}
                       </td>
                       <td>
-                        <Link
-                          href={`/dashboard/users/${lead.user.id}`}
-                          className="text-foreground hover:text-foreground text-sm"
-                        >
-                          View User
-                        </Link>
+                        {lead.user?.id ? (
+                          <Link
+                            href={`/dashboard/users/${lead.user.id}`}
+                            className="text-foreground hover:text-foreground text-sm"
+                          >
+                            View User
+                          </Link>
+                        ) : (
+                          <span className="text-gray-400 text-sm">No User</span>
+                        )}
                       </td>
                     </tr>
                   ))}
