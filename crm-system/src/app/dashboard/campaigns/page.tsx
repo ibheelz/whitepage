@@ -45,6 +45,7 @@ export default function CampaignsPage() {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [managingCampaign, setManagingCampaign] = useState<Campaign | null>(null)
+  const [allConversionTypes, setAllConversionTypes] = useState<string[]>([])
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -79,6 +80,17 @@ export default function CampaignsPage() {
           status: campaign.isActive ? 'active' : 'paused' as CampaignStatus
         }))
         setCampaigns(campaignsWithStatus)
+
+        // Extract all unique conversion types from campaigns
+        const conversionTypes = new Set<string>()
+        campaignsWithStatus.forEach((campaign: any) => {
+          if (campaign.conversionTypes && Array.isArray(campaign.conversionTypes)) {
+            campaign.conversionTypes.forEach((type: any) => {
+              conversionTypes.add(type.name || type.id || type)
+            })
+          }
+        })
+        setAllConversionTypes(Array.from(conversionTypes))
       } else {
         setError('Failed to load campaigns')
       }
@@ -183,6 +195,26 @@ export default function CampaignsPage() {
   const handleManageCampaign = (campaign: Campaign) => {
     // Directly open the edit modal
     setManagingCampaign(campaign)
+  }
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    try {
+      const response = await fetch(`/api/campaigns/${campaignId}`, {
+        method: 'DELETE'
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        alert('Campaign deleted successfully!')
+        fetchCampaigns()
+      } else {
+        throw new Error(result.error)
+      }
+    } catch (error) {
+      console.error('Error deleting campaign:', error)
+      alert('Failed to delete campaign: ' + (error as Error).message)
+    }
   }
 
 
@@ -350,13 +382,88 @@ export default function CampaignsPage() {
               <table className="w-full">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Campaign</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Clicks</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Leads</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Regs</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Created</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14,2 14,8 20,8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                          <polyline points="10,9 9,9 8,9"/>
+                        </svg>
+                        <span>Campaign</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        <span>Status</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <path d="M9 12l2 2 4-4"/>
+                          <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                          <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                          <path d="M18 12c0 3-3 6-6 6s-6-3-6-6 3-6 6-6 6 3 6 6"/>
+                        </svg>
+                        <span>Clicks</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                          <circle cx="8.5" cy="7" r="4"/>
+                          <line x1="20" y1="8" x2="20" y2="14"/>
+                          <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                        <span>Leads</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        <span>Regs</span>
+                      </div>
+                    </th>
+                    {/* Dynamic conversion type columns */}
+                    {allConversionTypes.map((conversionType) => (
+                      <th key={conversionType} className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                        <div className="flex items-center space-x-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                          </svg>
+                          <span>{conversionType}</span>
+                        </div>
+                      </th>
+                    ))}
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <span>Created</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center space-x-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <circle cx="12" cy="12" r="3"/>
+                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        <span>Actions</span>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -435,6 +542,20 @@ export default function CampaignsPage() {
                       <td className="px-6 py-4">
                         <div className="text-white font-medium">{campaign.stats.totalEvents.toLocaleString()}</div>
                       </td>
+                      {/* Dynamic conversion type data columns */}
+                      {allConversionTypes.map((conversionType) => {
+                        // Find conversion data for this type in campaign
+                        const conversionData = campaign.conversionTypes?.find((ct: any) =>
+                          (ct.name || ct.id || ct) === conversionType
+                        )
+                        const count = conversionData?.count || campaign.stats?.[`${conversionType.toLowerCase()}Count`] || 0
+
+                        return (
+                          <td key={conversionType} className="px-6 py-4">
+                            <div className="text-white font-medium">{count.toLocaleString ? count.toLocaleString() : count}</div>
+                          </td>
+                        )
+                      })}
                       <td className="px-6 py-4">
                         <div className="text-sm text-white/60">
                           {new Date(campaign.createdAt).toLocaleDateString()}
@@ -443,7 +564,7 @@ export default function CampaignsPage() {
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleManageCampaign(campaign)}
-                          className="w-20 px-4 py-1.5 text-xs font-medium rounded-lg bg-white text-black hover:bg-white/90 transition-colors tracking-widest flex items-center justify-center"
+                          className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                         >
                           MANAGE
                         </button>
@@ -554,7 +675,7 @@ export default function CampaignsPage() {
                   {/* Manage Button */}
                   <button
                     onClick={() => handleManageCampaign(campaign)}
-                    className="w-20 px-4 py-1.5 text-xs font-medium text-black bg-white hover:bg-white/90 rounded-lg transition-colors tracking-widest flex items-center justify-center"
+                    className="w-20 px-4 py-1.5 text-xs font-bold text-black bg-primary hover:bg-primary/90 rounded-lg transition-colors flex items-center justify-center"
                   >
                     MANAGE
                   </button>
@@ -576,6 +697,7 @@ export default function CampaignsPage() {
           <CampaignModal
             isOpen={true}
             onClose={() => setManagingCampaign(null)}
+            onDelete={handleDeleteCampaign}
             onSubmit={async (updatedData) => {
               try {
                 console.log('Updating campaign:', managingCampaign.id, updatedData)
