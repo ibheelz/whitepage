@@ -218,7 +218,7 @@ export default function EventsPage() {
           {filteredEvents.map((event: any, index) => (
             <div
               key={event.id}
-              className="premium-card p-6 hover:scale-105 transition-all duration-300 glow-effect"
+              className="premium-card p-6 transition-all duration-300 glow-effect"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex items-start justify-between">

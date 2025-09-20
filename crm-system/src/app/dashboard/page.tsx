@@ -142,7 +142,7 @@ const HistogramChart = ({ data, height = 60 }: { data: number[], height?: number
             title={`$${value.toLocaleString()}`}
           >
             <div
-              className="w-full rounded-t-lg transition-all duration-500 group-hover:scale-y-110 group-hover:brightness-125"
+              className="w-full rounded-t-lg transition-all duration-500 group-hover:brightness-125"
               style={{
                 height: `${barHeight}px`,
                 background: `linear-gradient(180deg,
@@ -267,7 +267,7 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 w-full">
         <Link href="/dashboard/customers">
-          <InteractiveCard className="transition-all duration-300 w-full min-h-[140px] hover:scale-105 cursor-pointer group">
+          <InteractiveCard className="transition-all duration-300 w-full min-h-[140px] cursor-pointer group">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex-1 min-w-0 pr-2">
                 <div className="text-xl sm:text-2xl lg:text-3xl font-black text-primary truncate group-hover:text-yellow-300 transition-colors">
@@ -284,7 +284,7 @@ export default function DashboardPage() {
                   Click to manage customers →
                 </div>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-xl flex-shrink-0 group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-xl flex-shrink-0 group-hover:shadow-2xl transition-all duration-300">
                 <UsersIcon size={18} className="text-black sm:w-[20px] sm:h-[20px]" />
               </div>
             </div>
@@ -554,7 +554,7 @@ export default function DashboardPage() {
 
                 return (
                   <div key={lead.id} className="flex items-center space-x-3 p-3 bg-muted/5 rounded-lg hover:bg-muted/10 transition-all duration-200 group">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center transition-transform">
                       <UserIcon size={14} className="text-black" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -606,7 +606,7 @@ export default function DashboardPage() {
             { name: 'Analytics', uptime: '99.7%' },
             { name: 'Security', uptime: '100%' },
           ].map((service) => (
-            <div key={service.name} className="text-center premium-card p-2 sm:p-3 hover:shadow-lg transition-all duration-300 w-full">
+            <div key={service.name} className="text-center premium-card p-2 sm:p-3 transition-all duration-300 w-full">
               <div className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 bg-primary rounded-lg flex items-center justify-center">
                 <CheckIcon size={10} className="text-black sm:w-3 sm:h-3" />
               </div>

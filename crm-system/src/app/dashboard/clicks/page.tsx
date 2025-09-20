@@ -92,7 +92,7 @@ export default function ClicksPage() {
           <p className="text-xs sm:text-sm text-muted-foreground">Monitor and analyze user click behavior across campaigns</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-6 py-3 rounded-2xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+          <button className="px-6 py-3 rounded-2xl font-bold text-black transition-all duration-300 flex items-center gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
@@ -102,7 +102,7 @@ export default function ClicksPage() {
             <ImportIcon size={16} />
             Import Data
           </button>
-          <button className="px-6 py-3 rounded-2xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+          <button className="px-6 py-3 rounded-2xl font-bold text-black transition-all duration-300 flex items-center gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',

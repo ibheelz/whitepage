@@ -179,7 +179,7 @@ export default function LeadsPage() {
           <p className="text-xs sm:text-sm text-muted-foreground">Manage and analyze lead submissions</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+          <button className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
@@ -189,7 +189,7 @@ export default function LeadsPage() {
             <ImportIcon size={16} />
             Import Leads
           </button>
-          <button onClick={handleExport} className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95" style={{
+          <button onClick={handleExport} className="px-4 py-2 rounded-xl font-bold text-black transition-all duration-300 flex items-center gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',

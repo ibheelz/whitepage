@@ -175,7 +175,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   {/* Compact avatar for small screens - match large screen compact style */}
                   <button
                     onClick={() => setCompactUserMenuOpen(!compactUserMenuOpen)}
-                    className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
+                    className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg"
                     title="User menu"
                   >
                     <Avatar
@@ -224,7 +224,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     {/* Compact avatar using same API as expanded */}
                     <button
                       onClick={() => setCompactUserMenuOpen(!compactUserMenuOpen)}
-                      className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg hover:scale-105"
+                      className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-300 shadow-lg"
                       title="User menu"
                     >
                       <Avatar
@@ -283,7 +283,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     </div>
                     <button
                       onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-                      className="p-2 rounded-xl hover:bg-primary/10 text-primary hover:text-primary/80 transition-all duration-300 hover:scale-110"
+                      className="p-2 rounded-xl hover:bg-primary/10 text-primary hover:text-primary/80 transition-all duration-300"
                       title="Sign out"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

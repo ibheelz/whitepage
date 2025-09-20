@@ -37,6 +37,8 @@ export default function CampaignsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<'compact' | 'table'>('compact')
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
 
   useEffect(() => {
     fetchCampaigns()
@@ -122,38 +124,83 @@ export default function CampaignsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto p-8">
-        {/* Simple Header */}
+        {/* Header with Status Indicator */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-white">Campaigns</h1>
               <p className="text-muted-foreground text-sm mt-1">Manage your marketing campaigns</p>
             </div>
-            <button className="premium-button-primary">
-              <PlusIcon size={16} className="mr-2" />
-              New Campaign
-            </button>
+            <div className="flex items-center space-x-4">
+              <button className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
+                <PlusIcon size={16} />
+                <span>New Campaign</span>
+              </button>
+            </div>
           </div>
         </div>
 
 
-        {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative max-w-md">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <SearchIcon size={16} className="text-muted-foreground" />
+        {/* Search Bar and View Toggle */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-muted-foreground">
+                <path d="M21 21L16.514 16.506M19 10.5C19 15.194 15.194 19 10.5 19S2 15.194 2 10.5 5.806 2 10.5 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <input
               type="search"
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="premium-input pl-10 w-full"
+              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-200 backdrop-blur-sm"
             />
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
+            {/* Compact View */}
+            <button
+              onClick={() => setViewMode('compact')}
+              className={`p-2 rounded-lg transition-all duration-200 ${
+                viewMode === 'compact'
+                  ? 'text-black'
+                  : 'text-white/60 hover:text-white/80'
+              }`}
+              style={{
+                background: viewMode === 'compact'
+                  ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                  : 'transparent'
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+              </svg>
+            </button>
+
+            {/* Table View */}
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-2 rounded-lg transition-all duration-200 ${
+                viewMode === 'table'
+                  ? 'text-black'
+                  : 'text-white/60 hover:text-white/80'
+              }`}
+              style={{
+                background: viewMode === 'table'
+                  ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                  : 'transparent'
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+              </svg>
+            </button>
           </div>
         </div>
 
-        {/* Campaign List */}
+        {/* Campaign Display */}
         {filteredCampaigns.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-muted/20 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -168,70 +215,211 @@ export default function CampaignsPage() {
               New Campaign
             </button>
           </div>
+        ) : viewMode === 'table' ? (
+          /* Table View */
+          <div className="rounded-2xl shadow-xl overflow-hidden" style={{
+            background: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
+          }}>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-max">
+                <thead style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Campaign</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Clicks</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Leads</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody style={{ backgroundColor: 'transparent' }}>
+                  {filteredCampaigns.map((campaign, index) => (
+                    <tr
+                      key={campaign.id}
+                      className="transition-all duration-200 border-b border-white/5 h-[60px] overflow-hidden"
+                      style={{
+                        background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
+                      }}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="relative">
+                            <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
+                              <TargetIcon size={16} className="text-primary" />
+                            </div>
+                            <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${
+                              campaign.isActive ? 'bg-green-500' : 'bg-red-500'
+                            }`} />
+                          </div>
+                          <div>
+                            <div className="font-medium text-white">{campaign.name}</div>
+                            <div className="text-sm text-white/60">/{campaign.slug}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="relative">
+                          <button
+                            onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
+                            className={`px-3 py-1 rounded text-xs font-medium flex items-center space-x-2 backdrop-blur-sm border ${
+                              campaign.isActive
+                                ? 'bg-green-500/20 text-green-400 border-green-500/40'
+                                : 'bg-red-500/20 text-red-400 border-red-500/40'
+                            }`}
+                          >
+                            <div className={`w-2 h-2 rounded-full ${
+                              campaign.isActive ? 'bg-green-400' : 'bg-red-400'
+                            }`} />
+                            <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+
+                          {dropdownOpen === campaign.id && (
+                            <div className="absolute right-0 mt-2 w-32 bg-card/90 backdrop-blur-sm border border-border rounded-lg shadow-lg z-10">
+                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-green-400">
+                                <div className="w-2 h-2 rounded-full bg-green-400" />
+                                <span>Active</span>
+                              </button>
+                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-red-400">
+                                <div className="w-2 h-2 rounded-full bg-red-400" />
+                                <span>Paused</span>
+                              </button>
+                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-yellow-400">
+                                <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                                <span>Testing</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-white">{campaign.stats.totalClicks.toLocaleString()}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-white">{campaign.stats.totalLeads.toLocaleString()}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-white/60">
+                          {new Date(campaign.createdAt).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button className="px-4 py-1.5 text-xs font-medium rounded-lg bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
+                          Manage
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         ) : (
-          <div className="space-y-4">
+          /* Compact View Cards */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredCampaigns.map((campaign) => (
-              <div key={campaign.id} className="premium-card">
-                <div className="flex items-center justify-between">
+              <div
+                key={campaign.id}
+                className="rounded-xl p-4 relative cursor-pointer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                {/* Status Indicator Circle */}
+                <div className="absolute top-3 right-3 w-3 h-3 rounded-full border-2 border-background">
+                  <div className={`w-full h-full rounded-full ${
+                    campaign.isActive ? 'bg-green-500' : 'bg-red-500'
+                  }`} />
+                </div>
+
+                <div className="space-y-4">
                   {/* Campaign Info */}
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
                       <TargetIcon size={20} className="text-primary" />
                     </div>
-                    <div>
-                      <h3 className="font-medium text-foreground">{campaign.name}</h3>
-                      <p className="text-sm text-muted-foreground">/{campaign.slug}</p>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-white text-base">{campaign.name}</h3>
+                      <p className="text-sm text-white/60">/{campaign.slug}</p>
                     </div>
                   </div>
 
                   {/* Metrics */}
-                  <div className="hidden md:flex items-center space-x-8">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-foreground">{campaign.stats.totalClicks.toLocaleString()}</div>
-                      <div className="text-xs text-muted-foreground">Clicks</div>
+                      <div className="text-lg font-semibold text-white">{campaign.stats.totalClicks.toLocaleString()}</div>
+                      <div className="text-xs text-white/60">Clicks</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-foreground">{campaign.stats.totalLeads.toLocaleString()}</div>
-                      <div className="text-xs text-muted-foreground">Leads</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-semibold text-foreground">{campaign.stats.conversionRate}%</div>
-                      <div className="text-xs text-muted-foreground">CVR</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-semibold text-foreground">${campaign.stats.totalRevenue.toLocaleString()}</div>
-                      <div className="text-xs text-muted-foreground">Revenue</div>
+                      <div className="text-lg font-semibold text-white">{campaign.stats.totalLeads.toLocaleString()}</div>
+                      <div className="text-xs text-white/60">Leads</div>
                     </div>
                   </div>
 
                   {/* Status & Actions */}
-                  <div className="flex items-center space-x-3">
-                    <span className="px-2 py-1 rounded text-xs font-medium bg-muted/20 text-foreground">
-                      {campaign.isActive ? 'Active' : 'Paused'}
-                    </span>
-                    <button className="premium-button-secondary px-3 py-1 text-xs">
-                      Edit
-                    </button>
-                  </div>
-                </div>
+                  <div className="flex items-center justify-between">
+                    {/* Status Dropdown Button */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
+                        className={`${viewMode === 'compact' ? 'px-2 py-1' : 'px-3 py-1'} rounded text-xs font-medium flex items-center space-x-2 backdrop-blur-sm border ${
+                          campaign.isActive
+                            ? 'bg-green-500/20 text-green-400 border-green-500/40'
+                            : 'bg-red-500/20 text-red-400 border-red-500/40'
+                        }`}
+                      >
+                        <div className={`w-2 h-2 rounded-full ${
+                          campaign.isActive ? 'bg-green-400' : 'bg-red-400'
+                        }`} />
+                        <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
 
-                {/* Mobile Metrics */}
-                <div className="md:hidden mt-4 grid grid-cols-4 gap-4 pt-4 border-t border-muted/20">
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">{campaign.stats.totalClicks.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Clicks</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">{campaign.stats.totalLeads.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Leads</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">{campaign.stats.conversionRate}%</div>
-                    <div className="text-xs text-muted-foreground">CVR</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">${campaign.stats.totalRevenue.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Revenue</div>
+                      {/* Dropdown Menu */}
+                      {dropdownOpen === campaign.id && (
+                        <div className="absolute right-0 mt-2 w-32 bg-card/90 backdrop-blur-sm border border-border rounded-lg shadow-lg z-10">
+                          <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-green-400">
+                            <div className="w-2 h-2 rounded-full bg-green-400" />
+                            <span>Active</span>
+                          </button>
+                          <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-red-400">
+                            <div className="w-2 h-2 rounded-full bg-red-400" />
+                            <span>Paused</span>
+                          </button>
+                          <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-yellow-400">
+                            <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                            <span>Testing</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <button className="px-4 py-1.5 text-xs font-medium rounded-lg bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
+                      Manage
+                    </button>
                   </div>
                 </div>
               </div>

@@ -281,7 +281,7 @@ export default function FraudMonitorPage() {
             {alerts.map((alert, index) => (
               <div
                 key={alert.id}
-                className="premium-card p-6 hover:scale-105 transition-all duration-300 glow-effect"
+                className="premium-card p-6 transition-all duration-300 glow-effect"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-start justify-between">
@@ -333,7 +333,7 @@ export default function FraudMonitorPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <button className="premium-card p-8 hover:scale-105 transition-all duration-300 glow-effect text-left">
+        <button className="premium-card p-8 transition-all duration-300 glow-effect text-left">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
               <BlockIcon size={24} />
@@ -344,7 +344,7 @@ export default function FraudMonitorPage() {
             </div>
           </div>
         </button>
-        <button className="premium-card p-8 hover:scale-105 transition-all duration-300 glow-effect text-left">
+        <button className="premium-card p-8 transition-all duration-300 glow-effect text-left">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
               <AnalyticsIcon size={24} />
@@ -355,7 +355,7 @@ export default function FraudMonitorPage() {
             </div>
           </div>
         </button>
-        <button className="premium-card p-8 hover:scale-105 transition-all duration-300 glow-effect text-left">
+        <button className="premium-card p-8 transition-all duration-300 glow-effect text-left">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
               <SettingsIcon size={24} />

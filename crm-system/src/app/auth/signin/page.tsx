@@ -173,7 +173,7 @@ export default function SignInPage() {
 
               <div className="grid gap-6">
                 <div
-                  className="premium-card p-6 cursor-pointer transition-all duration-300 hover:scale-105 glow-effect group"
+                  className="premium-card p-6 cursor-pointer transition-all duration-300 glow-effect group"
                   onClick={() => fillCredentials('abiola@mieladigital.com', 'admin123')}
                 >
                   <div className="flex items-center justify-between">
@@ -200,14 +200,14 @@ export default function SignInPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="text-2xl opacity-40 group-hover:opacity-80 transition-all duration-300 group-hover:scale-110">
+                    <div className="text-2xl opacity-40 group-hover:opacity-80 transition-all duration-300">
                       ⚡
                     </div>
                   </div>
                 </div>
 
                 <div
-                  className="premium-card p-6 cursor-pointer transition-all duration-300 hover:scale-105 glow-effect group"
+                  className="premium-card p-6 cursor-pointer transition-all duration-300 glow-effect group"
                   onClick={() => fillCredentials('client@example.com', 'client123')}
                 >
                   <div className="flex items-center justify-between">
@@ -234,7 +234,7 @@ export default function SignInPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="text-2xl opacity-40 group-hover:opacity-80 transition-all duration-300 group-hover:scale-110">
+                    <div className="text-2xl opacity-40 group-hover:opacity-80 transition-all duration-300">
                       📊
                     </div>
                   </div>

@@ -938,7 +938,7 @@ export default function CustomersPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 mb-2 xxs:mb-1 xs:mb-3 sm:mb-6">
         <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Customer Management</h1>
         <div className="flex flex-row gap-1 xxs:gap-1 xs:gap-1.5 sm:gap-2 w-full sm:w-auto min-w-0">
-          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
+          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
@@ -949,7 +949,7 @@ export default function CustomersPage() {
             <ImportIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
             <span className="hidden xs:inline text-xs sm:text-sm truncate">Import</span>
           </button>
-          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
+          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
@@ -960,7 +960,7 @@ export default function CustomersPage() {
             <ExportIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
             <span className="hidden xs:inline text-xs sm:text-sm truncate">Export</span>
           </button>
-          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[140px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2 hover:scale-105 active:scale-95" style={{
+          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[140px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2" style={{
             background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
@@ -1011,7 +1011,7 @@ export default function CustomersPage() {
 
             <button
               onClick={handleManualRefresh}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-300 hover:scale-105"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-300"
               style={{
                 background: 'rgba(253, 198, 0, 0.2)',
                 border: '1px solid rgba(253, 198, 0, 0.3)',
@@ -1066,7 +1066,7 @@ export default function CustomersPage() {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 whitespace-nowrap"
+            className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
             style={{
               background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
               backdropFilter: 'blur(10px)',
@@ -1487,7 +1487,7 @@ export default function CustomersPage() {
               /* Compact Card for Small Screens */
               <div
                 key={customer.id}
-                className="rounded-xl p-4 transition-all duration-300 hover:scale-[1.01] cursor-pointer"
+                className="rounded-xl p-4 transition-all duration-300 cursor-pointer"
                 style={{
                   background: 'rgba(255, 255, 255, 0.08)',
                   backdropFilter: 'blur(20px)',
@@ -1605,7 +1605,7 @@ export default function CustomersPage() {
               /* Full Card for Large Screens */
             <div
               key={customer.id}
-              className="rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] cursor-pointer"
+              className="rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 transition-all duration-300 cursor-pointer"
               style={{
                 background: 'rgba(255, 255, 255, 0.08)',
                 backdropFilter: 'blur(20px)',

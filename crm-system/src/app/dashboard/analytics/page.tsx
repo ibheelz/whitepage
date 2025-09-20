@@ -382,7 +382,7 @@ export default function AnalyticsPage() {
               <div key={hour.hour} className="text-center">
                 <div className="h-32 flex items-end justify-center mb-2">
                   <div
-                    className="w-8 bg-gradient-to-t from-primary to-primary/80 rounded-t-xl shadow-lg transition-all duration-500 hover:scale-105"
+                    className="w-8 bg-gradient-to-t from-primary to-primary/80 rounded-t-xl shadow-lg transition-all duration-500"
                     style={{ height: `${height}%` }}
                     title={`${hour.hour}:00 - ${hour.clicks} clicks, ${hour.leads} leads`}
                   />
