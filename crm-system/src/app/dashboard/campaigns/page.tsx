@@ -29,6 +29,7 @@ interface Campaign {
   description: string | null
   clientId: string | null
   brandId: string | null
+  logoUrl?: string | null
   status: CampaignStatus
   createdAt: string
   updatedAt: string
@@ -159,19 +160,23 @@ export default function CampaignsPage() {
     try {
       console.log('Creating campaign:', campaignData)
 
-      // Here you would normally make an API call to create the campaign
-      // const response = await fetch('/api/campaigns', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(campaignData)
-      // })
+      const response = await fetch('/api/campaigns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(campaignData)
+      })
 
-      // For now, just log and refresh campaigns
-      alert('Campaign created successfully!')
-      fetchCampaigns()
+      const result = await response.json()
+
+      if (result.success) {
+        alert('Campaign created successfully!')
+        fetchCampaigns()
+      } else {
+        throw new Error(result.error)
+      }
     } catch (error) {
       console.error('Error creating campaign:', error)
-      alert('Failed to create campaign')
+      alert('Failed to create campaign: ' + (error as Error).message)
     }
   }
 
@@ -362,8 +367,16 @@ export default function CampaignsPage() {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                            <TargetIcon size={20} className="text-black" />
+                          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
+                            {campaign.logoUrl ? (
+                              <img
+                                src={campaign.logoUrl}
+                                alt={`${campaign.name} logo`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <TargetIcon size={20} className="text-black" />
+                            )}
                           </div>
                           <div>
                             <div className="font-medium text-white">{campaign.name}</div>
@@ -459,8 +472,16 @@ export default function CampaignsPage() {
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="flex items-center space-x-4">
-                    <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center">
-                      <TargetIcon size={26} className="text-black" />
+                    <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center overflow-hidden">
+                      {campaign.logoUrl ? (
+                        <img
+                          src={campaign.logoUrl}
+                          alt={`${campaign.name} logo`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <TargetIcon size={26} className="text-black" />
+                      )}
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-white text-lg mb-0 truncate">{campaign.name}</h3>
@@ -555,12 +576,29 @@ export default function CampaignsPage() {
           <CampaignModal
             isOpen={true}
             onClose={() => setManagingCampaign(null)}
-            onSubmit={(updatedData) => {
-              console.log('Updating campaign:', managingCampaign.id, updatedData)
-              // Here you would make an API call to update the campaign
-              alert(`Campaign "${managingCampaign.name}" updated successfully!`)
-              setManagingCampaign(null)
-              fetchCampaigns()
+            onSubmit={async (updatedData) => {
+              try {
+                console.log('Updating campaign:', managingCampaign.id, updatedData)
+
+                const response = await fetch(`/api/campaigns/${managingCampaign.id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(updatedData)
+                })
+
+                const result = await response.json()
+
+                if (result.success) {
+                  alert(`Campaign "${managingCampaign.name}" updated successfully!`)
+                  setManagingCampaign(null)
+                  fetchCampaigns()
+                } else {
+                  throw new Error(result.error)
+                }
+              } catch (error) {
+                console.error('Error updating campaign:', error)
+                alert('Failed to update campaign: ' + (error as Error).message)
+              }
             }}
             editMode={managingCampaign}
           />

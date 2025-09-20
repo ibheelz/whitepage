@@ -46,6 +46,10 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, editMode }: C
         clientId: editMode.clientId || '',
         brandId: editMode.brandId || ''
       })
+      // If there's an existing logo URL in editMode, set it as preview
+      if (editMode.logoUrl) {
+        setLogoPreview(editMode.logoUrl)
+      }
     } else {
       setFormData({
         name: '',
@@ -53,6 +57,9 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, editMode }: C
         clientId: '',
         brandId: ''
       })
+      // Reset logo states for new campaign
+      setBrandLogo(null)
+      setLogoPreview(null)
     }
   }, [editMode])
 
@@ -86,15 +93,42 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, editMode }: C
     }
   }
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       setBrandLogo(file)
+
+      // Show preview immediately
       const reader = new FileReader()
       reader.onload = (e) => {
         setLogoPreview(e.target?.result as string)
       }
       reader.readAsDataURL(file)
+
+      // Upload to server
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+
+        const result = await response.json()
+
+        if (result.success) {
+          // Update preview with server URL
+          setLogoPreview(result.url)
+          console.log('Logo uploaded successfully:', result.url)
+        } else {
+          console.error('Upload failed:', result.error)
+          alert('Failed to upload logo: ' + result.error)
+        }
+      } catch (error) {
+        console.error('Upload error:', error)
+        alert('Failed to upload logo')
+      }
     }
   }
 
@@ -120,7 +154,8 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, editMode }: C
     const campaignData = {
       ...formData,
       conversionTypes,
-      brandLogo
+      brandLogo,
+      logoUrl: logoPreview // Include the current logo URL
     }
 
     onSubmit(campaignData)

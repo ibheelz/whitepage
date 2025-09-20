@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
+
+const createCampaignSchema = z.object({
+  name: z.string().min(1, 'Campaign name is required'),
+  slug: z.string().min(1, 'Campaign slug is required'),
+  description: z.string().optional(),
+  clientId: z.string().optional(),
+  brandId: z.string().optional(),
+  logoUrl: z.string().optional()
+})
 
 export async function GET(request: NextRequest) {
   try {
@@ -114,6 +124,58 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch campaigns'
+    }, { status: 500 })
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validatedData = createCampaignSchema.parse(body)
+
+    // Check if slug already exists
+    const existingCampaign = await prisma.campaign.findUnique({
+      where: { slug: validatedData.slug }
+    })
+
+    if (existingCampaign) {
+      return NextResponse.json({
+        success: false,
+        error: 'Campaign slug already exists'
+      }, { status: 400 })
+    }
+
+    // Create the campaign
+    const campaign = await prisma.campaign.create({
+      data: {
+        name: validatedData.name,
+        slug: validatedData.slug,
+        description: validatedData.description,
+        clientId: validatedData.clientId,
+        brandId: validatedData.brandId,
+        logoUrl: validatedData.logoUrl
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      campaign
+    })
+
+  } catch (error) {
+    console.error('Create campaign error:', error)
+
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid request data',
+        details: error.errors
+      }, { status: 400 })
+    }
+
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to create campaign'
     }, { status: 500 })
   }
 }
