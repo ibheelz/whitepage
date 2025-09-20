@@ -247,8 +247,8 @@ export default function CampaignsPage() {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                            <TargetIcon size={18} className="text-black" />
+                          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                            <TargetIcon size={20} className="text-black" />
                           </div>
                           <div>
                             <div className="font-medium text-white">{campaign.name}</div>
@@ -338,8 +338,8 @@ export default function CampaignsPage() {
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                      <TargetIcon size={24} className="text-black" />
+                    <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center">
+                      <TargetIcon size={26} className="text-black" />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-white text-lg mb-0 truncate">{campaign.name}</h3>
