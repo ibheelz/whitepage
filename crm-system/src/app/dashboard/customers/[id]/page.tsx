@@ -234,28 +234,20 @@ export default function CustomerDetailPage() {
             >
               <BackArrowIcon size={20} className="text-muted-foreground" />
             </button>
-            <div className="flex items-center space-x-4">
-              <Avatar
-                firstName={customer.firstName}
-                lastName={customer.lastName}
-                userId={customer.id}
-                size="lg"
-              />
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">{getDisplayName()}</h1>
-                <p className="text-sm text-muted-foreground">Customer Tracking Profile</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">{getDisplayName()}</h1>
+              <p className="text-sm text-muted-foreground">Customer Tracking Profile</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
             <div className={`px-3 py-1.5 rounded-full text-sm font-medium ${
-              customer.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              customer.isActive ? 'bg-muted text-foreground' : 'bg-muted text-muted-foreground'
             }`}>
               {customer.isActive ? 'Active' : 'Inactive'}
             </div>
             {customer.isFraud && (
-              <div className="px-3 py-1.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+              <div className="px-3 py-1.5 rounded-full text-sm font-medium bg-muted text-muted-foreground">
                 Fraud Flag
               </div>
             )}
@@ -266,20 +258,9 @@ export default function CustomerDetailPage() {
       <div className="p-6 space-y-6">
         {/* Customer Profile - Minimalist */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Basic Info */}
+          {/* Contact Info */}
           <div className="bg-card rounded-xl p-4">
-            <div className="flex items-center space-x-3 mb-4">
-              <Avatar
-                firstName={customer.firstName}
-                lastName={customer.lastName}
-                userId={customer.id}
-                size="lg"
-              />
-              <div>
-                <h2 className="font-semibold text-foreground">{getDisplayName()}</h2>
-                <p className="text-sm text-muted-foreground">{customer.jobTitle || 'Customer'}</p>
-              </div>
-            </div>
+            <h3 className="font-semibold text-foreground mb-3">Contact Information</h3>
 
             <div className="space-y-2">
               {customer.masterEmail && (
@@ -329,22 +310,17 @@ export default function CustomerDetailPage() {
             <h3 className="font-semibold text-foreground mb-3">Status</h3>
             <div className="space-y-2">
               <div className={`inline-flex px-2 py-1 rounded text-xs font-medium ${
-                customer.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                customer.isActive ? 'bg-muted text-foreground' : 'bg-muted text-muted-foreground'
               }`}>
                 {customer.isActive ? 'Active' : 'Inactive'}
               </div>
               {customer.source && (
-                <div className={`inline-flex px-2 py-1 rounded text-xs font-medium ml-2 ${
-                  customer.source === 'LinkedIn' ? 'bg-blue-100 text-blue-800' :
-                  customer.source === 'Referral' ? 'bg-green-100 text-green-800' :
-                  customer.source === 'Paid Ad' ? 'bg-purple-100 text-purple-800' :
-                  'bg-orange-100 text-orange-800'
-                }`}>
+                <div className="inline-flex px-2 py-1 rounded text-xs font-medium ml-2 bg-muted text-foreground">
                   {customer.source}
                 </div>
               )}
               {customer.isFraud && (
-                <div className="inline-flex px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800 ml-2">
+                <div className="inline-flex px-2 py-1 rounded text-xs font-medium bg-muted text-muted-foreground ml-2">
                   Fraud Flag
                 </div>
               )}
@@ -379,11 +355,7 @@ export default function CustomerDetailPage() {
             {timeline.length > 0 ? (
               timeline.slice(0, 10).map((item, index) => (
                 <div key={index} className="flex items-start space-x-4 pb-4 border-b border-border last:border-b-0">
-                  <div className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${
-                    item.type === 'click' ? 'bg-blue-500' :
-                    item.type === 'lead' ? 'bg-green-500' :
-                    'bg-purple-500'
-                  }`} />
+                  <div className="w-3 h-3 rounded-full mt-2 flex-shrink-0 bg-primary" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium text-foreground">{item.title}</h4>
