@@ -403,11 +403,11 @@ export default function InfluencersPage() {
         {/* Content */}
         {viewMode === 'compact' ? (
           /* Sleeker Compact View Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedInfluencers.map((influencer) => (
               <div
                 key={influencer.id}
-                className="group relative rounded-2xl px-8 py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
+                className="group relative rounded-2xl px-6 py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
               >
                 {/* Status Light Indicator */}
                 <div className="absolute top-4 right-4">
@@ -415,7 +415,7 @@ export default function InfluencersPage() {
                 </div>
 
                 {/* Influencer Header */}
-                <div className="mb-5 -mx-8 -mt-6 px-8 pt-6 pb-5 rounded-t-2xl bg-white/5" style={{
+                <div className="mb-5 -mx-6 -mt-6 px-6 pt-6 pb-5 rounded-t-2xl bg-white/5" style={{
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="flex items-center space-x-4">
@@ -432,32 +432,32 @@ export default function InfluencersPage() {
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-4 gap-4 mb-6">
-                  <div className="flex flex-col items-center">
-                    <div className="bg-primary text-black font-bold mb-2 px-3 py-1.5 rounded-lg flex items-center justify-center text-xs">{influencer.totalClicks.toLocaleString()}</div>
+                <div className="grid grid-cols-4 gap-4 py-4">
+                  <div className="flex flex-col items-center py-2">
+                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalClicks.toLocaleString()}</div>
                     <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Clicks</div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <div className="bg-primary text-black font-bold mb-2 px-3 py-1.5 rounded-lg flex items-center justify-center text-xs">{influencer.totalLeads.toLocaleString()}</div>
+                  <div className="flex flex-col items-center py-2">
+                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalLeads.toLocaleString()}</div>
                     <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Leads</div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <div className="bg-primary text-black font-bold mb-2 px-3 py-1.5 rounded-lg flex items-center justify-center text-xs">{influencer.totalRegs.toLocaleString()}</div>
+                  <div className="flex flex-col items-center py-2">
+                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalRegs.toLocaleString()}</div>
                     <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Regs</div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <div className="bg-primary text-black font-bold mb-2 px-3 py-1.5 rounded-lg flex items-center justify-center text-xs">{influencer.totalFtd.toLocaleString()}</div>
+                  <div className="flex flex-col items-center py-2">
+                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalFtd.toLocaleString()}</div>
                     <div className="text-xs font-normal text-white/40 uppercase tracking-wide">FTD</div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
                   {/* Status Toggle Button */}
                   <div className="relative" ref={dropdownOpen === influencer.id ? dropdownRef : null}>
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === influencer.id ? null : influencer.id)}
-                      className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center justify-center space-x-1 ${
+                      className={`w-full px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center justify-center space-x-1 ${
                         getStatusConfig(influencer.status).bgClass
                       } ${
                         getStatusConfig(influencer.status).textClass
@@ -496,9 +496,16 @@ export default function InfluencersPage() {
                     )}
                   </div>
 
+                  {/* View Button */}
+                  <button
+                    className="w-full px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                  >
+                    VIEW
+                  </button>
+
                   {/* Manage Button */}
                   <button
-                    className="w-20 px-4 py-1.5 text-xs font-bold text-black bg-white hover:bg-white/90 rounded-lg transition-colors flex items-center justify-center"
+                    className="w-full px-4 py-1.5 text-xs font-bold text-black bg-white hover:bg-white/90 rounded-lg transition-colors flex items-center justify-center"
                   >
                     MANAGE
                   </button>
