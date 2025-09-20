@@ -425,7 +425,7 @@ export default function InfluencersPage() {
               </h1>
               <p className="text-white/60 text-sm sm:text-base mt-1">Manage your influencer partnerships</p>
             </div>
-            <div className="flex items-center justify-end">
+            <div className="hidden lg:flex items-center justify-end">
               <button className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
                 style={{
                   background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
@@ -435,12 +435,11 @@ export default function InfluencersPage() {
                   boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                   color: '#0a0a0a'
                 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="sm:w-4 sm:h-4">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="w-4 h-4">
                   <path d="M12 5v14"/>
                   <path d="M5 12h14"/>
                 </svg>
-                <span className="hidden sm:inline">Add Influencer</span>
-                <span className="sm:hidden">Add</span>
+                <span>Add Influencer</span>
               </button>
             </div>
           </div>
@@ -448,20 +447,35 @@ export default function InfluencersPage() {
 
         {/* Mobile Controls - Shows on mobile only */}
         <div className="lg:hidden space-y-3">
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Total Influencers Count */}
-            <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white min-w-0 flex-1">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="8.5" cy="7" r="4"/>
-                <line x1="20" y1="8" x2="20" y2="14"/>
-                <line x1="23" y1="11" x2="17" y2="11"/>
-              </svg>
-              <span className="text-black text-sm font-bold whitespace-nowrap">
-                {sortedInfluencers.length} Influencer{sortedInfluencers.length !== 1 ? 's' : ''}
-              </span>
-            </div>
+          {/* Total Influencers Count */}
+          <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="8.5" cy="7" r="4"/>
+              <line x1="20" y1="8" x2="20" y2="14"/>
+              <line x1="23" y1="11" x2="17" y2="11"/>
+            </svg>
+            <span className="text-black text-sm font-bold whitespace-nowrap">
+              {sortedInfluencers.length} Influencer{sortedInfluencers.length !== 1 ? 's' : ''}
+            </span>
           </div>
+
+          {/* Add Influencer Button */}
+          <button className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300"
+            style={{
+              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(253, 198, 0, 0.3)',
+              boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              color: '#0a0a0a'
+            }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="flex-shrink-0">
+              <path d="M12 5v14"/>
+              <path d="M5 12h14"/>
+            </svg>
+            <span>Add Influencer</span>
+          </button>
         </div>
 
         {/* Desktop Search Bar and Controls - Shows on desktop only */}

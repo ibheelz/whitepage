@@ -457,8 +457,28 @@ export default function CampaignsPage() {
                 </span>
               </div>
 
-              {/* View Mode Toggle */}
-              <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
+              {/* Create Campaign Button */}
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 h-[52px] flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(253, 198, 0, 0.3)',
+                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  color: '#0a0a0a'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="flex-shrink-0">
+                  <path d="M12 5v14"/>
+                  <path d="M5 12h14"/>
+                </svg>
+                <span className="whitespace-nowrap">New Campaign</span>
+              </button>
+
+              {/* View Mode Toggle - Hidden unless sidebar is compressed */}
+              <div className="hidden xl:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
                 {/* Compact View */}
                 <button
                   onClick={() => setViewMode('compact')}
@@ -499,26 +519,6 @@ export default function CampaignsPage() {
                   </svg>
                 </button>
               </div>
-
-              {/* Create Campaign Button */}
-              <button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 h-[52px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(253, 198, 0, 0.3)',
-                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  color: '#0a0a0a'
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                  <path d="M12 5v14"/>
-                  <path d="M5 12h14"/>
-                </svg>
-                <span>New Campaign</span>
-              </button>
             </div>
           </div>
 
