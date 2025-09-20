@@ -117,19 +117,19 @@ export default function ClicksPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-primary mb-2">{totalClicks}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Clicks</div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-primary mb-2">{convertedClicks}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Conversions</div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-foreground mb-2">{conversionRate}%</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Conv Rate</div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-foreground mb-2">${totalValue.toFixed(0)}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Value</div>
         </div>
@@ -265,7 +265,7 @@ export default function ClicksPage() {
       <div className="premium-card p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span className="font-semibold text-foreground">Live Click Tracking</span>
           </div>
           <div className="text-sm text-muted-foreground">

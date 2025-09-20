@@ -284,7 +284,7 @@ export default function DashboardPage() {
                   Click to manage customers →
                 </div>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-xl flex-shrink-0 group-hover:shadow-2xl transition-all duration-300">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:shadow-2xl transition-all duration-300">
                 <UsersIcon size={18} className="text-black sm:w-[20px] sm:h-[20px]" />
               </div>
             </div>
@@ -500,7 +500,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-primary">Live Activity</h3>
             <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               <span className="text-xs text-green-400 font-medium">Live</span>
             </div>
           </div>

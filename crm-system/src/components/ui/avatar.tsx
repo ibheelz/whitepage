@@ -109,7 +109,7 @@ export function Avatar({ firstName, lastName, userId, size = 'md', className }: 
       className={cn(
         'rounded-full flex items-center justify-center text-white font-semibold ring-2 ring-white/10',
         sizeClasses[size],
-        isLoading ? 'bg-gray-600 animate-pulse' : getBackgroundColor(),
+        isLoading ? 'bg-gray-600' : getBackgroundColor(),
         className
       )}
     >

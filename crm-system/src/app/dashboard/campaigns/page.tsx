@@ -107,7 +107,7 @@ export default function CampaignsPage() {
     return (
       <div className="space-y-8">
         <div className="premium-card p-12 text-center">
-          <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+          <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto mb-6">
             <WarningIcon size={32} />
           </div>
           <h2 className="text-2xl font-black text-foreground mb-2">Error Loading Campaigns</h2>
@@ -120,11 +120,10 @@ export default function CampaignsPage() {
     )
   }
 
-
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto p-8">
-        {/* Header with Status Indicator */}
+        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
@@ -143,10 +142,11 @@ export default function CampaignsPage() {
 
         {/* Search Bar and View Toggle */}
         <div className="mb-6 flex items-center justify-between">
-          <div className="relative flex-1 max-w-md">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-muted-foreground">
-                <path d="M21 21L16.514 16.506M19 10.5C19 15.194 15.194 19 10.5 19S2 15.194 2 10.5 5.806 2 10.5 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <div className="relative flex-1 max-w-lg">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white/40">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <input
@@ -154,7 +154,15 @@ export default function CampaignsPage() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full pl-10 pr-4 py-3 text-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                color: 'var(--foreground)'
+              }}
             />
           </div>
 
@@ -216,59 +224,35 @@ export default function CampaignsPage() {
             </button>
           </div>
         ) : viewMode === 'table' ? (
-          /* Table View */
-          <div className="rounded-2xl shadow-xl overflow-hidden" style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
-          }}>
+          /* Modern Table View */
+          <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-max">
-                <thead style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
+              <table className="w-full">
+                <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Campaign</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Clicks</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Leads</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Created</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Campaign</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Clicks</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Leads</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Regs</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Created</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">Actions</th>
                   </tr>
                 </thead>
-                <tbody style={{ backgroundColor: 'transparent' }}>
+                <tbody>
                   {filteredCampaigns.map((campaign, index) => (
                     <tr
                       key={campaign.id}
-                      className="transition-all duration-200 border-b border-white/5 h-[60px] overflow-hidden"
-                      style={{
-                        background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
-                      }}
+                      className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
-                          <div className="relative">
-                            <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
-                              <TargetIcon size={16} className="text-primary" />
-                            </div>
-                            <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${
-                              campaign.isActive ? 'bg-green-500' : 'bg-red-500'
-                            }`} />
+                          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <TargetIcon size={18} className="text-black" />
                           </div>
                           <div>
                             <div className="font-medium text-white">{campaign.name}</div>
-                            <div className="text-sm text-white/60">/{campaign.slug}</div>
+                            <div className="text-sm text-white/60">{campaign.slug}</div>
                           </div>
                         </div>
                       </td>
@@ -276,14 +260,14 @@ export default function CampaignsPage() {
                         <div className="relative">
                           <button
                             onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                            className={`px-3 py-1 rounded text-xs font-medium flex items-center space-x-2 backdrop-blur-sm border ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 border transition-colors ${
                               campaign.isActive
-                                ? 'bg-green-500/20 text-green-400 border-green-500/40'
-                                : 'bg-red-500/20 text-red-400 border-red-500/40'
+                                ? 'bg-green-500/10 text-green-400 border-green-500/30'
+                                : 'bg-red-500/10 text-red-400 border-red-500/30'
                             }`}
                           >
                             <div className={`w-2 h-2 rounded-full ${
-                              campaign.isActive ? 'bg-green-400' : 'bg-red-400'
+                              campaign.isActive ? 'bg-green-500' : 'bg-red-500'
                             }`} />
                             <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
                             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -292,17 +276,17 @@ export default function CampaignsPage() {
                           </button>
 
                           {dropdownOpen === campaign.id && (
-                            <div className="absolute right-0 mt-2 w-32 bg-card/90 backdrop-blur-sm border border-border rounded-lg shadow-lg z-10">
-                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-green-400">
-                                <div className="w-2 h-2 rounded-full bg-green-400" />
+                            <div className="absolute top-full left-0 mt-1 w-28 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400">
+                                <div className="w-2 h-2 rounded-full bg-green-500" />
                                 <span>Active</span>
                               </button>
-                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-red-400">
-                                <div className="w-2 h-2 rounded-full bg-red-400" />
+                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400">
+                                <div className="w-2 h-2 rounded-full bg-red-500" />
                                 <span>Paused</span>
                               </button>
-                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-yellow-400">
-                                <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-yellow-500/10 flex items-center space-x-2 text-yellow-400">
+                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
                                 <span>Testing</span>
                               </button>
                             </div>
@@ -310,10 +294,13 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-white">{campaign.stats.totalClicks.toLocaleString()}</div>
+                        <div className="text-white font-medium">{campaign.stats.totalClicks.toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-white">{campaign.stats.totalLeads.toLocaleString()}</div>
+                        <div className="text-white font-medium">{campaign.stats.totalLeads.toLocaleString()}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-white font-medium">{campaign.stats.totalEvents.toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-white/60">
@@ -321,7 +308,7 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <button className="px-4 py-1.5 text-xs font-medium rounded-lg bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
+                        <button className="px-4 py-1.5 text-xs font-medium rounded-lg bg-white text-black hover:bg-white/90 transition-colors">
                           Manage
                         </button>
                       </td>
@@ -332,95 +319,95 @@ export default function CampaignsPage() {
             </div>
           </div>
         ) : (
-          /* Compact View Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          /* Sleeker Compact View Cards */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCampaigns.map((campaign) => (
               <div
                 key={campaign.id}
-                className="rounded-xl p-4 relative cursor-pointer"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                }}
+                className="group relative rounded-2xl p-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
               >
-                {/* Status Indicator Circle */}
-                <div className="absolute top-3 right-3 w-3 h-3 rounded-full border-2 border-background">
-                  <div className={`w-full h-full rounded-full ${
+                {/* Status Light Indicator */}
+                <div className="absolute top-4 right-4">
+                  <div className={`w-3 h-3 rounded-full ${
                     campaign.isActive ? 'bg-green-500' : 'bg-red-500'
                   }`} />
                 </div>
 
-                <div className="space-y-4">
-                  {/* Campaign Info */}
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
-                      <TargetIcon size={20} className="text-primary" />
+                {/* Campaign Header */}
+                <div className="mb-6 -m-6 p-6 rounded-t-2xl bg-white/5" style={{
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                      <TargetIcon size={24} className="text-black" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-white text-base">{campaign.name}</h3>
-                      <p className="text-sm text-white/60">/{campaign.slug}</p>
+                      <h3 className="font-semibold text-white text-lg mb-0 truncate">{campaign.name}</h3>
+                      <p className="text-white/60 text-sm font-mono">{campaign.slug}</p>
                     </div>
                   </div>
+                </div>
 
-                  {/* Metrics */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-lg font-semibold text-white">{campaign.stats.totalClicks.toLocaleString()}</div>
-                      <div className="text-xs text-white/60">Clicks</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-semibold text-white">{campaign.stats.totalLeads.toLocaleString()}</div>
-                      <div className="text-xs text-white/60">Leads</div>
-                    </div>
+                {/* Metrics Grid */}
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-white mb-1">{campaign.stats.totalClicks.toLocaleString()}</div>
+                    <div className="text-xs font-medium text-white/60 uppercase tracking-wide">Clicks</div>
                   </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-white mb-1">{campaign.stats.totalLeads.toLocaleString()}</div>
+                    <div className="text-xs font-medium text-white/60 uppercase tracking-wide">Leads</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-white mb-1">{campaign.stats.totalEvents.toLocaleString()}</div>
+                    <div className="text-xs font-medium text-white/60 uppercase tracking-wide">Regs</div>
+                  </div>
+                </div>
 
-                  {/* Status & Actions */}
-                  <div className="flex items-center justify-between">
-                    {/* Status Dropdown Button */}
-                    <div className="relative">
-                      <button
-                        onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                        className={`${viewMode === 'compact' ? 'px-2 py-1' : 'px-3 py-1'} rounded text-xs font-medium flex items-center space-x-2 backdrop-blur-sm border ${
-                          campaign.isActive
-                            ? 'bg-green-500/20 text-green-400 border-green-500/40'
-                            : 'bg-red-500/20 text-red-400 border-red-500/40'
-                        }`}
-                      >
-                        <div className={`w-2 h-2 rounded-full ${
-                          campaign.isActive ? 'bg-green-400' : 'bg-red-400'
-                        }`} />
-                        <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-
-                      {/* Dropdown Menu */}
-                      {dropdownOpen === campaign.id && (
-                        <div className="absolute right-0 mt-2 w-32 bg-card/90 backdrop-blur-sm border border-border rounded-lg shadow-lg z-10">
-                          <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-green-400">
-                            <div className="w-2 h-2 rounded-full bg-green-400" />
-                            <span>Active</span>
-                          </button>
-                          <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-red-400">
-                            <div className="w-2 h-2 rounded-full bg-red-400" />
-                            <span>Paused</span>
-                          </button>
-                          <button className="w-full px-3 py-2 text-left text-xs hover:bg-muted/20 flex items-center space-x-2 text-yellow-400">
-                            <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                            <span>Testing</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <button className="px-4 py-1.5 text-xs font-medium rounded-lg bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
-                      Manage
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  {/* Status Toggle Button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center space-x-2 ${
+                        campaign.isActive
+                          ? 'bg-green-500/10 border-green-500/30 text-green-400'
+                          : 'bg-red-500/10 border-red-500/30 text-red-400'
+                      }`}
+                    >
+                      <div className={`w-2 h-2 rounded-full ${
+                        campaign.isActive ? 'bg-green-500' : 'bg-red-500'
+                      }`} />
+                      <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
                     </button>
+
+                    {/* Status Options Dropdown */}
+                    {dropdownOpen === campaign.id && (
+                      <div className="absolute bottom-full left-0 mb-2 w-28 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
+                        <button className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400">
+                          <div className="w-2 h-2 rounded-full bg-green-500" />
+                          <span>Active</span>
+                        </button>
+                        <button className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400">
+                          <div className="w-2 h-2 rounded-full bg-red-500" />
+                          <span>Paused</span>
+                        </button>
+                        <button className="w-full px-3 py-2 text-left text-xs hover:bg-yellow-500/10 flex items-center space-x-2 text-yellow-400">
+                          <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                          <span>Testing</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Manage Button */}
+                  <button className="px-4 py-1.5 text-xs font-medium text-black bg-white hover:bg-white/90 rounded-lg transition-colors">
+                    Manage
+                  </button>
                 </div>
               </div>
             ))}

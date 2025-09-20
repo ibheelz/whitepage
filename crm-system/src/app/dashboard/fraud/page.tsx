@@ -126,7 +126,7 @@ export default function FraudMonitorPage() {
     return (
       <div className="space-y-8">
         <div className="premium-card p-12 text-center">
-          <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-3xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-6 shadow-xl">
+          <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-3xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-6">
             <WarningIcon size={32} />
           </div>
           <h2 className="text-2xl font-black text-foreground mb-2">Fraud System Error</h2>
@@ -157,7 +157,7 @@ export default function FraudMonitorPage() {
             threatLevel === 'medium' ? 'bg-yellow-500/20' :
             'bg-green-500/20'
           }`}>
-            <div className={`w-3 h-3 rounded-full animate-pulse ${
+            <div className={`w-3 h-3 rounded-full ${
               threatLevel === 'high' ? 'bg-red-500' :
               threatLevel === 'medium' ? 'bg-yellow-500' :
               'bg-green-500'
@@ -183,7 +183,7 @@ export default function FraudMonitorPage() {
 
       {/* Alert Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className={`premium-card p-6 text-center glow-effect ${criticalAlerts > 0 ? 'border-red-500/30' : ''}`}>
+        <div className={`premium-card p-6 text-center ${criticalAlerts > 0 ? 'border-red-500/30' : ''}`}>
           <div className={`text-3xl font-black mb-2 ${criticalAlerts > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
             {criticalAlerts}
           </div>
@@ -191,7 +191,7 @@ export default function FraudMonitorPage() {
             Critical Alerts
           </div>
         </div>
-        <div className={`premium-card p-6 text-center glow-effect ${highAlerts > 0 ? 'border-orange-500/30' : ''}`}>
+        <div className={`premium-card p-6 text-center ${highAlerts > 0 ? 'border-orange-500/30' : ''}`}>
           <div className={`text-3xl font-black mb-2 ${highAlerts > 0 ? 'text-primary' : 'text-muted-foreground'}`}>
             {highAlerts}
           </div>
@@ -199,13 +199,13 @@ export default function FraudMonitorPage() {
             High Priority
           </div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-primary mb-2">{alerts.length}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
             Total Alerts
           </div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-foreground mb-2">{stats?.flaggedUsers || 0}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
             Flagged Users
@@ -215,7 +215,7 @@ export default function FraudMonitorPage() {
 
       {/* Fraud Statistics */}
       {stats && (
-        <div className="premium-card p-8 glow-effect">
+        <div className="premium-card p-8">
           <h2 className="text-2xl font-black text-foreground mb-6">Fraud Statistics (Last 7 Days)</h2>
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-6">
             <div className="text-center p-4 bg-muted/10 rounded-2xl">
@@ -263,14 +263,14 @@ export default function FraudMonitorPage() {
       )}
 
       {/* Active Alerts */}
-      <div className="premium-card p-8 glow-effect">
+      <div className="premium-card p-8">
         <h2 className="text-2xl font-black text-foreground mb-8 flex items-center">
           <AlertIcon size={24} className="mr-3" />
           Active Fraud Alerts
         </h2>
         {alerts.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-6 shadow-xl">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-6">
               <CheckIcon size={32} />
             </div>
             <h3 className="text-xl font-black text-primary mb-2">No Active Fraud Alerts</h3>
@@ -281,12 +281,12 @@ export default function FraudMonitorPage() {
             {alerts.map((alert, index) => (
               <div
                 key={alert.id}
-                className="premium-card p-6 transition-all duration-300 glow-effect"
+                className="premium-card p-6 transition-all duration-300"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
+                    <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl">
                       {getTypeIcon(alert.type)}
                     </div>
                     <div className="space-y-3">
@@ -333,9 +333,9 @@ export default function FraudMonitorPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <button className="premium-card p-8 transition-all duration-300 glow-effect text-left">
+        <button className="premium-card p-8 transition-all duration-300 text-left">
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl">
               <BlockIcon size={24} />
             </div>
             <div>
@@ -344,9 +344,9 @@ export default function FraudMonitorPage() {
             </div>
           </div>
         </button>
-        <button className="premium-card p-8 transition-all duration-300 glow-effect text-left">
+        <button className="premium-card p-8 transition-all duration-300 text-left">
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl">
               <AnalyticsIcon size={24} />
             </div>
             <div>
@@ -355,9 +355,9 @@ export default function FraudMonitorPage() {
             </div>
           </div>
         </button>
-        <button className="premium-card p-8 transition-all duration-300 glow-effect text-left">
+        <button className="premium-card p-8 transition-all duration-300 text-left">
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl">
               <SettingsIcon size={24} />
             </div>
             <div>

@@ -986,7 +986,7 @@ export default function CustomersPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${liveUpdatesEnabled ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
+              <div className={`w-3 h-3 rounded-full ${liveUpdatesEnabled ? 'bg-green-500' : 'bg-gray-500'}`}></div>
               <span className="text-sm font-medium text-foreground">
                 Live Updates: {liveUpdatesEnabled ? 'ON' : 'OFF'}
               </span>
@@ -1146,7 +1146,7 @@ export default function CustomersPage() {
       </div>
 
       {effectiveViewMode === 'table' ? (
-        <div className="rounded-2xl shadow-xl overflow-hidden" style={{
+        <div className="rounded-2xl overflow-hidden" style={{
           background: 'rgba(255, 255, 255, 0.08)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',

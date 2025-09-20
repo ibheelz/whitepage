@@ -71,19 +71,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-300 ${
         sidebarCollapsed ? 'w-16 lg:w-20' : 'w-16 lg:w-80'
       }`}>
-        <div className="flex h-full flex-col overflow-hidden" style={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
+        <div className="flex h-full flex-col overflow-hidden bg-white/5 border-r border-white/10" style={{
           borderRadius: '0 24px 24px 0',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
           position: 'relative'
         }}>
           {/* Animated Background */}
           <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-0 left-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-2xl animate-pulse delay-1000" />
+            <div className="absolute top-0 left-0 w-40 h-40 bg-primary/5 rounded-full" />
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-secondary/5 rounded-full delay-1000" />
           </div>
 
           {sidebarCollapsed ? (
@@ -189,7 +184,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   {compactUserMenuOpen && (
                     <div className="absolute bottom-4 left-16 z-50">
                       <div
-                        className="bg-background border border-primary/30 rounded-lg p-2 shadow-2xl min-w-[120px]"
+                        className="bg-background border border-primary/30 rounded-lg p-2 min-w-[120px]"
                         style={{
                           background: 'rgba(8, 7, 8, 0.95)',
                           backdropFilter: 'blur(20px)',
@@ -239,7 +234,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     {compactUserMenuOpen && (
                       <div className="absolute bottom-4 left-16 z-50">
                         <div
-                          className="bg-background border border-primary/30 rounded-lg p-2 shadow-2xl min-w-[120px]"
+                          className="bg-background border border-primary/30 rounded-lg p-2 min-w-[120px]"
                           style={{
                             background: 'rgba(8, 7, 8, 0.95)',
                             backdropFilter: 'blur(20px)',
@@ -306,11 +301,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="min-h-screen p-4 lg:p-6 relative">
           {/* Background Elements */}
           <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-10 left-10 w-48 h-48 bg-secondary/5 rounded-full blur-2xl animate-pulse delay-1000" />
+            <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full" />
+            <div className="absolute bottom-10 left-10 w-48 h-48 bg-secondary/5 rounded-full delay-1000" />
           </div>
 
-          <div className="fade-in page-transition relative">
+          <div className="fade-in relative">
             {children}
           </div>
         </main>

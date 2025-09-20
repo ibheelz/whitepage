@@ -145,19 +145,19 @@ export default function EventsPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-primary mb-2">{totalEvents}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Events</div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-primary mb-2">{conversionEvents}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Conversions</div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-foreground mb-2">${totalValue.toFixed(0)}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Value</div>
         </div>
-        <div className="premium-card p-6 text-center glow-effect">
+        <div className="premium-card p-6 text-center">
           <div className="text-3xl font-black text-foreground mb-2">${avgEventValue}</div>
           <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Avg Value</div>
         </div>
@@ -218,12 +218,12 @@ export default function EventsPage() {
           {filteredEvents.map((event: any, index) => (
             <div
               key={event.id}
-              className="premium-card p-6 transition-all duration-300 glow-effect"
+              className="premium-card p-6 transition-all duration-300"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${getEventColor(event.type)} rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl glow-effect`}>
+                  <div className={`w-16 h-16 bg-gradient-to-br ${getEventColor(event.type)} rounded-2xl flex items-center justify-center text-white font-black text-2xl`}>
                     {getEventIcon(event.type)}
                   </div>
                   <div className="flex-1 space-y-3">
@@ -286,7 +286,7 @@ export default function EventsPage() {
       <div className="premium-card p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span className="font-black text-foreground">Live Event Stream</span>
           </div>
           <button className="premium-button-secondary text-xs">
