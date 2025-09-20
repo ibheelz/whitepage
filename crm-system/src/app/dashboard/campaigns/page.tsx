@@ -415,15 +415,6 @@ export default function CampaignsPage() {
                     <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
                       <div className="flex items-center space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
-                          <circle cx="12" cy="12" r="10"/>
-                          <polyline points="12,6 12,12 16,14"/>
-                        </svg>
-                        <span>Status</span>
-                      </div>
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
-                      <div className="flex items-center space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <path d="M9 12l2 2 4-4"/>
                           <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
                           <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
@@ -479,7 +470,7 @@ export default function CampaignsPage() {
                           <circle cx="12" cy="12" r="3"/>
                           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
-                        <span>Actions</span>
+                        <span>Status & Actions</span>
                       </div>
                     </th>
                   </tr>
@@ -507,48 +498,6 @@ export default function CampaignsPage() {
                             <div className="font-medium text-white">{campaign.name}</div>
                             <div className="text-sm text-white/60">{campaign.slug}</div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
-                          <button
-                            onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                            className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
-                              getStatusConfig(campaign.status).bgClass
-                            } ${
-                              getStatusConfig(campaign.status).textClass
-                            } ${
-                              getStatusConfig(campaign.status).borderClass
-                            }`}
-                          >
-                            <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
-                          </button>
-
-                          {dropdownOpen === campaign.id && (
-                            <div className="absolute top-full left-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
-                              <button
-                                onClick={() => updateCampaignStatus(campaign.id, 'active')}
-                                className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
-                              >
-                                <div className="w-2 h-2 rounded-full bg-green-500" />
-                                <span>Active</span>
-                              </button>
-                              <button
-                                onClick={() => updateCampaignStatus(campaign.id, 'paused')}
-                                className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
-                              >
-                                <div className="w-2 h-2 rounded-full bg-primary" />
-                                <span>Paused</span>
-                              </button>
-                              <button
-                                onClick={() => updateCampaignStatus(campaign.id, 'inactive')}
-                                className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
-                              >
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                                <span>Inactive</span>
-                              </button>
-                            </div>
-                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -588,12 +537,64 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => handleManageCampaign(campaign)}
-                          className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
-                        >
-                          MANAGE
-                        </button>
+                        <div className="flex items-center space-x-2">
+                          {/* Status Dropdown */}
+                          <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
+                            <button
+                              onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
+                              className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
+                                getStatusConfig(campaign.status).bgClass
+                              } ${
+                                getStatusConfig(campaign.status).textClass
+                              } ${
+                                getStatusConfig(campaign.status).borderClass
+                              }`}
+                            >
+                              <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
+                            </button>
+
+                            {dropdownOpen === campaign.id && (
+                              <div className="absolute top-full left-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                                <button
+                                  onClick={() => updateCampaignStatus(campaign.id, 'active')}
+                                  className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                                >
+                                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                                  <span>Active</span>
+                                </button>
+                                <button
+                                  onClick={() => updateCampaignStatus(campaign.id, 'paused')}
+                                  className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                                >
+                                  <div className="w-2 h-2 rounded-full bg-primary" />
+                                  <span>Paused</span>
+                                </button>
+                                <button
+                                  onClick={() => updateCampaignStatus(campaign.id, 'inactive')}
+                                  className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                                >
+                                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                                  <span>Inactive</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* View Button */}
+                          <button
+                            className="w-16 px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
+                          >
+                            VIEW
+                          </button>
+
+                          {/* Manage Button */}
+                          <button
+                            onClick={() => handleManageCampaign(campaign)}
+                            className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                          >
+                            MANAGE
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
