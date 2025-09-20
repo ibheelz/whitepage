@@ -229,18 +229,154 @@ export default function LeadsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
-        {/* Header - Super Responsive */}
-        <div className="mb-4 sm:mb-6 lg:mb-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary truncate">
-                Lead Tracking
-              </h1>
-              <p className="text-white/60 text-sm sm:text-base mt-1">Track and analyze lead submissions</p>
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+        {/* Header */}
+        <div className="space-y-4">
+          {/* Title */}
+          <div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">
+              Lead Tracking
+            </h1>
+            <p className="text-white/60 text-sm sm:text-base mt-1">Track and analyze lead submissions</p>
+          </div>
+
+          {/* Mobile Controls - Shows on mobile only */}
+          <div className="lg:hidden space-y-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+              {/* Total Leads Count */}
+              <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white min-w-0 flex-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="8.5" cy="7" r="4"/>
+                  <line x1="20" y1="8" x2="20" y2="14"/>
+                  <line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+                <span className="text-black text-sm font-bold">
+                  {filteredLeads.length} Lead{filteredLeads.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+
+              {/* Date Filter */}
+              <div className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[180px]">
+                <select
+                  value={dateFilter}
+                  onChange={(e) => {
+                    setDateFilter(e.target.value)
+                    if (e.target.value !== 'custom') {
+                      setShowCustomDatePicker(false)
+                    } else {
+                      setShowCustomDatePicker(true)
+                    }
+                  }}
+                  className="date-filter-select w-full appearance-none bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                >
+                  <option value="today" className="bg-black text-white">Today</option>
+                  <option value="yesterday" className="bg-black text-white">Yesterday</option>
+                  <option value="past7days" className="bg-black text-white">Past 7 Days</option>
+                  <option value="past30days" className="bg-black text-white">Past 30 Days</option>
+                  <option value="custom" className="bg-black text-white">Custom Range</option>
+                  <option value="all" className="bg-black text-white">All Time</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+
+                {/* Custom Date Range Picker for Mobile */}
+                {showCustomDatePicker && (
+                  <>
+                    {/* Mobile Backdrop */}
+                    <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" />
+
+                    {/* Modal */}
+                    <div className="date-range-modal absolute z-50 top-full mt-2 left-0 right-0 mx-2
+                                   bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl
+                                   p-3 shadow-xl">
+                      <div className="flex flex-col gap-3">
+                        {/* Header */}
+                        <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                          <div className="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                              <line x1="16" y1="2" x2="16" y2="6"/>
+                              <line x1="8" y1="2" x2="8" y2="6"/>
+                              <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            <h3 className="text-white/90 font-medium text-sm">Select Date Range</h3>
+                          </div>
+                          <button
+                            onClick={() => setShowCustomDatePicker(false)}
+                            className="p-1 hover:bg-white/10 rounded transition-colors"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/60">
+                              <line x1="18" y1="6" x2="6" y2="18"/>
+                              <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                          </button>
+                        </div>
+
+                        {/* Date Inputs */}
+                        <div className="grid grid-cols-1 gap-3">
+                          <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-white/80 text-xs">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                              </svg>
+                              From Date
+                            </label>
+                            <input
+                              type="date"
+                              value={customDateRange.from}
+                              onChange={(e) => setCustomDateRange(prev => ({ ...prev, from: e.target.value }))}
+                              className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm
+                                       focus:outline-none focus:ring-2 focus:ring-primary/50 hover:bg-white/15 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-white/80 text-xs">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                                <path d="M9 11H1m8 0a2 2 0 1 0 4 0m-4 0a2 2 0 1 1 4 0m0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V9z"/>
+                              </svg>
+                              To Date
+                            </label>
+                            <input
+                              type="date"
+                              value={customDateRange.to}
+                              onChange={(e) => setCustomDateRange(prev => ({ ...prev, to: e.target.value }))}
+                              className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm
+                                       focus:outline-none focus:ring-2 focus:ring-primary/50 hover:bg-white/15 transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="grid grid-cols-2 gap-2 pt-2">
+                          <button
+                            onClick={() => setShowCustomDatePicker(false)}
+                            className="px-3 py-2 bg-white/10 hover:bg-white/15 text-white/80 rounded-lg text-xs transition-colors border border-white/20"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => setShowCustomDatePicker(false)}
+                            className="px-3 py-2 bg-primary text-black rounded-lg text-xs font-medium hover:bg-primary/90 transition-colors
+                                     flex items-center justify-center gap-1"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Apply
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            <div className="flex items-center justify-end gap-2 sm:gap-4 flex-shrink-0">
-              <button className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+
+            {/* Import/Export Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300"
                 style={{
                   background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
                   backdropFilter: 'blur(10px)',
@@ -249,16 +385,15 @@ export default function LeadsPage() {
                   boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                   color: '#0a0a0a'
                 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="sm:w-4 sm:h-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                   <polyline points="14,2 14,8 20,8"/>
                   <line x1="16" y1="13" x2="8" y2="13"/>
                   <line x1="16" y1="17" x2="8" y2="17"/>
                 </svg>
-                <span className="hidden sm:inline">Import Data</span>
-                <span className="sm:hidden">Import</span>
+                <span>Import Data</span>
               </button>
-              <button onClick={handleExport} className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+              <button onClick={handleExport} className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300"
                 style={{
                   background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
                   backdropFilter: 'blur(10px)',
@@ -267,78 +402,79 @@ export default function LeadsPage() {
                   boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                   color: '#0a0a0a'
                 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="sm:w-4 sm:h-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7,10 12,15 17,10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                <span className="hidden sm:inline">Export Data</span>
-                <span className="sm:hidden">Export</span>
+                <span>Export Data</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Search Bar and Controls - Ultra Responsive */}
-        <div className="mb-3 sm:mb-4 md:mb-6 flex flex-col gap-2 xs:gap-3 sm:gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Responsive Search Bar */}
-          <div className="bg-white/10 border border-white/20 rounded-xl p-3 sm:p-4 flex items-center space-x-3 flex-1 lg:max-w-sm xl:max-w-md 2xl:max-w-lg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0 sm:w-5 sm:h-5">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
-            </svg>
-            <input
-              type="search"
-              placeholder="Search leads..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
-            />
-          </div>
-
-          {/* Count Badge, Date Filter, and View Mode Toggle - Hide on mobile for auto-compact mode */}
-          <div className="hidden lg:flex items-center gap-4">
-            {/* Total Leads Count */}
-            <div className="flex items-center gap-2 px-4 rounded-xl bg-white h-[52px]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="8.5" cy="7" r="4"/>
-                <line x1="20" y1="8" x2="20" y2="14"/>
-                <line x1="23" y1="11" x2="17" y2="11"/>
+        {/* Search Bar and Desktop Controls */}
+        <div className="space-y-4 lg:space-y-0">
+          {/* Desktop Layout - All on one row */}
+          <div className="hidden lg:flex items-center justify-between gap-4">
+            {/* Search Bar */}
+            <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 max-w-md">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
               </svg>
-              <span className="text-black text-sm font-bold">
-                {filteredLeads.length} Lead{filteredLeads.length !== 1 ? 's' : ''}
-              </span>
+              <input
+                type="search"
+                placeholder="Search leads..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
+              />
             </div>
 
-            {/* Date Filter */}
-            <div className="relative flex-shrink-0">
-              <select
-                value={dateFilter}
-                onChange={(e) => {
-                  setDateFilter(e.target.value)
-                  if (e.target.value !== 'custom') {
-                    setShowCustomDatePicker(false)
-                  } else {
-                    setShowCustomDatePicker(true)
-                  }
-                }}
-                className="date-filter-select appearance-none bg-white/10 border border-white/20 rounded-xl px-3 sm:px-4 py-3 sm:py-4 pr-8 sm:pr-10 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px] xs:min-w-[140px] sm:min-w-[160px] h-[52px]"
-              >
-                <option value="today" className="bg-black text-white">Today</option>
-                <option value="yesterday" className="bg-black text-white">Yesterday</option>
-                <option value="past7days" className="bg-black text-white">Past 7 Days</option>
-                <option value="past30days" className="bg-black text-white">Past 30 Days</option>
-                <option value="custom" className="bg-black text-white">Custom Range</option>
-                <option value="all" className="bg-black text-white">All Time</option>
-              </select>
-              <svg className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <polyline points="6,9 12,15 18,9"></polyline>
-              </svg>
+            {/* Right-aligned Controls */}
+            <div className="flex items-center gap-4">
+              {/* Total Leads Count */}
+              <div className="flex items-center justify-center gap-2 px-4 rounded-xl bg-white h-[52px] min-w-[140px] flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="8.5" cy="7" r="4"/>
+                  <line x1="20" y1="8" x2="20" y2="14"/>
+                  <line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+                <span className="text-black text-sm font-bold whitespace-nowrap">
+                  {filteredLeads.length} Lead{filteredLeads.length !== 1 ? 's' : ''}
+                </span>
+              </div>
 
-              {/* Custom Date Range Picker - Mobile First */}
-              {showCustomDatePicker && (
+              {/* Date Filter */}
+              <div className="relative flex-shrink-0">
+                <select
+                  value={dateFilter}
+                  onChange={(e) => {
+                    setDateFilter(e.target.value)
+                    if (e.target.value !== 'custom') {
+                      setShowCustomDatePicker(false)
+                    } else {
+                      setShowCustomDatePicker(true)
+                    }
+                  }}
+                  className="date-filter-select appearance-none bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[160px] h-[52px]"
+                >
+                  <option value="today" className="bg-black text-white">Today</option>
+                  <option value="yesterday" className="bg-black text-white">Yesterday</option>
+                  <option value="past7days" className="bg-black text-white">Past 7 Days</option>
+                  <option value="past30days" className="bg-black text-white">Past 30 Days</option>
+                  <option value="custom" className="bg-black text-white">Custom Range</option>
+                  <option value="all" className="bg-black text-white">All Time</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+
+                {/* Custom Date Range Picker - Mobile First */}
+                {showCustomDatePicker && (
                 <>
                   {/* Mobile Backdrop */}
                   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" />
@@ -428,8 +564,8 @@ export default function LeadsPage() {
                     </div>
                   </div>
                 </>
-              )}
-            </div>
+                )}
+              </div>
 
             {/* View Mode Toggle */}
             <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
@@ -473,9 +609,25 @@ export default function LeadsPage() {
                 </svg>
               </button>
             </div>
+            </div>
+          </div>
+
+          {/* Mobile Search Bar */}
+          <div className="lg:hidden bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              type="search"
+              placeholder="Search leads..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
+            />
           </div>
         </div>
-
 
         {/* Error Message */}
         {error && (
@@ -677,11 +829,11 @@ export default function LeadsPage() {
           </div>
         ) : (
           /* Compact View - Super Responsive Enhanced Cards */
-          <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredLeads.map((lead) => (
               <div
                 key={lead.id}
-                className="relative rounded-xl sm:rounded-2xl p-6 sm:p-8 bg-white/5 border border-white/10 hover:bg-white/8 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="relative rounded-xl p-4 sm:p-6 bg-white/5 border border-white/10 hover:bg-white/8 transition-all duration-200"
               >
                 {/* Header with Avatar and Name */}
                 <div className="flex items-center space-x-4 sm:space-x-5 mb-4 sm:mb-6">
