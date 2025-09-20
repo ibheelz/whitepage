@@ -225,6 +225,12 @@ export default function CampaignsPage() {
     return matchesSearch
   })
 
+  // Sort campaigns by status (active first, then paused, then inactive)
+  const sortedCampaigns = filteredCampaigns.sort((a, b) => {
+    const statusOrder = { 'active': 0, 'paused': 1, 'inactive': 2 }
+    return statusOrder[a.status] - statusOrder[b.status]
+  })
+
   if (loading) {
     return (
       <div className="space-y-8">
@@ -359,7 +365,7 @@ export default function CampaignsPage() {
         </div>
 
         {/* Campaign Display */}
-        {filteredCampaigns.length === 0 ? (
+        {sortedCampaigns.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
@@ -479,7 +485,7 @@ export default function CampaignsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCampaigns.map((campaign, index) => (
+                  {sortedCampaigns.map((campaign, index) => (
                     <tr
                       key={campaign.id}
                       className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
@@ -598,7 +604,7 @@ export default function CampaignsPage() {
         ) : (
           /* Sleeker Compact View Cards */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCampaigns.map((campaign) => (
+            {sortedCampaigns.map((campaign) => (
               <div
                 key={campaign.id}
                 className="group relative rounded-2xl px-8 py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
