@@ -534,13 +534,13 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="bg-primary text-black font-bold px-2 py-1.5 rounded-lg flex items-center justify-center text-xs w-fit">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
+                        <div className="text-primary font-bold">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="bg-primary text-black font-bold px-2 py-1.5 rounded-lg flex items-center justify-center text-xs w-fit">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
+                        <div className="text-primary font-bold">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="bg-primary text-black font-bold px-2 py-1.5 rounded-lg flex items-center justify-center text-xs w-fit">{Math.floor(Math.random() * 500).toLocaleString()}</div>
+                        <div className="text-primary font-bold">{Math.floor(Math.random() * 500).toLocaleString()}</div>
                       </td>
                       {/* Dynamic conversion type data columns */}
                       {allConversionTypes.map((conversionType) => {
