@@ -183,14 +183,12 @@ export default function CampaignsPage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('Campaign created successfully!')
         fetchCampaigns()
       } else {
         throw new Error(result.error)
       }
     } catch (error) {
       console.error('Error creating campaign:', error)
-      alert('Failed to create campaign: ' + (error as Error).message)
     }
   }
 
@@ -208,14 +206,12 @@ export default function CampaignsPage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('Campaign deleted successfully!')
         fetchCampaigns()
       } else {
         throw new Error(result.error)
       }
     } catch (error) {
       console.error('Error deleting campaign:', error)
-      alert('Failed to delete campaign: ' + (error as Error).message)
     }
   }
 
@@ -364,17 +360,31 @@ export default function CampaignsPage() {
 
         {/* Campaign Display */}
         {filteredCampaigns.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-muted/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <TargetIcon size={24} className="text-muted-foreground" />
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <circle cx="12" cy="12" r="4"/>
+              </svg>
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No campaigns found</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchQuery ? 'No campaigns match your search' : 'Create your first campaign to get started'}
+            <h3 className="text-2xl font-bold text-white mb-3">
+              {searchQuery ? 'No campaigns match your search' : 'No campaigns found'}
+            </h3>
+            <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
+              {searchQuery
+                ? 'Try adjusting your search terms or clear the filter to see all campaigns'
+                : 'Create your first campaign to start tracking your marketing performance and manage conversions'
+              }
             </p>
-            <button className="premium-button-primary">
-              <PlusIcon size={16} className="mr-2" />
-              New Campaign
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="inline-flex items-center space-x-3 px-8 py-4 bg-primary text-black font-bold rounded-2xl hover:bg-primary/90 transition-all duration-300 shadow-xl hover:shadow-primary/25 transform hover:-translate-y-0.5"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Create Campaign</span>
             </button>
           </div>
         ) : viewMode === 'table' ? (
@@ -721,7 +731,6 @@ export default function CampaignsPage() {
                 const result = await response.json()
 
                 if (result.success) {
-                  alert(`Campaign "${managingCampaign.name}" updated successfully!`)
                   setManagingCampaign(null)
                   fetchCampaigns()
                 } else {
@@ -729,7 +738,6 @@ export default function CampaignsPage() {
                 }
               } catch (error) {
                 console.error('Error updating campaign:', error)
-                alert('Failed to update campaign: ' + (error as Error).message)
               }
             }}
             editMode={managingCampaign}

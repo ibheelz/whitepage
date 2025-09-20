@@ -128,14 +128,12 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml']
       if (!allowedTypes.includes(file.type)) {
-        alert('Invalid file type. Please upload JPEG, PNG, GIF, or SVG files only.')
         return
       }
 
       // Validate file size (5MB max)
       const maxSize = 5 * 1024 * 1024 // 5MB
       if (file.size > maxSize) {
-        alert('File size too large. Maximum size is 5MB.')
         return
       }
 
@@ -166,11 +164,9 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
           console.log('Logo uploaded successfully:', result.url)
         } else {
           console.error('Upload failed:', result.error)
-          alert('Failed to upload logo: ' + result.error)
         }
       } catch (error) {
         console.error('Upload error:', error)
-        alert('Failed to upload logo')
       }
     }
   }
@@ -196,13 +192,11 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
 
     // Validate campaign name
     if (nameValidationError) {
-      alert('Please fix the campaign name error before submitting.')
       return
     }
 
     // Validate logo is required
     if (!logoPreview) {
-      alert('Brand logo is required. Please upload a logo before creating the campaign.')
       return
     }
 
@@ -219,10 +213,8 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
 
   const handleDelete = () => {
     if (editMode && onDelete) {
-      if (window.confirm(`Are you sure you want to delete the campaign "${editMode.name}"? This action cannot be undone.`)) {
-        onDelete(editMode.id)
-        onClose()
-      }
+      onDelete(editMode.id)
+      onClose()
     }
   }
 
