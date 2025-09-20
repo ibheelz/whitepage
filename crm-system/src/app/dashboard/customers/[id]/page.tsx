@@ -252,7 +252,15 @@ export default function CustomerDetailPage() {
           <div className="text-muted-foreground mb-4">{error || 'The requested customer could not be found.'}</div>
           <Link
             href="/dashboard/leads"
-            className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-black rounded-xl hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(253, 198, 0, 0.3)',
+              boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              color: '#0a0a0a'
+            }}
           >
             <BackArrowIcon size={16} />
             <span>Back to Lead Tracking</span>

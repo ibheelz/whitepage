@@ -155,9 +155,17 @@ export default function LinksPage() {
               onClick={() => setViewMode('compact')}
               className={`p-2 rounded-lg transition-colors ${
                 viewMode === 'compact'
-                  ? 'bg-primary text-black'
+                  ? 'text-black'
                   : 'bg-muted/20 hover:bg-muted/30 text-muted-foreground'
               }`}
+              style={viewMode === 'compact' ? {
+                background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(253, 198, 0, 0.3)',
+                boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                color: '#0a0a0a'
+              } : {}}
               title="Compact view"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -168,9 +176,17 @@ export default function LinksPage() {
               onClick={() => setViewMode('table')}
               className={`p-2 rounded-lg transition-colors ${
                 viewMode === 'table'
-                  ? 'bg-primary text-black'
+                  ? 'text-black'
                   : 'bg-muted/20 hover:bg-muted/30 text-muted-foreground'
               }`}
+              style={viewMode === 'table' ? {
+                background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(253, 198, 0, 0.3)',
+                boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                color: '#0a0a0a'
+              } : {}}
               title="Table view"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

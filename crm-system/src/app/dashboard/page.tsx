@@ -473,9 +473,17 @@ export default function DashboardPage() {
                 return (
                   <div key={i} className={`p-1 rounded text-xs ${
                     isToday
-                      ? 'bg-primary text-black font-bold'
+                      ? 'text-black font-bold'
                       : 'text-muted-foreground hover:bg-muted/20'
-                  }`}>
+                  }`}
+                    style={isToday ? {
+                      background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                      backdropFilter: 'blur(10px)',
+                      WebkitBackdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(253, 198, 0, 0.3)',
+                      boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                      color: '#0a0a0a'
+                    } : {}}>
                     {day}
                   </div>
                 )
