@@ -19,6 +19,8 @@ interface CampaignStats {
   totalRevenue: number
 }
 
+type CampaignStatus = 'active' | 'paused' | 'inactive'
+
 interface Campaign {
   id: string
   name: string
@@ -26,7 +28,7 @@ interface Campaign {
   description: string | null
   clientId: string | null
   brandId: string | null
-  isActive: boolean
+  status: CampaignStatus
   createdAt: string
   updatedAt: string
   stats: CampaignStats
@@ -50,7 +52,12 @@ export default function CampaignsPage() {
       const data = await response.json()
 
       if (data.success) {
-        setCampaigns(data.campaigns)
+        // Convert isActive boolean to status for backwards compatibility
+        const campaignsWithStatus = data.campaigns.map((campaign: any) => ({
+          ...campaign,
+          status: campaign.isActive ? 'active' : 'paused' as CampaignStatus
+        }))
+        setCampaigns(campaignsWithStatus)
       } else {
         setError('Failed to load campaigns')
       }
@@ -59,6 +66,73 @@ export default function CampaignsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const updateCampaignStatus = async (campaignId: string, newStatus: CampaignStatus) => {
+    try {
+      // Optimistically update the UI
+      setCampaigns(prev => prev.map(campaign =>
+        campaign.id === campaignId
+          ? { ...campaign, status: newStatus }
+          : campaign
+      ))
+
+      // Close dropdown
+      setDropdownOpen(null)
+
+      // Here you would make an API call to update the campaign status
+      // const response = await fetch(`/api/campaigns/${campaignId}`, {
+      //   method: 'PATCH',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ status: newStatus })
+      // })
+
+      console.log(`Campaign ${campaignId} status updated to ${newStatus}`)
+    } catch (err) {
+      console.error('Failed to update campaign status:', err)
+      // Revert optimistic update on error
+      fetchCampaigns()
+    }
+  }
+
+  const getStatusConfig = (status: CampaignStatus) => {
+    switch (status) {
+      case 'active':
+        return {
+          label: 'Active',
+          color: 'green',
+          bgClass: 'bg-green-500/10',
+          textClass: 'text-green-400',
+          borderClass: 'border-green-500/30',
+          indicatorClass: 'bg-green-500'
+        }
+      case 'paused':
+        return {
+          label: 'Paused',
+          color: 'yellow',
+          bgClass: 'bg-primary/10',
+          textClass: 'text-primary',
+          borderClass: 'border-primary/30',
+          indicatorClass: 'bg-primary'
+        }
+      case 'inactive':
+        return {
+          label: 'Inactive',
+          color: 'red',
+          bgClass: 'bg-red-500/10',
+          textClass: 'text-red-400',
+          borderClass: 'border-red-500/30',
+          indicatorClass: 'bg-red-500'
+        }
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    return `${day}/${month}/${year}`
   }
 
 
@@ -261,33 +335,44 @@ export default function CampaignsPage() {
                           <button
                             onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 border transition-colors ${
-                              campaign.isActive
-                                ? 'bg-green-500/10 text-green-400 border-green-500/30'
-                                : 'bg-red-500/10 text-red-400 border-red-500/30'
+                              getStatusConfig(campaign.status).bgClass
+                            } ${
+                              getStatusConfig(campaign.status).textClass
+                            } ${
+                              getStatusConfig(campaign.status).borderClass
                             }`}
                           >
                             <div className={`w-2 h-2 rounded-full ${
-                              campaign.isActive ? 'bg-green-500' : 'bg-red-500'
+                              getStatusConfig(campaign.status).indicatorClass
                             }`} />
-                            <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
+                            <span>{getStatusConfig(campaign.status).label}</span>
                             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                           </button>
 
                           {dropdownOpen === campaign.id && (
-                            <div className="absolute top-full left-0 mt-1 w-28 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
-                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400">
+                            <div className="absolute top-full left-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                              <button
+                                onClick={() => updateCampaignStatus(campaign.id, 'active')}
+                                className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                              >
                                 <div className="w-2 h-2 rounded-full bg-green-500" />
                                 <span>Active</span>
                               </button>
-                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400">
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
+                              <button
+                                onClick={() => updateCampaignStatus(campaign.id, 'paused')}
+                                className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                              >
+                                <div className="w-2 h-2 rounded-full bg-primary" />
                                 <span>Paused</span>
                               </button>
-                              <button className="w-full px-3 py-2 text-left text-xs hover:bg-yellow-500/10 flex items-center space-x-2 text-yellow-400">
-                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                                <span>Testing</span>
+                              <button
+                                onClick={() => updateCampaignStatus(campaign.id, 'inactive')}
+                                className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                              >
+                                <div className="w-2 h-2 rounded-full bg-red-500" />
+                                <span>Inactive</span>
                               </button>
                             </div>
                           )}
@@ -328,9 +413,7 @@ export default function CampaignsPage() {
               >
                 {/* Status Light Indicator */}
                 <div className="absolute top-4 right-4">
-                  <div className={`w-3 h-3 rounded-full ${
-                    campaign.isActive ? 'bg-green-500' : 'bg-red-500'
-                  }`} />
+                  <div className={`w-3 h-3 rounded-full ${getStatusConfig(campaign.status).indicatorClass}`} />
                 </div>
 
                 {/* Campaign Header */}
@@ -343,7 +426,7 @@ export default function CampaignsPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-white text-lg mb-0 truncate">{campaign.name}</h3>
-                      <p className="text-white/60 text-sm font-mono">{campaign.slug}</p>
+                      <p className="text-white/60 text-sm font-mono">{campaign.slug} | {formatDate(campaign.createdAt)}</p>
                     </div>
                   </div>
                 </div>
@@ -371,15 +454,17 @@ export default function CampaignsPage() {
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center space-x-2 ${
-                        campaign.isActive
-                          ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                          : 'bg-red-500/10 border-red-500/30 text-red-400'
+                        getStatusConfig(campaign.status).bgClass
+                      } ${
+                        getStatusConfig(campaign.status).textClass
+                      } ${
+                        getStatusConfig(campaign.status).borderClass
                       }`}
                     >
                       <div className={`w-2 h-2 rounded-full ${
-                        campaign.isActive ? 'bg-green-500' : 'bg-red-500'
+                        getStatusConfig(campaign.status).indicatorClass
                       }`} />
-                      <span>{campaign.isActive ? 'Active' : 'Paused'}</span>
+                      <span>{getStatusConfig(campaign.status).label}</span>
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
@@ -387,18 +472,27 @@ export default function CampaignsPage() {
 
                     {/* Status Options Dropdown */}
                     {dropdownOpen === campaign.id && (
-                      <div className="absolute bottom-full left-0 mb-2 w-28 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
-                        <button className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400">
+                      <div className="absolute bottom-full left-0 mb-2 w-32 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
+                        <button
+                          onClick={() => updateCampaignStatus(campaign.id, 'active')}
+                          className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                        >
                           <div className="w-2 h-2 rounded-full bg-green-500" />
                           <span>Active</span>
                         </button>
-                        <button className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400">
-                          <div className="w-2 h-2 rounded-full bg-red-500" />
+                        <button
+                          onClick={() => updateCampaignStatus(campaign.id, 'paused')}
+                          className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-primary" />
                           <span>Paused</span>
                         </button>
-                        <button className="w-full px-3 py-2 text-left text-xs hover:bg-yellow-500/10 flex items-center space-x-2 text-yellow-400">
-                          <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                          <span>Testing</span>
+                        <button
+                          onClick={() => updateCampaignStatus(campaign.id, 'inactive')}
+                          className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-red-500" />
+                          <span>Inactive</span>
                         </button>
                       </div>
                     )}
