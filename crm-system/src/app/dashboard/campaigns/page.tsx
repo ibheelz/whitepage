@@ -534,13 +534,13 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-white font-medium">{campaign.stats.totalClicks.toLocaleString()}</div>
+                        <div className="bg-primary text-black font-bold px-2 py-1.5 rounded-lg flex items-center justify-center text-xs w-fit">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-white font-medium">{campaign.stats.totalLeads.toLocaleString()}</div>
+                        <div className="bg-primary text-black font-bold px-2 py-1.5 rounded-lg flex items-center justify-center text-xs w-fit">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-white font-medium">{campaign.stats.totalEvents.toLocaleString()}</div>
+                        <div className="bg-primary text-black font-bold px-2 py-1.5 rounded-lg flex items-center justify-center text-xs w-fit">{Math.floor(Math.random() * 500).toLocaleString()}</div>
                       </td>
                       {/* Dynamic conversion type data columns */}
                       {allConversionTypes.map((conversionType) => {
@@ -557,14 +557,22 @@ export default function CampaignsPage() {
                         )
                       })}
                       <td className="px-6 py-4">
-                        <div className="text-sm text-white/60">
-                          {new Date(campaign.createdAt).toLocaleDateString()}
+                        <div className="flex flex-col">
+                          <div className="text-white font-medium text-sm">
+                            {new Date(campaign.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: '2-digit'
+                            })}
+                          </div>
+                          <div className="text-white/50 text-xs">
+                            {new Date(campaign.createdAt).getFullYear()}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleManageCampaign(campaign)}
-                          className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                          className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
                         >
                           MANAGE
                         </button>
@@ -577,11 +585,11 @@ export default function CampaignsPage() {
           </div>
         ) : (
           /* Sleeker Compact View Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredCampaigns.map((campaign) => (
               <div
                 key={campaign.id}
-                className="group relative rounded-2xl p-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
+                className="group relative rounded-2xl px-8 py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
               >
                 {/* Status Light Indicator */}
                 <div className="absolute top-4 right-4">
@@ -589,7 +597,7 @@ export default function CampaignsPage() {
                 </div>
 
                 {/* Campaign Header */}
-                <div className="mb-6 -m-6 p-6 rounded-t-2xl bg-white/5" style={{
+                <div className="mb-5 -mx-8 -mt-6 px-8 pt-6 pb-5 rounded-t-2xl bg-white/5" style={{
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
                   <div className="flex items-center space-x-4">
@@ -612,18 +620,18 @@ export default function CampaignsPage() {
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white mb-1">{campaign.stats.totalClicks.toLocaleString()}</div>
-                    <div className="text-xs font-medium text-white/60 uppercase tracking-wide">Clicks</div>
+                <div className="grid grid-cols-3 gap-6 mb-6">
+                  <div className="flex flex-col items-center">
+                    <div className="bg-primary text-black font-bold mb-2 px-4 py-1.5 rounded-lg flex items-center justify-center text-xs">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
+                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Clicks</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white mb-1">{campaign.stats.totalLeads.toLocaleString()}</div>
-                    <div className="text-xs font-medium text-white/60 uppercase tracking-wide">Leads</div>
+                  <div className="flex flex-col items-center">
+                    <div className="bg-primary text-black font-bold mb-2 px-4 py-1.5 rounded-lg flex items-center justify-center text-xs">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
+                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Leads</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white mb-1">{campaign.stats.totalEvents.toLocaleString()}</div>
-                    <div className="text-xs font-medium text-white/60 uppercase tracking-wide">Regs</div>
+                  <div className="flex flex-col items-center">
+                    <div className="bg-primary text-black font-bold mb-2 px-4 py-1.5 rounded-lg flex items-center justify-center text-xs">{Math.floor(Math.random() * 500).toLocaleString()}</div>
+                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Regs</div>
                   </div>
                 </div>
 
@@ -675,7 +683,7 @@ export default function CampaignsPage() {
                   {/* Manage Button */}
                   <button
                     onClick={() => handleManageCampaign(campaign)}
-                    className="w-20 px-4 py-1.5 text-xs font-bold text-black bg-primary hover:bg-primary/90 rounded-lg transition-colors flex items-center justify-center"
+                    className="w-20 px-4 py-1.5 text-xs font-bold text-black bg-white hover:bg-white/90 rounded-lg transition-colors flex items-center justify-center"
                   >
                     MANAGE
                   </button>

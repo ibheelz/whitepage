@@ -36,7 +36,26 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
 
   const [brandLogo, setBrandLogo] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const [nameValidationError, setNameValidationError] = useState<string | null>(null)
+  const [existingCampaigns, setExistingCampaigns] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Fetch existing campaigns for validation
+  React.useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch('/api/campaigns')
+        const result = await response.json()
+        if (result.success) {
+          const campaignNames = result.campaigns.map((c: any) => c.name.toLowerCase())
+          setExistingCampaigns(campaignNames)
+        }
+      } catch (error) {
+        console.error('Failed to fetch campaigns:', error)
+      }
+    }
+    fetchCampaigns()
+  }, [isOpen])
 
   // Update form data when editMode changes
   React.useEffect(() => {
@@ -61,6 +80,7 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
       // Reset logo states for new campaign
       setBrandLogo(null)
       setLogoPreview(null)
+      setNameValidationError(null)
     }
   }, [editMode])
 
@@ -84,8 +104,19 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
       [field]: value
     }))
 
-    // Auto-generate slug from name
+    // Validate campaign name for duplicates
     if (field === 'name') {
+      const normalizedName = value.toLowerCase().trim()
+      const isDuplicate = existingCampaigns.includes(normalizedName) &&
+        (!editMode || editMode.name.toLowerCase() !== normalizedName)
+
+      if (isDuplicate) {
+        setNameValidationError('Campaign name already exists. Please choose a different name.')
+      } else {
+        setNameValidationError(null)
+      }
+
+      // Auto-generate slug from name
       const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
       setFormData(prev => ({
         ...prev,
@@ -97,6 +128,20 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
   const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml']
+      if (!allowedTypes.includes(file.type)) {
+        alert('Invalid file type. Please upload JPEG, PNG, GIF, or SVG files only.')
+        return
+      }
+
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024 // 5MB
+      if (file.size > maxSize) {
+        alert('File size too large. Maximum size is 5MB.')
+        return
+      }
+
       setBrandLogo(file)
 
       // Show preview immediately
@@ -151,6 +196,18 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate campaign name
+    if (nameValidationError) {
+      alert('Please fix the campaign name error before submitting.')
+      return
+    }
+
+    // Validate logo is required
+    if (!logoPreview) {
+      alert('Brand logo is required. Please upload a logo before creating the campaign.')
+      return
+    }
 
     const campaignData = {
       ...formData,
@@ -271,14 +328,26 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-white placeholder-white/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className={`w-full px-4 py-3 rounded-xl text-white placeholder-white/50 transition-all duration-300 focus:outline-none focus:ring-2 ${
+                      nameValidationError ? 'focus:ring-red-500 border-red-500' : 'focus:ring-primary/50'
+                    }`}
                     style={{
                       background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)'
+                      border: nameValidationError ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.15)'
                     }}
                     placeholder="Enter campaign name"
                     required
                   />
+                  {nameValidationError && (
+                    <p className="text-red-400 text-sm mt-1 flex items-center space-x-1">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                      <span>{nameValidationError}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -317,6 +386,7 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
                   <path d="M21 15l-3.086-3.086a2 2 0 00-2.828 0L6 21"/>
                 </svg>
                 <span>Brand Logo</span>
+                <span className="text-red-400 ml-1">*</span>
               </h3>
 
               <div
@@ -325,11 +395,17 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
               >
                 {logoPreview ? (
                   <div className="space-y-4">
-                    <img
-                      src={logoPreview}
-                      alt="Logo preview"
-                      className="mx-auto max-h-24 rounded-lg"
-                    />
+                    <div className="flex justify-center">
+                      <img
+                        src={logoPreview}
+                        alt="Logo preview"
+                        className="max-h-24 max-w-full object-contain rounded-lg"
+                        style={{
+                          display: 'block',
+                          margin: '0 auto'
+                        }}
+                      />
+                    </div>
                     <p className="text-sm text-white/60">Click to change logo</p>
                   </div>
                 ) : (
@@ -342,8 +418,8 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
                       </svg>
                     </div>
                     <div>
-                      <p className="text-white/80 font-medium">Upload Brand Logo</p>
-                      <p className="text-sm text-white/60">PNG, JPG up to 5MB</p>
+                      <p className="text-white/80 font-medium">Upload Brand Logo *</p>
+                      <p className="text-sm text-white/60">JPEG, PNG, GIF, SVG • Max 5MB</p>
                     </div>
                   </div>
                 )}
@@ -351,9 +427,10 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                   onChange={handleLogoUpload}
                   className="hidden"
+                  required={!editMode}
                 />
               </div>
             </div>
