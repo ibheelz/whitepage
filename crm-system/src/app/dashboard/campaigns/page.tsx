@@ -213,13 +213,13 @@ export default function CampaignsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto p-8">
+      <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-white">Campaigns</h1>
-              <p className="text-muted-foreground text-sm mt-1">Manage your marketing campaigns</p>
+              <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Campaign Management</h1>
+              <p className="text-white/60 text-base">Manage your marketing campaigns</p>
             </div>
             <div className="flex items-center space-x-4">
               <button className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
@@ -236,7 +236,7 @@ export default function CampaignsPage() {
 
         {/* Search Bar and View Toggle */}
         <div className="mb-6 flex items-center justify-between gap-6">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 max-w-lg">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 w-80">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>

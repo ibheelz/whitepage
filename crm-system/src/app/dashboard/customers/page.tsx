@@ -1046,7 +1046,7 @@ export default function CustomersPage() {
 
       <div className="mb-4 sm:mb-6 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:flex-none sm:w-48 md:w-64 lg:w-80">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 w-80">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
@@ -1141,21 +1141,10 @@ export default function CustomersPage() {
       </div>
 
       {effectiveViewMode === 'table' ? (
-        <div className="rounded-2xl overflow-hidden" style={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
-        }}>
+        <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
           <div className="overflow-x-auto custom-scrollbar mobile-table">
             <table className="w-full min-w-max touch-manipulation">
-            <thead style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-            }}>
+            <thead className="bg-white/5 border-b border-white/10">
               <tr>
                 <th className="px-6 py-4 text-left w-12">
                   <input
@@ -1284,16 +1273,7 @@ export default function CustomersPage() {
               {currentCustomers.map((customer, index) => (
                 <tr
                   key={customer.id}
-                  className="transition-all duration-200 border-b border-white/5 h-[60px] overflow-hidden"
-                  style={{
-                    background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
-                  }}
+                  className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
                 >
                   <td className="px-6 py-3 w-12">
                     <input
