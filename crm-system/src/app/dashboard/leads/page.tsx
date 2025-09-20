@@ -75,6 +75,58 @@ export default function LeadsPage() {
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<'compact' | 'table'>('compact')
 
+  // Date filtering state
+  const [dateFilter, setDateFilter] = useState('today')
+  const [customDateRange, setCustomDateRange] = useState({ from: '', to: '' })
+  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false)
+
+  // Handle click outside to close modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element
+      if (showCustomDatePicker && !target.closest('.date-range-modal') && !target.closest('.date-filter-select')) {
+        setShowCustomDatePicker(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showCustomDatePicker])
+
+  // Filter leads based on date
+  const filteredLeads = leads.filter(lead => {
+    if (!dateFilter || dateFilter === 'all') return true
+
+    const leadDate = new Date(lead.createdAt)
+    const today = new Date()
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
+    switch (dateFilter) {
+      case 'today':
+        return leadDate >= startOfToday
+      case 'yesterday':
+        const yesterday = new Date(startOfToday)
+        yesterday.setDate(yesterday.getDate() - 1)
+        return leadDate >= yesterday && leadDate < startOfToday
+      case 'past7days':
+        const week = new Date(startOfToday)
+        week.setDate(week.getDate() - 7)
+        return leadDate >= week
+      case 'past30days':
+        const month = new Date(startOfToday)
+        month.setDate(month.getDate() - 30)
+        return leadDate >= month
+      case 'custom':
+        if (!customDateRange.from || !customDateRange.to) return true
+        const fromDate = new Date(customDateRange.from)
+        const toDate = new Date(customDateRange.to)
+        toDate.setHours(23, 59, 59, 999) // Include the entire end date
+        return leadDate >= fromDate && leadDate <= toDate
+      default:
+        return true
+    }
+  })
+
   // Auto-set compact mode for smaller devices
   useEffect(() => {
     const handleResize = () => {
@@ -90,6 +142,11 @@ export default function LeadsPage() {
   useEffect(() => {
     fetchLeads()
   }, [])
+
+  // Update filtered leads when date filter or custom range changes
+  useEffect(() => {
+    // Trigger re-filtering when dateFilter or customDateRange changes
+  }, [dateFilter, customDateRange])
 
   const fetchLeads = async (page = 1) => {
     setLoading(true)
@@ -222,7 +279,7 @@ export default function LeadsPage() {
           </div>
         </div>
 
-        {/* Search Bar and View Toggle - Super Responsive */}
+        {/* Search Bar, Count, Date Filter and View Toggle - Super Responsive */}
         <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Responsive Search Bar */}
           <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
@@ -240,44 +297,171 @@ export default function LeadsPage() {
             />
           </div>
 
-          {/* View Mode Toggle - Hide on mobile for auto-compact mode */}
-          <div className="hidden lg:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
-            <button
-              onClick={() => setViewMode('compact')}
-              className={`p-3 rounded-lg transition-all duration-200 ${
-                viewMode === 'compact'
-                  ? 'text-black'
-                  : 'text-white/60 hover:text-white/80'
-              }`}
-              style={{
-                background: viewMode === 'compact'
-                  ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                  : 'transparent'
-              }}
-              title="Compact view"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+          {/* Right side controls */}
+          <div className="flex items-center gap-3">
+            {/* Count Rectangle */}
+            <div className="flex items-center gap-2 px-4 rounded-xl bg-white h-[50px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
               </svg>
-            </button>
-            <button
-              onClick={() => setViewMode('table')}
-              className={`p-3 rounded-lg transition-all duration-200 ${
-                viewMode === 'table'
-                  ? 'text-black'
-                  : 'text-white/60 hover:text-white/80'
-              }`}
-              style={{
-                background: viewMode === 'table'
-                  ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                  : 'transparent'
-              }}
-              title="Table view"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+              <span className="text-black text-sm font-bold">
+                {filteredLeads.length} Lead{filteredLeads.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {/* Date Filter */}
+            <div className="relative">
+              <select
+                value={dateFilter}
+                onChange={(e) => {
+                  setDateFilter(e.target.value)
+                  if (e.target.value !== 'custom') {
+                    setShowCustomDatePicker(false)
+                  } else {
+                    setShowCustomDatePicker(true)
+                  }
+                }}
+                className="date-filter-select appearance-none bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 h-[50px] min-w-[140px] sm:min-w-[160px]"
+              >
+                <option value="today" className="bg-black text-white">Today</option>
+                <option value="yesterday" className="bg-black text-white">Yesterday</option>
+                <option value="past7days" className="bg-black text-white">Past 7 Days</option>
+                <option value="past30days" className="bg-black text-white">Past 30 Days</option>
+                <option value="custom" className="bg-black text-white">Custom Range</option>
+                <option value="all" className="bg-black text-white">All Time</option>
+              </select>
+              <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <polyline points="6,9 12,15 18,9"></polyline>
               </svg>
-            </button>
+
+              {/* Custom Date Range Picker */}
+              {showCustomDatePicker && (
+                <div className="date-range-modal absolute z-10 top-full mt-2 right-0
+                               bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4
+                               min-w-[280px] sm:min-w-[320px] md:min-w-[360px] shadow-xl">
+                  <div className="flex flex-col gap-4">
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                      <div className="flex items-center gap-2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <h3 className="text-white/90 font-medium">Select Date Range</h3>
+                      </div>
+                      <button
+                        onClick={() => setShowCustomDatePicker(false)}
+                        className="p-1 hover:bg-white/10 rounded transition-colors"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/60">
+                          <line x1="18" y1="6" x2="6" y2="18"/>
+                          <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Date Inputs */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="flex-1">
+                        <label className="flex items-center gap-2 text-white/80 text-sm mb-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                          </svg>
+                          From Date
+                        </label>
+                        <input
+                          type="date"
+                          value={customDateRange.from}
+                          onChange={(e) => setCustomDateRange(prev => ({ ...prev, from: e.target.value }))}
+                          className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-primary/50 hover:bg-white/15 transition-colors"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="flex items-center gap-2 text-white/80 text-sm mb-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                            <path d="M9 11H1m8 0a2 2 0 1 0 4 0m-4 0a2 2 0 1 1 4 0m0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V9z"/>
+                          </svg>
+                          To Date
+                        </label>
+                        <input
+                          type="date"
+                          value={customDateRange.to}
+                          onChange={(e) => setCustomDateRange(prev => ({ ...prev, to: e.target.value }))}
+                          className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-primary/50 hover:bg-white/15 transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        onClick={() => setShowCustomDatePicker(false)}
+                        className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/15 text-white/80 rounded-lg text-sm transition-colors border border-white/20"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => setShowCustomDatePicker(false)}
+                        className="flex-1 px-3 py-2 bg-primary text-black rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors
+                                 flex items-center justify-center gap-2"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                        Apply Filter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* View Mode Toggle - Hide on mobile for auto-compact mode */}
+            <div className="hidden lg:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm h-[50px]">
+              <button
+                onClick={() => setViewMode('compact')}
+                className={`p-3 rounded-lg transition-all duration-200 ${
+                  viewMode === 'compact'
+                    ? 'text-black'
+                    : 'text-white/60 hover:text-white/80'
+                }`}
+                style={{
+                  background: viewMode === 'compact'
+                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                    : 'transparent'
+                }}
+                title="Compact view"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode('table')}
+                className={`p-3 rounded-lg transition-all duration-200 ${
+                  viewMode === 'table'
+                    ? 'text-black'
+                    : 'text-white/60 hover:text-white/80'
+                }`}
+                style={{
+                  background: viewMode === 'table'
+                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                    : 'transparent'
+                }}
+                title="Table view"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -290,7 +474,7 @@ export default function LeadsPage() {
         )}
 
         {/* Leads Display */}
-        {leads.length === 0 ? (
+        {filteredLeads.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
@@ -301,12 +485,14 @@ export default function LeadsPage() {
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-white mb-3">
-              {search ? 'No leads match your search' : 'No leads found'}
+              {search ? 'No leads match your search' : leads.length === 0 ? 'No leads found' : 'No leads match your date filter'}
             </h3>
             <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
               {search
                 ? 'Try adjusting your search terms or clear the search to see all leads'
-                : 'Lead submissions will appear here once they start coming in from your campaigns'
+                : leads.length === 0
+                ? 'Lead submissions will appear here once they start coming in from your campaigns'
+                : 'Try selecting a different date range to see more leads'
               }
             </p>
           </div>
@@ -376,7 +562,7 @@ export default function LeadsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {leads.map((lead) => (
+                  {filteredLeads.map((lead) => (
                     <tr
                       key={lead.id}
                       className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
@@ -480,67 +666,67 @@ export default function LeadsPage() {
             </div>
           </div>
         ) : (
-          /* Compact View - Minimalist Tracking Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {leads.map((lead) => (
+          /* Compact View - Enhanced Tracking Cards */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredLeads.map((lead) => (
               <div
                 key={lead.id}
-                className="relative rounded-xl p-4 bg-white/5 border border-white/10"
+                className="relative rounded-2xl p-6 bg-white/5 border border-white/10 hover:bg-white/8 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {/* Header with Avatar and Name */}
-                <div className="flex items-center space-x-3 mb-3">
+                <div className="flex items-center space-x-4 mb-4">
                   <Avatar
                     firstName={lead.firstName}
                     lastName={lead.lastName}
                     userId={lead.customer?.id}
-                    size="sm"
+                    size="md"
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-white text-sm truncate">{getDisplayName(lead)}</h3>
-                    <p className="text-white/50 text-xs truncate">{lead.campaign || 'No Campaign'}</p>
+                    <h3 className="font-semibold text-white text-base truncate">{getDisplayName(lead)}</h3>
+                    <p className="text-white/60 text-sm truncate">{lead.campaign || 'No Campaign'}</p>
                   </div>
                 </div>
 
                 {/* Essential Info - Only most relevant data */}
-                <div className="space-y-2 mb-3">
+                <div className="space-y-3 mb-4">
                   {/* Primary Contact */}
                   {lead.email && (
-                    <div className="flex items-center space-x-2">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
+                    <div className="flex items-center space-x-3">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                         <polyline points="22,6 12,13 2,6"/>
                       </svg>
-                      <span className="text-white/70 text-xs truncate">{lead.email}</span>
+                      <span className="text-white/70 text-sm truncate">{lead.email}</span>
                     </div>
                   )}
 
                   {/* Phone if no email */}
                   {!lead.email && lead.phone && (
-                    <div className="flex items-center space-x-2">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
+                    <div className="flex items-center space-x-3">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                       </svg>
-                      <span className="text-white/70 text-xs truncate">{lead.phone}</span>
+                      <span className="text-white/70 text-sm truncate">{lead.phone}</span>
                     </div>
                   )}
 
                   {/* Source */}
                   {lead.source && (
-                    <div className="flex items-center space-x-2">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
+                    <div className="flex items-center space-x-3">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
                         <circle cx="12" cy="12" r="2"/>
                         <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4Z"/>
                       </svg>
-                      <span className="text-white/70 text-xs truncate">{lead.source}</span>
+                      <span className="text-white/70 text-sm truncate">{lead.source}</span>
                     </div>
                   )}
 
                   {/* Last Action */}
-                  <div className="flex items-center space-x-2">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
+                  <div className="flex items-center space-x-3">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary/70 flex-shrink-0">
                       <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                     </svg>
-                    <span className="text-white/70 text-xs truncate">
+                    <span className="text-white/70 text-sm truncate">
                       {(() => {
                         const lastAction = getLastAction(lead)
                         return `${lastAction.action}${lastAction.count > 1 ? ` (${lastAction.count})` : ''}`
@@ -550,12 +736,12 @@ export default function LeadsPage() {
                 </div>
 
                 {/* Footer with Date, Time and Action */}
-                <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                <div className="flex items-center justify-between pt-3 border-t border-white/5">
                   <div className="flex flex-col">
-                    <span className="text-white/50 text-xs">
+                    <span className="text-white/60 text-sm font-medium">
                       {new Date(lead.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
                     </span>
-                    <span className="text-white/40 text-xs">
+                    <span className="text-white/40 text-sm">
                       {new Date(lead.createdAt).toLocaleTimeString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -566,12 +752,12 @@ export default function LeadsPage() {
                   {lead.customer?.id ? (
                     <Link
                       href={`/dashboard/customers/${lead.customer.id}`}
-                      className="px-3 py-1 text-xs font-medium text-black bg-primary hover:bg-primary/90 rounded-md transition-colors"
+                      className="px-4 py-2 text-sm font-semibold text-black bg-primary hover:bg-primary/90 rounded-lg transition-colors shadow-md hover:shadow-lg"
                     >
                       View
                     </Link>
                   ) : (
-                    <span className="text-white/40 text-xs">No Customer</span>
+                    <span className="text-white/40 text-sm">No Customer</span>
                   )}
                 </div>
               </div>
