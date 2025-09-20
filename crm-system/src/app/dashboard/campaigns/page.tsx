@@ -42,6 +42,21 @@ export default function CampaignsPage() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'compact' | 'table'>('compact')
+
+  // Auto-set compact mode for smaller devices
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setViewMode('compact')
+      }
+    }
+
+    // Set initial mode based on screen size
+    handleResize()
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [managingCampaign, setManagingCampaign] = useState<Campaign | null>(null)
@@ -284,22 +299,25 @@ export default function CampaignsPage() {
     <div className="min-h-screen bg-background">
       <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Campaign Management</h1>
-              <p className="text-white/60 text-base">Manage your marketing campaigns</p>
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary truncate">
+                Campaign Management
+              </h1>
+              <p className="text-white/60 text-sm sm:text-base mt-1">Manage your marketing campaigns</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm sm:text-base"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="sm:w-4 sm:h-4">
                   <path d="M12 5v14"/>
                   <path d="M5 12h14"/>
                 </svg>
-                <span>New Campaign</span>
+                <span className="hidden xs:inline">New Campaign</span>
+                <span className="xs:hidden">New</span>
               </button>
             </div>
           </div>
@@ -307,9 +325,9 @@ export default function CampaignsPage() {
 
 
         {/* Search Bar and View Toggle */}
-        <div className="mb-6 flex items-center justify-between gap-6">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 w-80">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+        <div className="mb-4 sm:mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-3 sm:p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0 sm:w-5 sm:h-5">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -318,12 +336,12 @@ export default function CampaignsPage() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm min-w-0"
             />
           </div>
 
-          {/* View Mode Toggle */}
-          <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
+          {/* View Mode Toggle - Hide on mobile for auto-compact mode */}
+          <div className="hidden lg:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
             {/* Compact View */}
             <button
               onClick={() => setViewMode('compact')}
@@ -337,8 +355,9 @@ export default function CampaignsPage() {
                   ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
                   : 'transparent'
               }}
+              title="Compact view"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="lg:w-[18px] lg:h-[18px]">
                 <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
               </svg>
             </button>
@@ -356,8 +375,9 @@ export default function CampaignsPage() {
                   ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
                   : 'transparent'
               }}
+              title="Table view"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="lg:w-[18px] lg:h-[18px]">
                 <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
               </svg>
             </button>
@@ -394,30 +414,31 @@ export default function CampaignsPage() {
             </button>
           </div>
         ) : viewMode === 'table' ? (
-          /* Modern Table View */
-          <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
+          /* Super Responsive Table View */
+          <div className="bg-white/5 rounded-xl lg:rounded-2xl border border-white/10 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-3 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-16">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-12 sm:w-16">
                       #
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-64">
-                      <div className="flex items-center space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide min-w-[200px] sm:w-64">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                           <polyline points="14,2 14,8 20,8"/>
                           <line x1="16" y1="13" x2="8" y2="13"/>
                           <line x1="16" y1="17" x2="8" y2="17"/>
                           <polyline points="10,9 9,9 8,9"/>
                         </svg>
-                        <span>Campaign</span>
+                        <span className="hidden sm:inline">Campaign</span>
+                        <span className="sm:hidden">Camp</span>
                       </div>
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
-                      <div className="flex items-center space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <path d="M9 12l2 2 4-4"/>
                           <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
                           <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
@@ -426,9 +447,9 @@ export default function CampaignsPage() {
                         <span>Clicks</span>
                       </div>
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
-                      <div className="flex items-center space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                           <circle cx="8.5" cy="7" r="4"/>
                           <line x1="20" y1="8" x2="20" y2="14"/>
@@ -437,9 +458,9 @@ export default function CampaignsPage() {
                         <span>Leads</span>
                       </div>
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
-                      <div className="flex items-center space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                         </svg>
                         <span>Regs</span>
@@ -447,54 +468,56 @@ export default function CampaignsPage() {
                     </th>
                     {/* Dynamic conversion type columns */}
                     {allConversionTypes.map((conversionType) => (
-                      <th key={conversionType} className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
-                        <div className="flex items-center space-x-2">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                      <th key={conversionType} className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                             <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
                           </svg>
-                          <span>{conversionType}</span>
+                          <span className="truncate">{conversionType}</span>
                         </div>
                       </th>
                     ))}
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-28">
-                      <div className="flex items-center space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-20 sm:w-28">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                           <line x1="16" y1="2" x2="16" y2="6"/>
                           <line x1="8" y1="2" x2="8" y2="6"/>
                           <line x1="3" y1="10" x2="21" y2="10"/>
                         </svg>
-                        <span>Created</span>
+                        <span className="hidden sm:inline">Created</span>
+                        <span className="sm:hidden">Date</span>
                       </div>
                     </th>
-                    <th className="px-4 py-4 text-right text-xs font-semibold text-white/80 uppercase tracking-wide">
-                      <div className="flex items-center justify-end space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-right text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide min-w-[120px] sm:min-w-[160px]">
+                      <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <circle cx="12" cy="12" r="3"/>
                           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
-                        <span>Status & Actions</span>
+                        <span className="hidden sm:inline">Status & Actions</span>
+                        <span className="sm:hidden text-[9px]">Actions</span>
                       </div>
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-white/10">
                   {sortedCampaigns.map((campaign, index) => (
                     <tr
                       key={campaign.id}
-                      className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
+                      className="hover:bg-white/5 transition-colors"
                     >
-                      <td className="px-3 py-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-2">
-                            <div className={`w-3 h-3 rounded-full ${getStatusConfig(campaign.status).indicatorClass}`} />
-                            <span className="text-white/60 text-sm font-medium">{index + 1}</span>
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <div className="flex items-center space-x-1 sm:space-x-2">
+                            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getStatusConfig(campaign.status).indicatorClass}`} />
+                            <span className="text-white/60 text-xs sm:text-sm font-medium">{index + 1}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
+                      <td className="px-3 sm:px-4 py-3 sm:py-4">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                             {campaign.logoUrl ? (
                               <img
                                 src={campaign.logoUrl}
@@ -502,23 +525,23 @@ export default function CampaignsPage() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <TargetIcon size={20} className="text-black" />
+                              <TargetIcon size={16} className="sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-black" />
                             )}
                           </div>
-                          <div>
-                            <div className="font-medium text-white">{campaign.name}</div>
-                            <div className="text-sm text-white/60">{campaign.slug}</div>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-white text-xs sm:text-sm lg:text-base truncate">{campaign.name}</div>
+                            <div className="text-[10px] sm:text-xs text-white/60 truncate">{campaign.slug}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-bold">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-bold">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-bold">{Math.floor(Math.random() * 500).toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{Math.floor(Math.random() * 500).toLocaleString()}</div>
                       </td>
                       {/* Dynamic conversion type data columns */}
                       {allConversionTypes.map((conversionType) => {
@@ -529,31 +552,39 @@ export default function CampaignsPage() {
                         const count = conversionData?.count || campaign.stats?.[`${conversionType.toLowerCase()}Count`] || 0
 
                         return (
-                          <td key={conversionType} className="px-4 py-4">
-                            <div className="text-white font-medium">{typeof count === 'number' && count.toLocaleString ? count.toLocaleString() : count}</div>
+                          <td key={conversionType} className="px-2 sm:px-4 py-3 sm:py-4">
+                            <div className="text-white font-medium text-xs sm:text-sm">{typeof count === 'number' && count.toLocaleString ? count.toLocaleString() : count}</div>
                           </td>
                         )
                       })}
-                      <td className="px-4 py-4">
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
                         <div className="flex flex-col">
-                          <div className="text-white font-medium text-sm">
-                            {new Date(campaign.createdAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: '2-digit'
-                            })}
+                          <div className="text-white font-medium text-xs sm:text-sm">
+                            <span className="hidden sm:inline">
+                              {new Date(campaign.createdAt).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: '2-digit'
+                              })}
+                            </span>
+                            <span className="sm:hidden">
+                              {new Date(campaign.createdAt).toLocaleDateString('en-US', {
+                                month: 'numeric',
+                                day: 'numeric'
+                              })}
+                            </span>
                           </div>
-                          <div className="text-white/50 text-xs">
+                          <div className="text-white/50 text-[10px] sm:text-xs">
                             {new Date(campaign.createdAt).getFullYear()}
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-right">
-                        <div className="flex items-center justify-end space-x-2">
+                      <td className="px-2 sm:px-4 py-3 sm:py-4 text-right">
+                        <div className="flex items-center justify-end space-x-1 sm:space-x-2">
                           {/* Status Dropdown */}
                           <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                             <button
                               onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                              className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
+                              className={`w-14 sm:w-20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
                                 getStatusConfig(campaign.status).bgClass
                               } ${
                                 getStatusConfig(campaign.status).textClass
@@ -561,30 +592,30 @@ export default function CampaignsPage() {
                                 getStatusConfig(campaign.status).borderClass
                               }`}
                             >
-                              <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
+                              <span className="text-[7px] sm:text-[8px] tracking-[0.2em] sm:tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
                             </button>
 
                             {dropdownOpen === campaign.id && (
-                              <div className="absolute top-full right-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                              <div className="absolute top-full right-0 mt-1 w-28 sm:w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
                                 <button
                                   onClick={() => updateCampaignStatus(campaign.id, 'active')}
-                                  className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs hover:bg-green-500/10 flex items-center space-x-1 sm:space-x-2 text-green-400"
                                 >
-                                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500" />
                                   <span>Active</span>
                                 </button>
                                 <button
                                   onClick={() => updateCampaignStatus(campaign.id, 'paused')}
-                                  className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs hover:bg-primary/10 flex items-center space-x-1 sm:space-x-2 text-primary"
                                 >
-                                  <div className="w-2 h-2 rounded-full bg-primary" />
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary" />
                                   <span>Paused</span>
                                 </button>
                                 <button
                                   onClick={() => updateCampaignStatus(campaign.id, 'inactive')}
-                                  className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs hover:bg-red-500/10 flex items-center space-x-1 sm:space-x-2 text-red-400"
                                 >
-                                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500" />
                                   <span>Inactive</span>
                                 </button>
                               </div>
@@ -593,17 +624,19 @@ export default function CampaignsPage() {
 
                           {/* View Button */}
                           <button
-                            className="w-16 px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
+                            className="w-10 sm:w-16 px-1 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
                           >
-                            VIEW
+                            <span className="hidden sm:inline">VIEW</span>
+                            <span className="sm:hidden">V</span>
                           </button>
 
                           {/* Manage Button */}
                           <button
                             onClick={() => handleManageCampaign(campaign)}
-                            className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                            className="w-12 sm:w-20 px-1 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                           >
-                            MANAGE
+                            <span className="hidden sm:inline">MANAGE</span>
+                            <span className="sm:hidden">M</span>
                           </button>
                         </div>
                       </td>
@@ -614,24 +647,24 @@ export default function CampaignsPage() {
             </div>
           </div>
         ) : (
-          /* Sleeker Compact View Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          /* Responsive Compact View Cards */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
             {sortedCampaigns.map((campaign) => (
               <div
                 key={campaign.id}
-                className="group relative rounded-2xl px-6 py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
+                className="group relative rounded-xl lg:rounded-2xl px-4 sm:px-5 lg:px-6 py-4 sm:py-5 lg:py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10 hover:bg-white/10"
               >
                 {/* Status Light Indicator */}
-                <div className="absolute top-4 right-4">
-                  <div className={`w-3 h-3 rounded-full ${getStatusConfig(campaign.status).indicatorClass}`} />
+                <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+                  <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${getStatusConfig(campaign.status).indicatorClass}`} />
                 </div>
 
                 {/* Campaign Header */}
-                <div className="mb-5 -mx-6 -mt-6 px-6 pt-6 pb-5 rounded-t-2xl bg-white/5" style={{
+                <div className="mb-4 sm:mb-5 -mx-4 sm:-mx-5 lg:-mx-6 -mt-4 sm:-mt-5 lg:-mt-6 px-4 sm:px-5 lg:px-6 pt-4 sm:pt-5 lg:pt-6 pb-4 sm:pb-5 rounded-t-xl lg:rounded-t-2xl bg-white/5" style={{
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center overflow-hidden">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-primary rounded-lg xl:rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
                       {campaign.logoUrl ? (
                         <img
                           src={campaign.logoUrl}
@@ -639,43 +672,54 @@ export default function CampaignsPage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <TargetIcon size={26} className="text-black" />
+                        <TargetIcon size={20} className="sm:w-6 sm:h-6 lg:w-[26px] lg:h-[26px] text-black" />
                       )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-white text-lg mb-0 truncate">{campaign.name}</h3>
-                      <p className="text-white/60 text-xs font-mono">{campaign.slug} | {formatDate(campaign.createdAt)}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white text-sm sm:text-base lg:text-lg mb-0 truncate">{campaign.name}</h3>
+                      <p className="text-white/60 text-xs font-mono truncate">
+                        <span className="sm:hidden">{campaign.slug}</span>
+                        <span className="hidden sm:inline">{campaign.slug} | {formatDate(campaign.createdAt)}</span>
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-4 gap-4 py-4">
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Clicks</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 py-3 sm:py-4">
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {Math.floor(Math.random() * 10000).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">Clicks</div>
                   </div>
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Leads</div>
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {Math.floor(Math.random() * 1000).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">Leads</div>
                   </div>
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{Math.floor(Math.random() * 500).toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Regs</div>
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {Math.floor(Math.random() * 500).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">Regs</div>
                   </div>
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{Math.floor(Math.random() * 100).toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">FTD</div>
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {Math.floor(Math.random() * 100).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">FTD</div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
+                <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pt-3 sm:pt-4 border-t border-white/10">
                   {/* Status Toggle Button */}
                   <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                      className={`w-full px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center justify-center space-x-1 ${
+                      className={`w-full px-2 sm:px-3 py-1 sm:py-1.5 rounded-md lg:rounded-lg text-[10px] sm:text-xs font-medium border transition-colors flex items-center justify-center ${
                         getStatusConfig(campaign.status).bgClass
                       } ${
                         getStatusConfig(campaign.status).textClass
@@ -683,29 +727,31 @@ export default function CampaignsPage() {
                         getStatusConfig(campaign.status).borderClass
                       }`}
                     >
-                      <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
+                      <span className="text-[8px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em]">
+                        {getStatusConfig(campaign.status).label.toUpperCase()}
+                      </span>
                     </button>
 
                     {/* Status Options Dropdown */}
                     {dropdownOpen === campaign.id && (
-                      <div className="absolute bottom-full left-0 mb-2 w-32 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
+                      <div className="absolute bottom-full left-0 mb-2 w-28 sm:w-32 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
                         <button
                           onClick={() => updateCampaignStatus(campaign.id, 'active')}
-                          className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
                         >
                           <div className="w-2 h-2 rounded-full bg-green-500" />
                           <span>Active</span>
                         </button>
                         <button
                           onClick={() => updateCampaignStatus(campaign.id, 'paused')}
-                          className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
                         >
                           <div className="w-2 h-2 rounded-full bg-primary" />
                           <span>Paused</span>
                         </button>
                         <button
                           onClick={() => updateCampaignStatus(campaign.id, 'inactive')}
-                          className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
                         >
                           <div className="w-2 h-2 rounded-full bg-red-500" />
                           <span>Inactive</span>
@@ -716,7 +762,7 @@ export default function CampaignsPage() {
 
                   {/* View Button */}
                   <button
-                    className="w-full px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                    className="w-full px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold rounded-md lg:rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                   >
                     VIEW
                   </button>
@@ -724,9 +770,10 @@ export default function CampaignsPage() {
                   {/* Manage Button */}
                   <button
                     onClick={() => handleManageCampaign(campaign)}
-                    className="w-full px-4 py-1.5 text-xs font-bold text-black bg-white hover:bg-white/90 rounded-lg transition-colors flex items-center justify-center"
+                    className="w-full px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold text-black bg-white hover:bg-white/90 rounded-md lg:rounded-lg transition-colors flex items-center justify-center"
                   >
-                    MANAGE
+                    <span className="sm:hidden">EDIT</span>
+                    <span className="hidden sm:inline">MANAGE</span>
                   </button>
                 </div>
               </div>

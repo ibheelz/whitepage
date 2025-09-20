@@ -64,6 +64,18 @@ export default function InfluencersPage() {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  // Auto-set compact mode for smaller devices
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setViewMode('compact')
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -324,29 +336,33 @@ export default function InfluencersPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Influencer Management</h1>
-              <p className="text-white/60 text-base">Manage your influencer partnerships</p>
+        {/* Header - Super Responsive */}
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary truncate">
+                Influencer Management
+              </h1>
+              <p className="text-white/60 text-sm sm:text-base mt-1">Manage your influencer partnerships</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <div className="flex items-center justify-end">
+              <button className="px-3 py-2 sm:px-4 sm:py-2 lg:px-6 lg:py-3 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2 text-sm sm:text-base">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="sm:w-4 sm:h-4">
                   <path d="M12 5v14"/>
                   <path d="M5 12h14"/>
                 </svg>
-                <span>Add Influencer</span>
+                <span className="hidden sm:inline">Add Influencer</span>
+                <span className="sm:hidden">Add</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Search Bar and View Toggle */}
-        <div className="mb-6 flex items-center justify-between gap-6">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 w-80">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+        {/* Search Bar and View Toggle - Super Responsive */}
+        <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Responsive Search Bar */}
+          <div className="bg-white/10 border border-white/20 rounded-xl p-3 sm:p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-5 sm:h-5">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -355,15 +371,15 @@ export default function InfluencersPage() {
               placeholder="Search influencers..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
             />
           </div>
 
-          {/* View Mode Toggle */}
-          <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
+          {/* View Mode Toggle - Hide on mobile for auto-compact mode */}
+          <div className="hidden lg:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
             <button
               onClick={() => setViewMode('compact')}
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`p-2 lg:p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'compact'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -375,13 +391,13 @@ export default function InfluencersPage() {
               }}
               title="Compact view"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="lg:w-5 lg:h-5">
                 <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
               </svg>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`p-2 lg:p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'table'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -393,71 +409,83 @@ export default function InfluencersPage() {
               }}
               title="Table view"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="lg:w-5 lg:h-5">
                 <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
               </svg>
             </button>
           </div>
         </div>
 
-        {/* Content */}
+        {/* Content - Super Responsive */}
         {viewMode === 'compact' ? (
-          /* Sleeker Compact View Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          /* Super Responsive Compact View Cards */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
             {sortedInfluencers.map((influencer) => (
               <div
                 key={influencer.id}
-                className="group relative rounded-2xl px-6 py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
+                className="group relative rounded-xl lg:rounded-2xl px-4 sm:px-5 lg:px-6 py-4 sm:py-5 lg:py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
               >
                 {/* Status Light Indicator */}
-                <div className="absolute top-4 right-4">
-                  <div className={`w-3 h-3 rounded-full ${getStatusConfig(influencer.status).indicatorClass}`} />
+                <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+                  <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${getStatusConfig(influencer.status).indicatorClass}`} />
                 </div>
 
                 {/* Influencer Header */}
-                <div className="mb-5 -mx-6 -mt-6 px-6 pt-6 pb-5 rounded-t-2xl bg-white/5" style={{
+                <div className="mb-4 sm:mb-5 -mx-4 sm:-mx-5 lg:-mx-6 -mt-4 sm:-mt-5 lg:-mt-6 px-4 sm:px-5 lg:px-6 pt-4 sm:pt-5 lg:pt-6 pb-4 sm:pb-5 rounded-t-xl lg:rounded-t-2xl bg-white/5" style={{
                   borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
                     <Avatar
                       firstName={influencer.name.split(' ')[0]}
                       lastName={influencer.name.split(' ')[1]}
-                      size="lg"
+                      size="md"
+                      className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex-shrink-0"
                     />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-white text-lg mb-0 truncate">{influencer.name}</h3>
-                      <p className="text-white/60 text-xs">{influencer.assignedCampaigns.length} campaigns | {new Date(influencer.createdAt).toLocaleDateString()}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white text-sm sm:text-base lg:text-lg mb-0 truncate">{influencer.name}</h3>
+                      <p className="text-white/60 text-xs font-mono truncate">
+                        <span className="sm:hidden">{influencer.socialHandle}</span>
+                        <span className="hidden sm:inline">{influencer.socialHandle} | {new Date(influencer.createdAt).toLocaleDateString()}</span>
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-4 gap-4 py-4">
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalClicks.toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Clicks</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 py-3 sm:py-4">
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {influencer.totalClicks.toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">Clicks</div>
                   </div>
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalLeads.toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Leads</div>
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {influencer.totalLeads.toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">Leads</div>
                   </div>
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalRegs.toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">Regs</div>
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {influencer.totalRegs.toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">Regs</div>
                   </div>
-                  <div className="flex flex-col items-center py-2">
-                    <div className="bg-primary text-black font-black mb-3 px-3 py-2 rounded-lg flex items-center justify-center text-sm">{influencer.totalFtd.toLocaleString()}</div>
-                    <div className="text-xs font-normal text-white/40 uppercase tracking-wide">FTD</div>
+                  <div className="flex flex-col items-center py-1.5 sm:py-2">
+                    <div className="bg-primary text-black font-black mb-2 sm:mb-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md lg:rounded-lg flex items-center justify-center text-xs sm:text-sm w-full">
+                      {influencer.totalFtd.toLocaleString()}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-normal text-white/40 uppercase tracking-wide text-center">FTD</div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
+                <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pt-3 sm:pt-4 border-t border-white/10">
                   {/* Status Toggle Button */}
                   <div className="relative" ref={dropdownOpen === influencer.id ? dropdownRef : null}>
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === influencer.id ? null : influencer.id)}
-                      className={`w-full px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center justify-center space-x-1 ${
+                      className={`w-full px-2 sm:px-3 py-1 sm:py-1.5 rounded-md lg:rounded-lg text-[10px] sm:text-xs font-medium border transition-colors flex items-center justify-center ${
                         getStatusConfig(influencer.status).bgClass
                       } ${
                         getStatusConfig(influencer.status).textClass
@@ -465,29 +493,31 @@ export default function InfluencersPage() {
                         getStatusConfig(influencer.status).borderClass
                       }`}
                     >
-                      <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(influencer.status).label.toUpperCase()}</span>
+                      <span className="text-[8px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em]">
+                        {getStatusConfig(influencer.status).label.toUpperCase()}
+                      </span>
                     </button>
 
                     {/* Status Options Dropdown */}
                     {dropdownOpen === influencer.id && (
-                      <div className="absolute bottom-full left-0 mb-2 w-32 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
+                      <div className="absolute bottom-full left-0 mb-2 w-28 sm:w-32 bg-background/95 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden z-10">
                         <button
                           onClick={() => updateInfluencerStatus(influencer.id, 'active')}
-                          className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
                         >
                           <div className="w-2 h-2 rounded-full bg-green-500" />
                           <span>Active</span>
                         </button>
                         <button
                           onClick={() => updateInfluencerStatus(influencer.id, 'paused')}
-                          className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
                         >
                           <div className="w-2 h-2 rounded-full bg-primary" />
                           <span>Paused</span>
                         </button>
                         <button
                           onClick={() => updateInfluencerStatus(influencer.id, 'inactive')}
-                          className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
                         >
                           <div className="w-2 h-2 rounded-full bg-red-500" />
                           <span>Inactive</span>
@@ -498,56 +528,59 @@ export default function InfluencersPage() {
 
                   {/* View Button */}
                   <button
-                    className="w-full px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                    className="w-full px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold rounded-md lg:rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                   >
                     VIEW
                   </button>
 
                   {/* Manage Button */}
                   <button
-                    className="w-full px-4 py-1.5 text-xs font-bold text-black bg-white hover:bg-white/90 rounded-lg transition-colors flex items-center justify-center"
+                    className="w-full px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold text-black bg-white hover:bg-white/90 rounded-md lg:rounded-lg transition-colors flex items-center justify-center"
                   >
-                    MANAGE
+                    <span className="sm:hidden">EDIT</span>
+                    <span className="hidden sm:inline">MANAGE</span>
                   </button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          /* Table View */
-          <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
+          /* Super Responsive Table View */
+          <div className="bg-white/5 rounded-xl lg:rounded-2xl border border-white/10 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-3 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-16">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-12 sm:w-16">
                       #
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-64">
+                    <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide min-w-[200px] sm:w-64">
                       Influencer
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
                       Clicks
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
                       Leads
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
                       Regs
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-16 sm:w-24">
                       FTD
                     </th>
-                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-28">
-                      Campaigns
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide w-20 sm:w-28">
+                      <span className="hidden sm:inline">Campaigns</span>
+                      <span className="sm:hidden">Camp</span>
                     </th>
-                    <th className="px-4 py-4 text-right text-xs font-semibold text-white/80 uppercase tracking-wide">
-                      <div className="flex items-center justify-end space-x-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                    <th className="px-2 sm:px-4 py-3 sm:py-4 text-right text-[10px] sm:text-xs font-semibold text-white/80 uppercase tracking-wide min-w-[120px] sm:min-w-[160px]">
+                      <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-4 sm:h-4">
                           <circle cx="12" cy="12" r="3"/>
                           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
-                        <span>Status & Actions</span>
+                        <span className="hidden sm:inline">Status & Actions</span>
+                        <span className="sm:hidden text-[9px]">Actions</span>
                       </div>
                     </th>
                   </tr>
@@ -555,49 +588,53 @@ export default function InfluencersPage() {
                 <tbody className="divide-y divide-white/10">
                   {sortedInfluencers.map((influencer, index) => (
                     <tr key={influencer.id} className="hover:bg-white/5 transition-colors">
-                      <td className="px-3 py-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-2">
-                            <div className={`w-3 h-3 rounded-full ${getStatusConfig(influencer.status).indicatorClass}`} />
-                            <span className="text-white/60 text-sm font-medium">{index + 1}</span>
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <div className="flex items-center space-x-1 sm:space-x-2">
+                            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getStatusConfig(influencer.status).indicatorClass}`} />
+                            <span className="text-white/60 text-xs sm:text-sm font-medium">{index + 1}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center space-x-3">
+                      <td className="px-3 sm:px-4 py-3 sm:py-4">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
                           <Avatar
                             firstName={influencer.name.split(' ')[0]}
                             lastName={influencer.name.split(' ')[1]}
                             size="sm"
+                            className="w-6 h-6 sm:w-8 sm:h-8"
                           />
-                          <div>
-                            <div className="font-medium text-white text-sm">{influencer.name}</div>
-                            <div className="text-white/60 text-xs">{influencer.socialHandle}</div>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-white text-xs sm:text-sm truncate">{influencer.name}</div>
+                            <div className="text-white/60 text-[10px] sm:text-xs truncate">{influencer.socialHandle}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-semibold">{influencer.totalClicks.toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{influencer.totalClicks.toLocaleString()}</div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-semibold">{influencer.totalLeads.toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{influencer.totalLeads.toLocaleString()}</div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-semibold">{influencer.totalRegs.toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{influencer.totalRegs.toLocaleString()}</div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-primary font-semibold">{influencer.totalFtd.toLocaleString()}</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-primary font-semibold text-xs sm:text-sm">{influencer.totalFtd.toLocaleString()}</div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-white text-sm">{influencer.assignedCampaigns.length} assigned</div>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="text-white text-xs sm:text-sm">
+                          <span className="hidden sm:inline">{influencer.assignedCampaigns.length} assigned</span>
+                          <span className="sm:hidden">{influencer.assignedCampaigns.length}</span>
+                        </div>
                       </td>
-                      <td className="px-4 py-4 text-right">
-                        <div className="flex items-center justify-end space-x-2">
+                      <td className="px-2 sm:px-4 py-3 sm:py-4 text-right">
+                        <div className="flex items-center justify-end space-x-1 sm:space-x-2">
                           {/* Status Dropdown */}
                           <div className="relative" ref={dropdownOpen === influencer.id ? dropdownRef : null}>
                             <button
                               onClick={() => setDropdownOpen(dropdownOpen === influencer.id ? null : influencer.id)}
-                              className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
+                              className={`w-14 sm:w-20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
                                 getStatusConfig(influencer.status).bgClass
                               } ${
                                 getStatusConfig(influencer.status).textClass
@@ -605,30 +642,30 @@ export default function InfluencersPage() {
                                 getStatusConfig(influencer.status).borderClass
                               }`}
                             >
-                              <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(influencer.status).label.toUpperCase()}</span>
+                              <span className="text-[7px] sm:text-[8px] tracking-[0.2em] sm:tracking-[0.3em]">{getStatusConfig(influencer.status).label.toUpperCase()}</span>
                             </button>
 
                             {dropdownOpen === influencer.id && (
-                              <div className="absolute top-full right-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                              <div className="absolute top-full right-0 mt-1 w-28 sm:w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
                                 <button
                                   onClick={() => updateInfluencerStatus(influencer.id, 'active')}
-                                  className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
+                                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs hover:bg-green-500/10 flex items-center space-x-1 sm:space-x-2 text-green-400"
                                 >
-                                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500" />
                                   <span>Active</span>
                                 </button>
                                 <button
                                   onClick={() => updateInfluencerStatus(influencer.id, 'paused')}
-                                  className="w-full px-3 py-2 text-left text-xs hover:bg-primary/10 flex items-center space-x-2 text-primary"
+                                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs hover:bg-primary/10 flex items-center space-x-1 sm:space-x-2 text-primary"
                                 >
-                                  <div className="w-2 h-2 rounded-full bg-primary" />
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary" />
                                   <span>Paused</span>
                                 </button>
                                 <button
                                   onClick={() => updateInfluencerStatus(influencer.id, 'inactive')}
-                                  className="w-full px-3 py-2 text-left text-xs hover:bg-red-500/10 flex items-center space-x-2 text-red-400"
+                                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs hover:bg-red-500/10 flex items-center space-x-1 sm:space-x-2 text-red-400"
                                 >
-                                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500" />
                                   <span>Inactive</span>
                                 </button>
                               </div>
@@ -637,16 +674,18 @@ export default function InfluencersPage() {
 
                           {/* View Button */}
                           <button
-                            className="w-16 px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
+                            className="w-10 sm:w-16 px-1 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
                           >
-                            VIEW
+                            <span className="hidden sm:inline">VIEW</span>
+                            <span className="sm:hidden">V</span>
                           </button>
 
                           {/* Manage Button */}
                           <button
-                            className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                            className="w-12 sm:w-20 px-1 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                           >
-                            MANAGE
+                            <span className="hidden sm:inline">MANAGE</span>
+                            <span className="sm:hidden">M</span>
                           </button>
                         </div>
                       </td>
