@@ -520,26 +520,29 @@ export default function InfluencersPage() {
               <table className="w-full">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-3 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-16">
+                      #
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-64">
                       Influencer
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       Clicks
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       Leads
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       Regs
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       FTD
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-28">
                       Campaigns
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
-                      <div className="flex items-center space-x-2">
+                    <th className="px-4 py-4 text-right text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center justify-end space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <circle cx="12" cy="12" r="3"/>
                           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -550,9 +553,17 @@ export default function InfluencersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
-                  {sortedInfluencers.map((influencer) => (
+                  {sortedInfluencers.map((influencer, index) => (
                     <tr key={influencer.id} className="hover:bg-white/5 transition-colors">
-                      <td className="px-6 py-4">
+                      <td className="px-3 py-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-3 h-3 rounded-full ${getStatusConfig(influencer.status).indicatorClass}`} />
+                            <span className="text-white/60 text-sm font-medium">{index + 1}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
                         <div className="flex items-center space-x-3">
                           <Avatar
                             firstName={influencer.name.split(' ')[0]}
@@ -565,23 +576,23 @@ export default function InfluencersPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-semibold">{influencer.totalClicks.toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-semibold">{influencer.totalLeads.toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-semibold">{influencer.totalRegs.toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-semibold">{influencer.totalFtd.toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-white text-sm">{influencer.assignedCampaigns.length} assigned</div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-2">
+                      <td className="px-4 py-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
                           {/* Status Dropdown */}
                           <div className="relative" ref={dropdownOpen === influencer.id ? dropdownRef : null}>
                             <button
@@ -598,7 +609,7 @@ export default function InfluencersPage() {
                             </button>
 
                             {dropdownOpen === influencer.id && (
-                              <div className="absolute top-full left-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                              <div className="absolute top-full right-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
                                 <button
                                   onClick={() => updateInfluencerStatus(influencer.id, 'active')}
                                   className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"

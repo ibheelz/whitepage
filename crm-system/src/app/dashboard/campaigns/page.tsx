@@ -400,7 +400,10 @@ export default function CampaignsPage() {
               <table className="w-full">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-3 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-16">
+                      #
+                    </th>
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-64">
                       <div className="flex items-center space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -412,7 +415,7 @@ export default function CampaignsPage() {
                         <span>Campaign</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       <div className="flex items-center space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <path d="M9 12l2 2 4-4"/>
@@ -423,7 +426,7 @@ export default function CampaignsPage() {
                         <span>Clicks</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       <div className="flex items-center space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -434,7 +437,7 @@ export default function CampaignsPage() {
                         <span>Leads</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                       <div className="flex items-center space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -444,7 +447,7 @@ export default function CampaignsPage() {
                     </th>
                     {/* Dynamic conversion type columns */}
                     {allConversionTypes.map((conversionType) => (
-                      <th key={conversionType} className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <th key={conversionType} className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-24">
                         <div className="flex items-center space-x-2">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                             <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
@@ -453,7 +456,7 @@ export default function CampaignsPage() {
                         </div>
                       </th>
                     ))}
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
+                    <th className="px-4 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide w-28">
                       <div className="flex items-center space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -464,8 +467,8 @@ export default function CampaignsPage() {
                         <span>Created</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white/80 uppercase tracking-wide">
-                      <div className="flex items-center space-x-2">
+                    <th className="px-4 py-4 text-right text-xs font-semibold text-white/80 uppercase tracking-wide">
+                      <div className="flex items-center justify-end space-x-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
                           <circle cx="12" cy="12" r="3"/>
                           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -481,7 +484,15 @@ export default function CampaignsPage() {
                       key={campaign.id}
                       className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
                     >
-                      <td className="px-6 py-4">
+                      <td className="px-3 py-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-3 h-3 rounded-full ${getStatusConfig(campaign.status).indicatorClass}`} />
+                            <span className="text-white/60 text-sm font-medium">{index + 1}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
                         <div className="flex items-center space-x-3">
                           <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
                             {campaign.logoUrl ? (
@@ -500,13 +511,13 @@ export default function CampaignsPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-bold">{Math.floor(Math.random() * 10000).toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-bold">{Math.floor(Math.random() * 1000).toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="text-primary font-bold">{Math.floor(Math.random() * 500).toLocaleString()}</div>
                       </td>
                       {/* Dynamic conversion type data columns */}
@@ -518,12 +529,12 @@ export default function CampaignsPage() {
                         const count = conversionData?.count || campaign.stats?.[`${conversionType.toLowerCase()}Count`] || 0
 
                         return (
-                          <td key={conversionType} className="px-6 py-4">
+                          <td key={conversionType} className="px-4 py-4">
                             <div className="text-white font-medium">{typeof count === 'number' && count.toLocaleString ? count.toLocaleString() : count}</div>
                           </td>
                         )
                       })}
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="flex flex-col">
                           <div className="text-white font-medium text-sm">
                             {new Date(campaign.createdAt).toLocaleDateString('en-US', {
@@ -536,8 +547,8 @@ export default function CampaignsPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-2">
+                      <td className="px-4 py-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
                           {/* Status Dropdown */}
                           <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                             <button
@@ -554,7 +565,7 @@ export default function CampaignsPage() {
                             </button>
 
                             {dropdownOpen === campaign.id && (
-                              <div className="absolute top-full left-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
+                              <div className="absolute top-full right-0 mt-1 w-32 bg-background/95 border border-white/20 rounded-lg overflow-hidden z-10">
                                 <button
                                   onClick={() => updateCampaignStatus(campaign.id, 'active')}
                                   className="w-full px-3 py-2 text-left text-xs hover:bg-green-500/10 flex items-center space-x-2 text-green-400"
