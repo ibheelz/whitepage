@@ -221,20 +221,21 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
   if (!isOpen) return null
 
   return (
-    <div
-      className="fixed top-0 bottom-0 right-0 z-[25] flex items-center justify-center p-4 left-16 lg:left-80"
-    >
-
-      {/* Backdrop */}
+    <>
+      {/* Full Screen Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40"
+        className="fixed inset-0 bg-black/40 z-[24]"
         style={{
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          zIndex: -1
         }}
         onClick={onClose}
       />
+
+      {/* Modal Container */}
+      <div
+        className="fixed top-0 bottom-0 right-0 z-[25] flex items-center justify-center p-4 left-16 lg:left-80"
+      >
 
       {/* Modal */}
       <div
@@ -571,6 +572,7 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
