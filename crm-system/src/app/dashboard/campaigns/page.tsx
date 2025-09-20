@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { PlusIcon, TargetIcon, WarningIcon, SearchIcon } from '@/components/ui/icons'
+import CampaignModal from '@/components/ui/campaign-modal'
 
 interface CampaignStats {
   totalClicks: number
@@ -41,6 +42,8 @@ export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'compact' | 'table'>('compact')
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [managingCampaign, setManagingCampaign] = useState<Campaign | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -152,6 +155,31 @@ export default function CampaignsPage() {
     return `${day}/${month}/${year}`
   }
 
+  const handleCreateCampaign = async (campaignData: any) => {
+    try {
+      console.log('Creating campaign:', campaignData)
+
+      // Here you would normally make an API call to create the campaign
+      // const response = await fetch('/api/campaigns', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(campaignData)
+      // })
+
+      // For now, just log and refresh campaigns
+      alert('Campaign created successfully!')
+      fetchCampaigns()
+    } catch (error) {
+      console.error('Error creating campaign:', error)
+      alert('Failed to create campaign')
+    }
+  }
+
+  const handleManageCampaign = (campaign: Campaign) => {
+    // Directly open the edit modal
+    setManagingCampaign(campaign)
+  }
+
 
   const filteredCampaigns = campaigns.filter((campaign) => {
     const matchesSearch =
@@ -222,7 +250,10 @@ export default function CampaignsPage() {
               <p className="text-white/60 text-base">Manage your marketing campaigns</p>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2"
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                   <path d="M12 5v14"/>
                   <path d="M5 12h14"/>
@@ -344,7 +375,7 @@ export default function CampaignsPage() {
                         <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                           <button
                             onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 border transition-colors ${
+                            className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center justify-center space-x-1 border transition-colors ${
                               getStatusConfig(campaign.status).bgClass
                             } ${
                               getStatusConfig(campaign.status).textClass
@@ -352,13 +383,7 @@ export default function CampaignsPage() {
                               getStatusConfig(campaign.status).borderClass
                             }`}
                           >
-                            <div className={`w-2 h-2 rounded-full ${
-                              getStatusConfig(campaign.status).indicatorClass
-                            }`} />
-                            <span>{getStatusConfig(campaign.status).label}</span>
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
+                            <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
                           </button>
 
                           {dropdownOpen === campaign.id && (
@@ -403,8 +428,11 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <button className="px-4 py-1.5 text-xs font-medium rounded-lg bg-white text-black hover:bg-white/90 transition-colors">
-                          Manage
+                        <button
+                          onClick={() => handleManageCampaign(campaign)}
+                          className="w-20 px-4 py-1.5 text-xs font-medium rounded-lg bg-white text-black hover:bg-white/90 transition-colors tracking-widest flex items-center justify-center"
+                        >
+                          MANAGE
                         </button>
                       </td>
                     </tr>
@@ -463,7 +491,7 @@ export default function CampaignsPage() {
                   <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center space-x-2 ${
+                      className={`w-20 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center justify-center space-x-1 ${
                         getStatusConfig(campaign.status).bgClass
                       } ${
                         getStatusConfig(campaign.status).textClass
@@ -471,13 +499,7 @@ export default function CampaignsPage() {
                         getStatusConfig(campaign.status).borderClass
                       }`}
                     >
-                      <div className={`w-2 h-2 rounded-full ${
-                        getStatusConfig(campaign.status).indicatorClass
-                      }`} />
-                      <span>{getStatusConfig(campaign.status).label}</span>
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
+                      <span className="text-[8px] tracking-[0.3em]">{getStatusConfig(campaign.status).label.toUpperCase()}</span>
                     </button>
 
                     {/* Status Options Dropdown */}
@@ -509,13 +531,39 @@ export default function CampaignsPage() {
                   </div>
 
                   {/* Manage Button */}
-                  <button className="px-4 py-1.5 text-xs font-medium text-black bg-white hover:bg-white/90 rounded-lg transition-colors">
-                    Manage
+                  <button
+                    onClick={() => handleManageCampaign(campaign)}
+                    className="w-20 px-4 py-1.5 text-xs font-medium text-black bg-white hover:bg-white/90 rounded-lg transition-colors tracking-widest flex items-center justify-center"
+                  >
+                    MANAGE
                   </button>
                 </div>
               </div>
             ))}
           </div>
+        )}
+
+        {/* Campaign Creation Modal */}
+        <CampaignModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSubmit={handleCreateCampaign}
+        />
+
+        {/* Campaign Edit Modal */}
+        {managingCampaign && (
+          <CampaignModal
+            isOpen={true}
+            onClose={() => setManagingCampaign(null)}
+            onSubmit={(updatedData) => {
+              console.log('Updating campaign:', managingCampaign.id, updatedData)
+              // Here you would make an API call to update the campaign
+              alert(`Campaign "${managingCampaign.name}" updated successfully!`)
+              setManagingCampaign(null)
+              fetchCampaigns()
+            }}
+            editMode={managingCampaign}
+          />
         )}
       </div>
     </div>
