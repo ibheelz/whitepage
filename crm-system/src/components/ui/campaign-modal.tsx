@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, Fragment } from 'react'
 
 interface ConversionType {
   id: string
@@ -24,10 +24,7 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
     brandId: editMode?.brandId || ''
   })
 
-  const [conversionTypes, setConversionTypes] = useState<ConversionType[]>([
-    { id: '1', name: 'Registration', description: 'User signs up' },
-    { id: '2', name: 'Purchase', description: 'User makes a purchase' }
-  ])
+  const [conversionTypes, setConversionTypes] = useState<ConversionType[]>([])
 
   const [newConversionType, setNewConversionType] = useState({
     name: '',
@@ -233,10 +230,7 @@ export default function CampaignModal({ isOpen, onClose, onSubmit, onDelete, edi
 
   return (
     <div
-      className="fixed top-0 bottom-0 right-0 z-[25] flex items-center justify-center p-4"
-      style={{
-        left: window.innerWidth >= 1024 ? '320px' : '64px'
-      }}
+      className="fixed top-0 bottom-0 right-0 z-[25] flex items-center justify-center p-4 left-16 lg:left-80"
     >
 
       {/* Backdrop */}

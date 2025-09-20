@@ -84,18 +84,17 @@ export async function GET(
           phone: lead.phone,
           firstName: lead.firstName,
           lastName: lead.lastName,
-          fullName: lead.fullName,
+          fullName: `${lead.firstName || ''} ${lead.lastName || ''}`.trim(),
           campaign: lead.campaign,
           source: lead.source,
           clickId: lead.clickId,
-          isEmailVerified: lead.isEmailVerified,
-          isPhoneVerified: lead.isPhoneVerified,
-          ageVerification: lead.ageVerification,
-          promotionalConsent: lead.promotionalConsent,
+          isEmailValid: lead.isEmailValid,
+          isPhoneValid: lead.isPhoneValid,
+          customFields: lead.customFields,
           qualityScore: lead.qualityScore,
           value: lead.value,
           currency: lead.currency,
-          submissionSource: lead.submissionSource
+          formUrl: lead.formUrl
         },
         metadata: {
           icon: 'document-text',
@@ -127,11 +126,8 @@ export async function GET(
           source: event.source,
           medium: event.medium,
           clickId: event.clickId,
-          leadId: event.leadId,
-          conversionId: event.conversionId,
           isConverted: event.isConverted,
-          isRevenue: event.isRevenue,
-          redtrackSent: event.redtrackSent
+          isRevenue: event.isRevenue
         },
         metadata: {
           icon: eventConfig.icon,

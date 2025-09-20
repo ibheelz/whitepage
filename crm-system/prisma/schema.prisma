@@ -222,6 +222,7 @@ model Campaign {
   clientId       String?
   brandId        String?
   logoUrl        String?
+  conversionTypes Json?
   isActive       Boolean  @default(true)
   totalClicks    Int      @default(0)
   totalLeads     Int      @default(0)

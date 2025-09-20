@@ -84,9 +84,11 @@ export default function CampaignsPage() {
         // Extract all unique conversion types from campaigns
         const conversionTypes = new Set<string>()
         campaignsWithStatus.forEach((campaign: any) => {
-          if (campaign.conversionTypes && Array.isArray(campaign.conversionTypes)) {
+          if (campaign.conversionTypes && Array.isArray(campaign.conversionTypes) && campaign.conversionTypes.length > 0) {
             campaign.conversionTypes.forEach((type: any) => {
-              conversionTypes.add(type.name || type.id || type)
+              if (type && (type.name || type.id || type)) {
+                conversionTypes.add(type.name || type.id || type)
+              }
             })
           }
         })
@@ -545,14 +547,14 @@ export default function CampaignsPage() {
                       {/* Dynamic conversion type data columns */}
                       {allConversionTypes.map((conversionType) => {
                         // Find conversion data for this type in campaign
-                        const conversionData = campaign.conversionTypes?.find((ct: any) =>
-                          (ct.name || ct.id || ct) === conversionType
-                        )
+                        const conversionData = campaign.conversionTypes && Array.isArray(campaign.conversionTypes)
+                          ? campaign.conversionTypes.find((ct: any) => (ct.name || ct.id || ct) === conversionType)
+                          : null
                         const count = conversionData?.count || campaign.stats?.[`${conversionType.toLowerCase()}Count`] || 0
 
                         return (
                           <td key={conversionType} className="px-6 py-4">
-                            <div className="text-white font-medium">{count.toLocaleString ? count.toLocaleString() : count}</div>
+                            <div className="text-white font-medium">{typeof count === 'number' && count.toLocaleString ? count.toLocaleString() : count}</div>
                           </td>
                         )
                       })}

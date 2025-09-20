@@ -8,7 +8,12 @@ const createCampaignSchema = z.object({
   description: z.string().optional(),
   clientId: z.string().optional(),
   brandId: z.string().optional(),
-  logoUrl: z.string().optional()
+  logoUrl: z.string().optional(),
+  conversionTypes: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string()
+  })).optional()
 })
 
 export async function GET(request: NextRequest) {
@@ -153,7 +158,8 @@ export async function POST(request: NextRequest) {
         description: validatedData.description,
         clientId: validatedData.clientId,
         brandId: validatedData.brandId,
-        logoUrl: validatedData.logoUrl
+        logoUrl: validatedData.logoUrl,
+        conversionTypes: validatedData.conversionTypes || []
       }
     })
 

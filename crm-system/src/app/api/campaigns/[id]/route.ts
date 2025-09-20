@@ -3,15 +3,17 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
 const updateCampaignSchema = z.object({
-  name: z.string().min(1).max(100).optional(),
-  slug: z.string().min(1).max(100).optional(),
+  name: z.string().min(1, 'Campaign name is required').optional(),
+  slug: z.string().min(1, 'Campaign slug is required').optional(),
   description: z.string().optional(),
-  logoUrl: z.string().optional().or(z.literal('')),
   clientId: z.string().optional(),
   brandId: z.string().optional(),
-  conversionTypeIds: z.array(z.string()).optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'PAUSED', 'DRAFT']).optional(),
-  isActive: z.boolean().optional()
+  logoUrl: z.string().optional(),
+  conversionTypes: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string()
+  })).optional()
 })
 
 export async function PUT(
@@ -21,68 +23,34 @@ export async function PUT(
   try {
     const body = await request.json()
     const validatedData = updateCampaignSchema.parse(body)
-    const { conversionTypeIds, ...campaignData } = validatedData
 
-    // Convert empty logoUrl to null
-    if (campaignData.logoUrl === '') {
-      campaignData.logoUrl = null
-    }
-
-    // Update campaign
+    // Update the campaign
     const campaign = await prisma.campaign.update({
       where: { id: params.id },
-      data: campaignData
-    })
-
-    // Update conversion type relationships if provided
-    if (conversionTypeIds !== undefined) {
-      // Remove existing relationships
-      await prisma.campaignConversionType.deleteMany({
-        where: { campaignId: campaign.id }
-      })
-
-      // Add new relationships
-      if (conversionTypeIds.length > 0) {
-        await prisma.campaignConversionType.createMany({
-          data: conversionTypeIds.map(conversionTypeId => ({
-            campaignId: campaign.id,
-            conversionTypeId
-          }))
-        })
-      }
-    }
-
-    // Return updated campaign with conversion types
-    const updatedCampaign = await prisma.campaign.findUnique({
-      where: { id: campaign.id },
-      include: {
-        conversionTypes: {
-          include: {
-            conversionType: true
-          }
-        }
+      data: {
+        ...(validatedData.name && { name: validatedData.name }),
+        ...(validatedData.slug && { slug: validatedData.slug }),
+        ...(validatedData.description !== undefined && { description: validatedData.description }),
+        ...(validatedData.clientId !== undefined && { clientId: validatedData.clientId }),
+        ...(validatedData.brandId !== undefined && { brandId: validatedData.brandId }),
+        ...(validatedData.logoUrl !== undefined && { logoUrl: validatedData.logoUrl }),
+        ...(validatedData.conversionTypes !== undefined && { conversionTypes: validatedData.conversionTypes })
       }
     })
 
     return NextResponse.json({
       success: true,
-      data: updatedCampaign
+      campaign
     })
+
   } catch (error) {
-    console.error('Error updating campaign:', error)
+    console.error('Update campaign error:', error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid input data',
+        error: 'Invalid request data',
         details: error.errors
-      }, { status: 400 })
-    }
-
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return NextResponse.json({
-        success: false,
-        error: 'Campaign with this slug already exists'
       }, { status: 400 })
     }
 
@@ -98,22 +66,16 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Delete campaign conversion type relationships first
-    await prisma.campaignConversionType.deleteMany({
-      where: { campaignId: params.id }
-    })
-
-    // Delete the campaign
     await prisma.campaign.delete({
       where: { id: params.id }
     })
 
     return NextResponse.json({
-      success: true,
-      message: 'Campaign deleted successfully'
+      success: true
     })
+
   } catch (error) {
-    console.error('Error deleting campaign:', error)
+    console.error('Delete campaign error:', error)
     return NextResponse.json({
       success: false,
       error: 'Failed to delete campaign'

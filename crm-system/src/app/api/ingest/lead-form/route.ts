@@ -207,8 +207,6 @@ export async function POST(request: NextRequest) {
         phone: fullPhone,
         firstName,
         lastName,
-        fullName: validatedData.fullName,
-        countryCode: validatedData.countryCode,
         clickId: validatedData.clickId,
         campaign: validatedData.campaign,
         source: validatedData.source || 'direct',
@@ -216,19 +214,22 @@ export async function POST(request: NextRequest) {
         userAgent: validatedData.userAgent,
         referrer: validatedData.referrer,
         landingPage: validatedData.landingPage,
-        redirectUrl: validatedData.redirectUrl,
         country: validatedData.country,
         city: validatedData.city,
-        language: validatedData.language,
-        platform: validatedData.platform,
         isEmailValid: true,
         isPhoneValid: true,
-        isEmailVerified: validatedData.emailVerified,
-        isPhoneVerified: validatedData.phoneVerified,
-        ageVerification: validatedData.ageVerification,
-        promotionalConsent: validatedData.promotionalConsent,
-        submissionSource: 'lead-form',
-        airtableId: validatedData.airtableId,
+        customFields: {
+          countryCode: validatedData.countryCode,
+          redirectUrl: validatedData.redirectUrl,
+          language: validatedData.language,
+          platform: validatedData.platform,
+          isEmailVerified: validatedData.emailVerified,
+          isPhoneVerified: validatedData.phoneVerified,
+          ageVerification: validatedData.ageVerification,
+          promotionalConsent: validatedData.promotionalConsent,
+          submissionSource: 'lead-form',
+          airtableId: validatedData.airtableId
+        },
       }
     })
 
@@ -253,7 +254,6 @@ export async function POST(request: NextRequest) {
         campaign: validatedData.campaign,
         source: validatedData.source,
         clickId: validatedData.clickId,
-        leadId: lead.id,
         ip: validatedData.ip,
         userAgent: validatedData.userAgent,
         pageUrl: validatedData.landingPage,
@@ -267,7 +267,6 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         customerId: customer.id,
-        leadId: lead.id,
         isNewCustomer: !customer.createdAt || (new Date().getTime() - customer.createdAt.getTime()) < 5000,
       }
     })
