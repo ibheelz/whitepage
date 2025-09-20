@@ -261,7 +261,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </div>
                 </div>
               ) : (
-                <div className="premium-card hover:shadow-lg transition-all duration-300">
+                <div className="premium-card hover:shadow-lg transition-all duration-300" style={{ borderRadius: '24px' }}>
                   <div className="flex items-center space-x-3">
                     <Avatar
                       firstName="Abiola"

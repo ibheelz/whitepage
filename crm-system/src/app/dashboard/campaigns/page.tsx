@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { PlusIcon, TargetIcon, WarningIcon, SearchIcon } from '@/components/ui/icons'
 
 interface CampaignStats {
@@ -41,10 +41,27 @@ export default function CampaignsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'compact' | 'table'>('compact')
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetchCampaigns()
   }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(null)
+      }
+    }
+
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [dropdownOpen])
 
   const fetchCampaigns = async () => {
     try {
@@ -206,7 +223,10 @@ export default function CampaignsPage() {
             </div>
             <div className="flex items-center space-x-4">
               <button className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
-                <PlusIcon size={16} />
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <path d="M12 5v14"/>
+                  <path d="M5 12h14"/>
+                </svg>
                 <span>New Campaign</span>
               </button>
             </div>
@@ -215,28 +235,18 @@ export default function CampaignsPage() {
 
 
         {/* Search Bar and View Toggle */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="relative flex-1 max-w-lg">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white/40">
-                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+        <div className="mb-6 flex items-center justify-between gap-6">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 max-w-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
             <input
               type="search"
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 text-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
-              style={{
-                background: 'rgba(255, 255, 255, 0.12)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                color: 'var(--foreground)'
-              }}
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
             />
           </div>
 
@@ -331,7 +341,7 @@ export default function CampaignsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="relative">
+                        <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                           <button
                             onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 border transition-colors ${
@@ -426,7 +436,7 @@ export default function CampaignsPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-white text-lg mb-0 truncate">{campaign.name}</h3>
-                      <p className="text-white/60 text-sm font-mono">{campaign.slug} | {formatDate(campaign.createdAt)}</p>
+                      <p className="text-white/60 text-xs font-mono">{campaign.slug} | {formatDate(campaign.createdAt)}</p>
                     </div>
                   </div>
                 </div>
@@ -450,7 +460,7 @@ export default function CampaignsPage() {
                 {/* Actions */}
                 <div className="flex items-center justify-between pt-4 border-t border-white/10">
                   {/* Status Toggle Button */}
-                  <div className="relative">
+                  <div className="relative" ref={dropdownOpen === campaign.id ? dropdownRef : null}>
                     <button
                       onClick={() => setDropdownOpen(dropdownOpen === campaign.id ? null : campaign.id)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center space-x-2 ${

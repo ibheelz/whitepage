@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, Edit, Trash2, Grid3X3, List, Plus, X } from 'lucide-react'
-import { ExportIcon, ImportIcon, PlusIcon } from '@/components/ui/icons'
+import { ExportIcon, ImportIcon, PlusIcon, SearchIcon } from '@/components/ui/icons'
 import CustomerModal from '@/components/ui/customer-modal'
 import { Avatar } from '@/components/ui/avatar'
 
@@ -1046,21 +1046,16 @@ export default function CustomersPage() {
 
       <div className="mb-4 sm:mb-6 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-          <div className="relative flex-1 sm:flex-none">
-            <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:flex-none sm:w-48 md:w-64 lg:w-80">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
             <input
               placeholder="Search customers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-full sm:w-48 md:w-64 lg:w-80 py-3 text-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
-              style={{
-                background: 'rgba(255, 255, 255, 0.12)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                color: 'var(--foreground)'
-              }}
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
             />
           </div>
 
