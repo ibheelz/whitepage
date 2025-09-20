@@ -446,10 +446,28 @@ export default function InfluencersPage() {
           </div>
         </div>
 
-        {/* Search Bar and View Toggle - Super Responsive */}
-        <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Mobile Controls - Shows on mobile only */}
+        <div className="lg:hidden space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Total Influencers Count */}
+            <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white min-w-0 flex-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+              <span className="text-black text-sm font-bold whitespace-nowrap">
+                {sortedInfluencers.length} Influencer{sortedInfluencers.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Search Bar and Controls - Shows on desktop only */}
+        <div className="hidden lg:flex items-center justify-between gap-4 mb-4 sm:mb-6">
           {/* Responsive Search Bar */}
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 max-w-sm lg:max-w-md xl:max-w-lg">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
@@ -463,17 +481,17 @@ export default function InfluencersPage() {
             />
           </div>
 
-          {/* Count Badge and View Mode Toggle - Hide on mobile for auto-compact mode */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* Right-aligned controls */}
+          <div className="flex items-center gap-4">
             {/* Total Influencers Count */}
-            <div className="flex items-center gap-2 px-4 rounded-xl bg-white h-[52px]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
+            <div className="flex items-center justify-center gap-2 px-4 rounded-xl bg-white h-[52px] min-w-[140px] flex-shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="8.5" cy="7" r="4"/>
                 <line x1="20" y1="8" x2="20" y2="14"/>
                 <line x1="23" y1="11" x2="17" y2="11"/>
               </svg>
-              <span className="text-black text-sm font-bold">
+              <span className="text-black text-sm font-bold whitespace-nowrap">
                 {sortedInfluencers.length} Influencer{sortedInfluencers.length !== 1 ? 's' : ''}
               </span>
             </div>
@@ -513,10 +531,27 @@ export default function InfluencersPage() {
                 title="Table view"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+                  <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2 2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
                 </svg>
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar - Shows on mobile only */}
+        <div className="lg:hidden mb-4 sm:mb-6">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              type="search"
+              placeholder="Search influencers..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
+            />
           </div>
         </div>
 
