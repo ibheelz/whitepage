@@ -590,7 +590,7 @@ export default function CampaignsPage() {
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleManageCampaign(campaign)}
-                          className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
+                          className="w-20 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                         >
                           MANAGE
                         </button>
