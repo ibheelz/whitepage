@@ -935,42 +935,71 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 xxs:gap-1 xs:gap-3 sm:gap-4 mb-2 xxs:mb-1 xs:mb-3 sm:mb-6">
-        <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Customer Management</h1>
-        <div className="flex flex-row gap-1 xxs:gap-1 xs:gap-1.5 sm:gap-2 w-full sm:w-auto min-w-0">
-          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2" style={{
-            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            border: '1px solid rgba(253, 198, 0, 0.3)',
-            color: '#080708',
-            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
-          }}>
-            <ImportIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="hidden xs:inline text-xs sm:text-sm truncate">Import</span>
-          </button>
-          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[120px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2" style={{
-            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            border: '1px solid rgba(253, 198, 0, 0.3)',
-            color: '#080708',
-            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
-          }}>
-            <ExportIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="hidden xs:inline text-xs sm:text-sm truncate">Export</span>
-          </button>
-          <button className="flex-1 sm:flex-none min-w-[40px] xxs:min-w-[36px] max-w-[140px] sm:max-w-none px-1 xxs:px-1 xs:px-2 sm:px-4 lg:px-5 py-1.5 xxs:py-1 xs:py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2" style={{
-            background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            border: '1px solid rgba(253, 198, 0, 0.3)',
-            color: '#080708',
-            boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
-          }}>
-            <PlusIcon size={16} className="h-3 w-3 xxs:h-2.5 xxs:w-2.5 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="hidden xs:inline text-xs sm:text-sm truncate">Add Customer</span>
-          </button>
+      {/* Header */}
+      <div className="space-y-4">
+        {/* Title */}
+        <div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">
+            Customer Management
+          </h1>
+          <p className="text-white/60 text-sm sm:text-base mt-1">Manage your customer database</p>
+        </div>
+
+        {/* Mobile Controls - Shows on mobile only */}
+        <div className="lg:hidden space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Total Customers Count */}
+            <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white min-w-0 flex-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+              <span className="text-black text-sm font-bold whitespace-nowrap">
+                {filteredCustomers.length} Customer{filteredCustomers.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+
+          {/* Import/Export/Add Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 flex-1" style={{
+              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(253, 198, 0, 0.3)',
+              color: '#080708',
+              boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+            }}>
+              <ImportIcon size={16} className="h-4 w-4 flex-shrink-0" />
+              <span>Import</span>
+            </button>
+            <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 flex-1" style={{
+              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(253, 198, 0, 0.3)',
+              color: '#080708',
+              boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+            }}>
+              <ExportIcon size={16} className="h-4 w-4 flex-shrink-0" />
+              <span>Export</span>
+            </button>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 flex-1" style={{
+              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(253, 198, 0, 0.3)',
+              color: '#080708',
+              boxShadow: '0 4px 16px rgba(253, 198, 0, 0.3)'
+            }}>
+              <PlusIcon size={16} className="h-4 w-4 flex-shrink-0" />
+              <span>Add Customer</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1044,10 +1073,13 @@ export default function CustomersPage() {
         </details>
       </div>
 
-      <div className="mb-4 sm:mb-6 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+      {/* Search Bar and Desktop Controls */}
+      <div className="space-y-4 lg:space-y-0">
+        {/* Desktop Layout - All on one row */}
+        <div className="hidden lg:flex items-center justify-between gap-4">
+          {/* Search Bar */}
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 max-w-md">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -1055,109 +1087,115 @@ export default function CustomersPage() {
               placeholder="Search customers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
             />
           </div>
 
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
-            style={{
-              background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              border: '1px solid rgba(253, 198, 0, 0.3)',
-              boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-              color: '#0a0a0a'
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            Add Customer
-          </button>
-
-          {selectedCustomers.size > 0 && (
-            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
-              <span className="text-xs sm:text-sm text-muted-foreground text-center xs:text-left">
-                {selectedCustomers.size} selected
+          {/* Right-aligned Controls */}
+          <div className="flex items-center gap-4">
+            {/* Total Customers Count */}
+            <div className="flex items-center justify-center gap-2 px-4 rounded-xl bg-white h-[52px] min-w-[140px] flex-shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+              <span className="text-black text-sm font-bold whitespace-nowrap">
+                {filteredCustomers.length} Customer{filteredCustomers.length !== 1 ? 's' : ''}
               </span>
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
               <button
-                onClick={deleteSelectedCustomers}
-                className="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2" style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: 'var(--foreground)'
-              }}>
-                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline">Delete Selected</span>
-                <span className="xs:hidden">Delete</span>
+                onClick={() => setViewMode('cards')}
+                className={`p-3 rounded-lg transition-all duration-200 ${
+                  viewMode === 'cards' ? 'text-black' : 'text-white/60 hover:text-white/80'
+                }`}
+                style={{
+                  background: viewMode === 'cards'
+                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                    : 'transparent'
+                }}
+                title="Cards view"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode('table')}
+                className={`p-3 rounded-lg transition-all duration-200 ${
+                  viewMode === 'table' ? 'text-black' : 'text-white/60 hover:text-white/80'
+                }`}
+                style={{
+                  background: viewMode === 'table'
+                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                    : 'transparent'
+                }}
+                title="Table view"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+                </svg>
               </button>
             </div>
-          )}
+
+            {/* Add Customer Button */}
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 h-[52px]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(253, 198, 0, 0.3)',
+                boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                color: '#0a0a0a'
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              Add Customer
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 lg:flex-1">
-          <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left order-2 sm:order-1">
-            Showing {Math.min(customersPerPage, currentCustomers.length)} of {filteredCustomers.length} customers
-          </p>
-
-          {!isSmallScreen && (
-            <div className="flex items-center gap-4 order-1 sm:order-2">
-              {/* Total Customers Count */}
-              <div className="flex items-center gap-2 px-4 rounded-xl bg-white h-[50px]">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="8.5" cy="7" r="4"/>
-                  <line x1="20" y1="8" x2="20" y2="14"/>
-                  <line x1="23" y1="11" x2="17" y2="11"/>
-                </svg>
-                <span className="text-black text-sm font-bold">
-                  {filteredCustomers.length} Customer{filteredCustomers.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-
-              {/* View Mode Toggle */}
-              <div className="flex items-center justify-center gap-1 rounded-xl p-1" style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-              }}>
-                <button
-                  onClick={() => setViewMode('cards')}
-                  className={`p-3 rounded-lg transition-all duration-200 ${
-                    viewMode === 'cards' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                  style={{
-                    background: viewMode === 'cards'
-                      ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                      : 'transparent'
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setViewMode('table')}
-                  className={`p-3 rounded-lg transition-all duration-200 ${
-                    viewMode === 'table' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                  style={{
-                    background: viewMode === 'table'
-                      ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                      : 'transparent'
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          )}
+        {/* Mobile Search Bar */}
+        <div className="lg:hidden bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            placeholder="Search customers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
+          />
         </div>
+
+        {/* Selected Customers Actions - Mobile Only */}
+        {selectedCustomers.size > 0 && (
+          <div className="lg:hidden flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
+            <span className="text-xs sm:text-sm text-muted-foreground text-center xs:text-left">
+              {selectedCustomers.size} selected
+            </span>
+            <button
+              onClick={deleteSelectedCustomers}
+              className="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2" style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              color: 'var(--foreground)'
+            }}>
+              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Delete Selected</span>
+              <span className="xs:hidden">Delete</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {effectiveViewMode === 'table' ? (

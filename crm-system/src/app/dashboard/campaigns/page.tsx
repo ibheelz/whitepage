@@ -371,18 +371,38 @@ export default function CampaignsPage() {
     <div className="min-h-screen bg-background">
       <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
         {/* Header */}
-        <div className="mb-4 sm:mb-6 lg:mb-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary truncate">
-                Campaign Management
-              </h1>
-              <p className="text-white/60 text-sm sm:text-base mt-1">Manage your marketing campaigns</p>
+        <div className="space-y-4">
+          {/* Title */}
+          <div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">
+              Campaign Management
+            </h1>
+            <p className="text-white/60 text-sm sm:text-base mt-1">Manage your marketing campaigns</p>
+          </div>
+
+          {/* Mobile Controls - Shows on mobile only */}
+          <div className="lg:hidden space-y-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+              {/* Total Campaigns Count */}
+              <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white min-w-0 flex-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14,2 14,8 20,8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10,9 9,9 8,9"/>
+                </svg>
+                <span className="text-black text-sm font-bold whitespace-nowrap">
+                  {sortedCampaigns.length} Campaign{sortedCampaigns.length !== 1 ? 's' : ''}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+
+            {/* Create Campaign Button */}
+            <div className="flex">
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+                className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 w-full"
                 style={{
                   background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
                   backdropFilter: 'blur(10px)',
@@ -392,22 +412,119 @@ export default function CampaignsPage() {
                   color: '#0a0a0a'
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="sm:w-4 sm:h-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                   <path d="M12 5v14"/>
                   <path d="M5 12h14"/>
                 </svg>
-                <span className="hidden xs:inline">New Campaign</span>
-                <span className="xs:hidden">New</span>
+                <span>New Campaign</span>
               </button>
             </div>
           </div>
         </div>
 
+        {/* Search Bar and Desktop Controls */}
+        <div className="space-y-4 lg:space-y-0">
+          {/* Desktop Layout - All on one row */}
+          <div className="hidden lg:flex items-center justify-between gap-4">
+            {/* Search Bar */}
+            <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 max-w-md">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input
+                type="search"
+                placeholder="Search campaigns..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
+              />
+            </div>
 
-        {/* Search Bar and View Toggle */}
-        <div className="mb-4 sm:mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
+            {/* Right-aligned Controls */}
+            <div className="flex items-center gap-4">
+              {/* Total Campaigns Count */}
+              <div className="flex items-center justify-center gap-2 px-4 rounded-xl bg-white h-[52px] min-w-[140px] flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black flex-shrink-0">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14,2 14,8 20,8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10,9 9,9 8,9"/>
+                </svg>
+                <span className="text-black text-sm font-bold whitespace-nowrap">
+                  {sortedCampaigns.length} Campaign{sortedCampaigns.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+
+              {/* View Mode Toggle */}
+              <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
+                {/* Compact View */}
+                <button
+                  onClick={() => setViewMode('compact')}
+                  className={`p-3 rounded-lg transition-all duration-200 ${
+                    viewMode === 'compact'
+                      ? 'text-black'
+                      : 'text-white/60 hover:text-white/80'
+                  }`}
+                  style={{
+                    background: viewMode === 'compact'
+                      ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                      : 'transparent'
+                  }}
+                  title="Compact view"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+                  </svg>
+                </button>
+
+                {/* Table View */}
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-3 rounded-lg transition-all duration-200 ${
+                    viewMode === 'table'
+                      ? 'text-black'
+                      : 'text-white/60 hover:text-white/80'
+                  }`}
+                  style={{
+                    background: viewMode === 'table'
+                      ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                      : 'transparent'
+                  }}
+                  title="Table view"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Create Campaign Button */}
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 h-[52px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(253, 198, 0, 0.3)',
+                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  color: '#0a0a0a'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <path d="M12 5v14"/>
+                  <path d="M5 12h14"/>
+                </svg>
+                <span>New Campaign</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Search Bar */}
+          <div className="lg:hidden bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -416,68 +533,8 @@ export default function CampaignsPage() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
             />
-          </div>
-
-          {/* Count Badge and View Mode Toggle - Hide on mobile for auto-compact mode */}
-          <div className="hidden lg:flex items-center gap-4">
-            {/* Total Campaigns Count */}
-            <div className="flex items-center gap-2 px-4 rounded-xl bg-white h-[52px]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10,9 9,9 8,9"/>
-              </svg>
-              <span className="text-black text-sm font-bold">
-                {sortedCampaigns.length} Campaign{sortedCampaigns.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
-              {/* Compact View */}
-              <button
-                onClick={() => setViewMode('compact')}
-                className={`p-3 rounded-lg transition-all duration-200 ${
-                  viewMode === 'compact'
-                    ? 'text-black'
-                    : 'text-white/60 hover:text-white/80'
-                }`}
-                style={{
-                  background: viewMode === 'compact'
-                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                    : 'transparent'
-                }}
-                title="Compact view"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
-                </svg>
-              </button>
-
-              {/* Table View */}
-              <button
-                onClick={() => setViewMode('table')}
-                className={`p-3 rounded-lg transition-all duration-200 ${
-                  viewMode === 'table'
-                    ? 'text-black'
-                    : 'text-white/60 hover:text-white/80'
-                }`}
-                style={{
-                  background: viewMode === 'table'
-                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                    : 'transparent'
-                }}
-                title="Table view"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
 
