@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmailIcon, PhoneIcon, LocationIcon } from '@/components/ui/icons'
+import { Avatar } from '@/components/ui/avatar'
 
 interface SearchResult {
   id: string
@@ -122,13 +123,20 @@ function SearchPageContent() {
                 <Card key={customer.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <Link
-                          href={`/dashboard/users/${customer.id}`}
-                          className="text-lg font-medium text-foreground hover:text-foreground"
-                        >
-                          {getDisplayName(customer)}
-                        </Link>
+                      <div className="flex items-start space-x-4 flex-1">
+                        <Avatar
+                          firstName={customer.firstName}
+                          lastName={customer.lastName}
+                          userId={customer.id}
+                          size="md"
+                        />
+                        <div className="flex-1">
+                          <Link
+                            href={`/dashboard/customers/${customer.id}`}
+                            className="text-lg font-medium text-foreground hover:text-foreground"
+                          >
+                            {getDisplayName(customer)}
+                          </Link>
 
                         <div className="mt-2 space-y-1">
                           {customer.masterEmail && (
@@ -165,6 +173,7 @@ function SearchPageContent() {
                               +{customer.identifiers.length - 3} more
                             </span>
                           )}
+                        </div>
                         </div>
                       </div>
 

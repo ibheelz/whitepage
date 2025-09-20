@@ -14,7 +14,8 @@ import {
   SettingsIcon,
   SearchIcon,
   FlashIcon,
-  UserIcon
+  UserIcon,
+  TargetIcon
 } from '@/components/ui/icons'
 import { Avatar } from '@/components/ui/avatar'
 
@@ -26,7 +27,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: AnalyticsIcon, description: 'Overview & Analytics' },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: CampaignIcon, description: 'Marketing Campaigns' },
   { name: 'Customers', href: '/dashboard/customers', icon: UsersIcon, description: 'Customer Management' },
-  { name: 'Leads', href: '/dashboard/leads', icon: ClicksIcon, description: 'Lead Management' },
+  { name: 'Lead Tracking', href: '/dashboard/leads', icon: TargetIcon, description: 'Lead Tracking' },
   { name: 'Clicks', href: '/dashboard/clicks', icon: ClicksIcon, description: 'Click Tracking' },
   { name: 'Events', href: '/dashboard/events', icon: EventsIcon, description: 'User Events' },
   { name: 'Analytics', href: '/dashboard/analytics', icon: AnalyticsIcon, description: 'Performance Insights' },
