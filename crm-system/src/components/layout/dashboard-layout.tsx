@@ -28,9 +28,9 @@ interface DashboardLayoutProps {
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: AnalyticsIcon, description: 'Overview & Analytics' },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: CampaignIcon, description: 'Marketing Campaigns' },
+  { name: 'Influencers', href: '/dashboard/influencers', icon: InfluencerIcon, description: 'Influencer Management' },
   { name: 'Customers', href: '/dashboard/customers', icon: UsersIcon, description: 'Customer Management' },
   { name: 'Lead Tracking', href: '/dashboard/leads', icon: TargetIcon, description: 'Lead Tracking' },
-  { name: 'Influencers', href: '/dashboard/influencers', icon: InfluencerIcon, description: 'Influencer Management' },
   { name: 'Links', href: '/dashboard/links', icon: LinksIcon, description: 'Link Management' },
   { name: 'Clicks', href: '/dashboard/clicks', icon: ClicksIcon, description: 'Click Tracking' },
   { name: 'Events', href: '/dashboard/events', icon: EventsIcon, description: 'User Events' },

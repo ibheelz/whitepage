@@ -248,7 +248,7 @@ export const RevenueIcon = ({ size = 20, className = '' }: IconProps) => (
 
 export const InfluencerIcon = ({ size = 20, className = '' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 9.5V11.5L21 14V12L15 13.5V15.5L21 18V16L15 17.5V19.5L12 20.5L9 19.5V17.5L3 16V18L9 15.5V13.5L3 12V14L9 11.5V9.5L3 7V9L9 6.5V4.5L12 3.5L15 4.5V6.5L21 9Z"/>
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
   </svg>
 )
 

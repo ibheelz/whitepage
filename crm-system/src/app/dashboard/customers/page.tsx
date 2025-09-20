@@ -1110,19 +1110,6 @@ export default function CustomersPage() {
               border: '1px solid rgba(255, 255, 255, 0.15)',
             }}>
               <button
-                onClick={() => setViewMode('table')}
-                className={`p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
-                  viewMode === 'table' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
-                }`}
-                style={{
-                  background: viewMode === 'table'
-                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
-                    : 'transparent'
-                }}
-              >
-                <List className="h-3 w-3 sm:h-4 sm:w-4" />
-              </button>
-              <button
                 onClick={() => setViewMode('cards')}
                 className={`p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
                   viewMode === 'cards' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
@@ -1133,7 +1120,24 @@ export default function CustomersPage() {
                     : 'transparent'
                 }}
               >
-                <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode('table')}
+                className={`p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
+                  viewMode === 'table' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
+                }`}
+                style={{
+                  background: viewMode === 'table'
+                    ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
+                    : 'transparent'
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+                </svg>
               </button>
             </div>
           )}

@@ -160,7 +160,9 @@ export default function LinksPage() {
               }`}
               title="Compact view"
             >
-              <LinksIcon size={16} />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+              </svg>
             </button>
             <button
               onClick={() => setViewMode('table')}
@@ -171,7 +173,9 @@ export default function LinksPage() {
               }`}
               title="Table view"
             >
-              <AnalyticsIcon size={16} />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
+              </svg>
             </button>
           </div>
         </div>
