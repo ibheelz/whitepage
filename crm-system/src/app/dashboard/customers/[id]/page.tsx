@@ -89,6 +89,9 @@ export default function CustomerDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('overview')
 
+  console.log('🚀 CustomerDetailPage mounted with ID:', customerId)
+  console.log('📊 Current state - loading:', loading, 'error:', error, 'customer:', !!customer)
+
   useEffect(() => {
     if (customerId) {
       fetchCustomerDetails()
@@ -97,15 +100,22 @@ export default function CustomerDetailPage() {
 
   const fetchCustomerDetails = async () => {
     try {
+      console.log('🔍 Fetching customer details for ID:', customerId)
       const response = await fetch(`/api/customers/${customerId}`)
+      console.log('📡 Response status:', response.status)
+
       const data = await response.json()
+      console.log('📄 Response data:', data)
 
       if (data.success) {
+        console.log('✅ Customer data loaded successfully:', data.customer)
         setCustomer(data.customer)
       } else {
+        console.log('❌ Failed to load customer:', data.error)
         setError(data.error || 'Failed to load customer details')
       }
     } catch (err) {
+      console.error('🚨 Fetch error:', err)
       setError('Failed to fetch customer details')
     } finally {
       setLoading(false)
@@ -289,347 +299,10 @@ export default function CustomerDetailPage() {
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
-        {/* Customer Profile - Comprehensive */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Contact Information */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-            <div className="flex items-center space-x-2 mb-3">
-              <UserIcon size={16} className="text-primary" />
-              <h3 className="font-semibold text-foreground">Contact Information</h3>
-            </div>
-
-            <div className="space-y-3">
-              {customer.firstName && customer.lastName && (
-                <div className="flex items-center space-x-2 text-sm">
-                  <UserIcon size={14} className="text-muted-foreground" />
-                  <span className="text-foreground">{customer.firstName} {customer.lastName}</span>
-                </div>
-              )}
-              {customer.masterEmail && (
-                <div className="flex items-center space-x-2 text-sm">
-                  <EmailIcon size={14} className="text-muted-foreground" />
-                  <span className="text-foreground">{customer.masterEmail}</span>
-                </div>
-              )}
-              {customer.masterPhone && (
-                <div className="flex items-center space-x-2 text-sm">
-                  <PhoneIcon size={14} className="text-muted-foreground" />
-                  <span className="text-foreground">{customer.masterPhone}</span>
-                </div>
-              )}
-              {(customer.city || customer.country) && (
-                <div className="flex items-center space-x-2 text-sm">
-                  <span className="text-foreground">
-                    {getCountryFlag(customer.country)} {customer.city && customer.country ? `${customer.city}, ${customer.country}` : customer.country || customer.city}
-                  </span>
-                </div>
-              )}
-              {customer.region && customer.region !== customer.city && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Region: </span>
-                  <span className="text-foreground">{customer.region}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Business Information */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-            <div className="flex items-center space-x-2 mb-3">
-              <CompanyIcon size={16} className="text-primary" />
-              <h3 className="font-semibold text-foreground">Business Information</h3>
-            </div>
-            <div className="space-y-3">
-              {customer.company && (
-                <div className="flex items-center space-x-2 text-sm">
-                  <CompanyIcon size={14} className="text-muted-foreground" />
-                  <span className="text-foreground">{customer.company}</span>
-                </div>
-              )}
-              {customer.jobTitle && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Job Title: </span>
-                  <span className="text-foreground">{customer.jobTitle}</span>
-                </div>
-              )}
-              {customer.source && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Traffic Source: </span>
-                  <span className="text-foreground">{customer.source}</span>
-                </div>
-              )}
-              {customer.assignedTeam && customer.assignedTeam.length > 0 && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Assigned Team: </span>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {teamMembers.map((member, index) => (
-                      <span key={index} className="inline-flex px-2 py-1 rounded text-xs bg-muted text-foreground">
-                        {member.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Account Status & Timeline */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-            <div className="flex items-center space-x-2 mb-3">
-              <TargetIcon size={16} className="text-primary" />
-              <h3 className="font-semibold text-foreground">Account Status</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-muted-foreground text-sm">Status:</span>
-                <div className={`inline-flex px-2 py-1 rounded text-xs font-medium ${
-                  customer.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                }`}>
-                  {customer.isActive ? 'Active' : 'Inactive'}
-                </div>
-              </div>
-              {customer.isFraud && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-muted-foreground text-sm">Fraud Flag:</span>
-                  <div className="inline-flex px-2 py-1 rounded text-xs font-medium bg-red-500/20 text-red-400">
-                    Flagged
-                  </div>
-                </div>
-              )}
-              <div className="text-sm">
-                <span className="text-muted-foreground">First Seen: </span>
-                <span className="text-foreground">{new Date(customer.firstSeen).toLocaleDateString()}</span>
-              </div>
-              <div className="text-sm">
-                <span className="text-muted-foreground">Last Seen: </span>
-                <span className="text-foreground">{new Date(customer.lastSeen).toLocaleDateString()}</span>
-              </div>
-              <div className="text-sm">
-                <span className="text-muted-foreground">Created: </span>
-                <span className="text-foreground">{new Date(customer.createdAt).toLocaleDateString()}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Customer Identifiers */}
-        {customer.identifiers && customer.identifiers.length > 0 && (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <UserIcon size={20} className="text-primary" />
-              <h3 className="text-lg font-semibold text-foreground">Customer Identifiers</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {customer.identifiers.map((identifier, index) => (
-                <div key={index} className="bg-white/5 border border-white/10 rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-foreground capitalize">
-                      {identifier.type.replace('_', ' ')}
-                    </span>
-                    <div className="flex space-x-1">
-                      {identifier.isPrimary && (
-                        <span className="inline-flex px-1.5 py-0.5 rounded text-xs bg-primary/20 text-primary">
-                          Primary
-                        </span>
-                      )}
-                      {identifier.isVerified && (
-                        <span className="inline-flex px-1.5 py-0.5 rounded text-xs bg-green-500/20 text-green-400">
-                          Verified
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-sm text-foreground mb-2 font-mono">
-                    {identifier.value}
-                  </div>
-                  {(identifier.source || identifier.campaign) && (
-                    <div className="text-xs text-muted-foreground">
-                      {identifier.source && `Source: ${identifier.source}`}
-                      {identifier.source && identifier.campaign && ' | '}
-                      {identifier.campaign && `Campaign: ${identifier.campaign}`}
-                    </div>
-                  )}
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Added: {new Date(identifier.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Stats - Minimalist */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <ClicksIcon size={20} className="text-primary" />
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">Clicks</div>
-            </div>
-            <div className="text-2xl font-bold text-primary">{customer.totalClicks}</div>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <TargetIcon size={20} className="text-primary" />
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">Leads</div>
-            </div>
-            <div className="text-2xl font-bold text-primary">{customer.totalLeads}</div>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <EventsIcon size={20} className="text-primary" />
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">Events</div>
-            </div>
-            <div className="text-2xl font-bold text-primary">{customer.totalEvents}</div>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <RevenueIcon size={20} className="text-primary" />
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">Revenue</div>
-            </div>
-            <div className="text-2xl font-bold text-primary">${customer.totalRevenue.toLocaleString()}</div>
-          </div>
-        </div>
-
-        {/* Click IDs */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <ClicksIcon size={20} className="text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Click IDs</h3>
-          </div>
-
-          {customer.clicks && customer.clicks.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {customer.clicks.slice(0, 12).map((click, index) => (
-                <div key={index} className="bg-white/5 border border-white/10 rounded-lg p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-foreground">
-                        {click.clickId || `Click #${index + 1}`}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {click.campaign || 'Unknown Campaign'}
-                      </span>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(click.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                  {click.source && (
-                    <div className="mt-2">
-                      <span className="inline-flex px-2 py-1 rounded text-xs bg-muted text-foreground">
-                        {click.source}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <ClicksIcon size={48} className="mx-auto mb-2 text-muted-foreground opacity-50" />
-              <p className="text-muted-foreground">No click IDs recorded yet</p>
-            </div>
-          )}
-
-          {customer.clicks && customer.clicks.length > 12 && (
-            <div className="mt-4 text-center">
-              <span className="text-sm text-muted-foreground">
-                Showing 12 of {customer.clicks.length} clicks
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Journey Timeline */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center">
-              <TargetIcon size={20} className="text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">Customer Journey Timeline</h3>
-              <p className="text-sm text-muted-foreground">Track customer interactions and engagement</p>
-            </div>
-          </div>
-
-          <div className="relative">
-            {timeline.length > 0 ? (
-              <div className="space-y-6">
-                {timeline.slice(0, 10).map((item, index) => (
-                  <div key={index} className="relative flex items-start space-x-4">
-                    {/* Timeline line */}
-                    {index < timeline.slice(0, 10).length - 1 && (
-                      <div className="absolute left-4 top-8 w-0.5 h-6 bg-white/10"></div>
-                    )}
-
-                    {/* Timeline dot with icon */}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 flex-shrink-0 ${
-                      item.type === 'click' ? 'bg-blue-500/20 border-blue-500/40' :
-                      item.type === 'lead' ? 'bg-green-500/20 border-green-500/40' :
-                      'bg-purple-500/20 border-purple-500/40'
-                    }`}>
-                      {item.type === 'click' ? (
-                        <ClicksIcon size={14} className={item.type === 'click' ? 'text-blue-400' : item.type === 'lead' ? 'text-green-400' : 'text-purple-400'} />
-                      ) : item.type === 'lead' ? (
-                        <TargetIcon size={14} className="text-green-400" />
-                      ) : (
-                        <EventsIcon size={14} className="text-purple-400" />
-                      )}
-                    </div>
-
-                    {/* Timeline content */}
-                    <div className="flex-1 bg-white/5 border border-white/10 rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h4 className="font-medium text-foreground">{item.title}</h4>
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                              item.type === 'click' ? 'bg-blue-500/20 text-blue-400' :
-                              item.type === 'lead' ? 'bg-green-500/20 text-green-400' :
-                              'bg-purple-500/20 text-purple-400'
-                            }`}>
-                              {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                            </span>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="text-sm font-medium text-foreground">
-                            {item.date.toLocaleDateString()}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {item.date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Click ID Display */}
-                      {item.clickId && (
-                        <div className="mb-2">
-                          <span className="text-sm font-mono text-yellow-400 px-2 py-1 rounded truncate max-w-[200px] inline-block" style={{
-                            background: 'rgba(253, 198, 0, 0.1)',
-                            border: '1px solid rgba(253, 198, 0, 0.3)'
-                          }} title={item.clickId}>
-                            {item.clickId}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-xl bg-muted/20 flex items-center justify-center mx-auto mb-4">
-                  <TargetIcon size={32} className="text-muted-foreground opacity-50" />
-                </div>
-                <div className="text-lg font-medium text-foreground mb-2">No Journey Activity</div>
-                <div className="text-sm text-muted-foreground">This customer hasn't had any recorded interactions yet.</div>
-              </div>
-            )}
-          </div>
+      <div className="p-6">
+        <div className="text-center">
+          <div className="text-lg font-medium text-foreground mb-2">Customer Tracking Profile</div>
+          <div className="text-sm text-muted-foreground">Profile page has been cleared</div>
         </div>
       </div>
     </div>
