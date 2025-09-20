@@ -98,7 +98,7 @@ export default function CustomersPage() {
   const [customersPerPage] = useState(20)
   const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards')
   const [sortField, setSortField] = useState<string>('')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -1046,7 +1046,7 @@ export default function CustomersPage() {
 
       <div className="mb-4 sm:mb-6 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 w-80">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
@@ -1111,7 +1111,7 @@ export default function CustomersPage() {
             }}>
               <button
                 onClick={() => setViewMode('cards')}
-                className={`p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
+                className={`p-3 rounded-lg transition-all duration-200 ${
                   viewMode === 'cards' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
                 }`}
                 style={{
@@ -1126,7 +1126,7 @@ export default function CustomersPage() {
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
+                className={`p-3 rounded-lg transition-all duration-200 ${
                   viewMode === 'table' ? 'text-black' : 'text-muted-foreground hover:text-foreground'
                 }`}
                 style={{

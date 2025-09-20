@@ -310,7 +310,15 @@ export default function CampaignsPage() {
             <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm sm:text-base"
+                className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(253, 198, 0, 0.3)',
+                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  color: '#0a0a0a'
+                }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="sm:w-4 sm:h-4">
                   <path d="M12 5v14"/>
@@ -326,8 +334,8 @@ export default function CampaignsPage() {
 
         {/* Search Bar and View Toggle */}
         <div className="mb-4 sm:mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-3 sm:p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0 sm:w-5 sm:h-5">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -336,7 +344,7 @@ export default function CampaignsPage() {
               placeholder="Search campaigns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm min-w-0"
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
             />
           </div>
 
@@ -345,7 +353,7 @@ export default function CampaignsPage() {
             {/* Compact View */}
             <button
               onClick={() => setViewMode('compact')}
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'compact'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -357,7 +365,7 @@ export default function CampaignsPage() {
               }}
               title="Compact view"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="lg:w-[18px] lg:h-[18px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
               </svg>
             </button>
@@ -365,7 +373,7 @@ export default function CampaignsPage() {
             {/* Table View */}
             <button
               onClick={() => setViewMode('table')}
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'table'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -377,7 +385,7 @@ export default function CampaignsPage() {
               }}
               title="Table view"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="lg:w-[18px] lg:h-[18px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
               </svg>
             </button>
@@ -404,7 +412,15 @@ export default function CampaignsPage() {
             </p>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="inline-flex items-center space-x-3 px-8 py-4 bg-primary text-black font-bold rounded-2xl hover:bg-primary/90 transition-all duration-300 shadow-xl hover:shadow-primary/25 transform hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+              style={{
+                background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(253, 198, 0, 0.3)',
+                boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                color: '#0a0a0a'
+              }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
                 <line x1="12" y1="5" x2="12" y2="19"/>
@@ -624,7 +640,7 @@ export default function CampaignsPage() {
 
                           {/* View Button */}
                           <button
-                            className="w-10 sm:w-16 px-1 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
+                            className="w-10 sm:w-16 px-1 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                           >
                             <span className="hidden sm:inline">VIEW</span>
                             <span className="sm:hidden">V</span>
@@ -633,7 +649,7 @@ export default function CampaignsPage() {
                           {/* Manage Button */}
                           <button
                             onClick={() => handleManageCampaign(campaign)}
-                            className="w-12 sm:w-20 px-1 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                            className="w-12 sm:w-20 px-1 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
                           >
                             <span className="hidden sm:inline">MANAGE</span>
                             <span className="sm:hidden">M</span>
@@ -652,7 +668,7 @@ export default function CampaignsPage() {
             {sortedCampaigns.map((campaign) => (
               <div
                 key={campaign.id}
-                className="group relative rounded-xl lg:rounded-2xl px-4 sm:px-5 lg:px-6 py-4 sm:py-5 lg:py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10 hover:bg-white/10"
+                className="group relative rounded-xl lg:rounded-2xl px-4 sm:px-5 lg:px-6 py-4 sm:py-5 lg:py-6 cursor-pointer transition-all duration-300 bg-white/5 border border-white/10"
               >
                 {/* Status Light Indicator */}
                 <div className="absolute top-3 sm:top-4 right-3 sm:right-4">

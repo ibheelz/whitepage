@@ -75,6 +75,18 @@ export default function LeadsPage() {
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<'compact' | 'table'>('compact')
 
+  // Auto-set compact mode for smaller devices
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setViewMode('compact')
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   useEffect(() => {
     fetchLeads()
   }, [])
@@ -161,39 +173,60 @@ export default function LeadsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="space-y-2 xxs:space-y-1 xs:space-y-3 sm:space-y-6 p-1 xxs:p-1 xs:p-2 sm:p-4 lg:p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-base xxs:text-sm xs:text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary">Lead Tracking</h1>
-              <p className="text-white/60 text-base">Track and analyze lead submissions</p>
+        {/* Header - Super Responsive */}
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-primary truncate">
+                Lead Tracking
+              </h1>
+              <p className="text-white/60 text-sm sm:text-base mt-1">Track and analyze lead submissions</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-end gap-2 sm:gap-4 flex-shrink-0">
+              <button className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(253, 198, 0, 0.3)',
+                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  color: '#0a0a0a'
+                }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="sm:w-4 sm:h-4">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                   <polyline points="14,2 14,8 20,8"/>
                   <line x1="16" y1="13" x2="8" y2="13"/>
                   <line x1="16" y1="17" x2="8" y2="17"/>
                 </svg>
-                <span>Import Data</span>
+                <span className="hidden sm:inline">Import Data</span>
+                <span className="sm:hidden">Import</span>
               </button>
-              <button onClick={handleExport} className="px-4 py-2 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button onClick={handleExport} className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(253, 198, 0, 0.3)',
+                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  color: '#0a0a0a'
+                }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="sm:w-4 sm:h-4">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7,10 12,15 17,10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                <span>Export Data</span>
+                <span className="hidden sm:inline">Export Data</span>
+                <span className="sm:hidden">Export</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Search Bar and View Toggle */}
-        <div className="mb-6 flex items-center justify-between gap-6">
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 w-80">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+        {/* Search Bar and View Toggle - Super Responsive */}
+        <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Responsive Search Bar */}
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -203,15 +236,15 @@ export default function LeadsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm"
+              className="flex-1 bg-transparent text-white placeholder-white/60 outline-none text-sm sm:text-base"
             />
           </div>
 
-          <div className="flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
-            {/* Compact View */}
+          {/* View Mode Toggle - Hide on mobile for auto-compact mode */}
+          <div className="hidden lg:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
             <button
               onClick={() => setViewMode('compact')}
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'compact'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -221,16 +254,15 @@ export default function LeadsPage() {
                   ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
                   : 'transparent'
               }}
+              title="Compact view"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
               </svg>
             </button>
-
-            {/* Table View */}
             <button
               onClick={() => setViewMode('table')}
-              className={`p-2 rounded-lg transition-all duration-200 ${
+              className={`p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'table'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -240,6 +272,7 @@ export default function LeadsPage() {
                   ? 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))'
                   : 'transparent'
               }}
+              title="Table view"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
@@ -408,35 +441,36 @@ export default function LeadsPage() {
                         </div>
                       </td>
                       {/* Last Action */}
-                      <td className="px-6 py-4">
+                      <td className="px-2 sm:px-6 py-3 sm:py-4">
                         {(() => {
                           const lastAction = getLastAction(lead)
                           return (
-                            <div className="flex items-center space-x-2">
-                              <div className={`w-2 h-2 rounded-full ${
+                            <div className="flex items-center space-x-1 sm:space-x-2">
+                              <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
                                 lastAction.type === 'event' ? 'bg-purple-500' :
                                 lastAction.type === 'click' ? 'bg-blue-500' : 'bg-green-500'
                               }`} />
                               <div className="flex flex-col">
-                                <span className="text-white text-sm font-medium">{lastAction.action}</span>
+                                <span className="text-white text-[10px] sm:text-sm font-medium truncate">{lastAction.action}</span>
                                 {lastAction.count > 1 && (
-                                  <span className="text-white/60 text-xs">{lastAction.count} times</span>
+                                  <span className="text-white/60 text-[9px] sm:text-xs">{lastAction.count} times</span>
                                 )}
                               </div>
                             </div>
                           )
                         })()}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-2 sm:px-6 py-3 sm:py-4 text-right">
                         {lead.customer?.id ? (
                           <Link
                             href={`/dashboard/customers/${lead.customer.id}`}
-                            className="px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center w-20"
+                            className="px-2 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center w-12 sm:w-20"
                           >
-                            VIEW
+                            <span className="hidden sm:inline">VIEW</span>
+                            <span className="sm:hidden">V</span>
                           </Link>
                         ) : (
-                          <span className="text-white/40 text-sm">No User</span>
+                          <span className="text-white/40 text-[10px] sm:text-sm">No User</span>
                         )}
                       </td>
                     </tr>

@@ -346,7 +346,15 @@ export default function InfluencersPage() {
               <p className="text-white/60 text-sm sm:text-base mt-1">Manage your influencer partnerships</p>
             </div>
             <div className="flex items-center justify-end">
-              <button className="px-3 py-2 sm:px-4 sm:py-2 lg:px-6 lg:py-3 bg-primary text-black rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2 text-sm sm:text-base">
+              <button className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(253, 198, 0, 0.9), rgba(253, 198, 0, 0.7))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(253, 198, 0, 0.3)',
+                  boxShadow: '0 8px 32px rgba(253, 198, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  color: '#0a0a0a'
+                }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="sm:w-4 sm:h-4">
                   <path d="M12 5v14"/>
                   <path d="M5 12h14"/>
@@ -361,8 +369,8 @@ export default function InfluencersPage() {
         {/* Search Bar and View Toggle - Super Responsive */}
         <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Responsive Search Bar */}
-          <div className="bg-white/10 border border-white/20 rounded-xl p-3 sm:p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary sm:w-5 sm:h-5">
+          <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center space-x-3 flex-1 sm:max-w-sm lg:max-w-md xl:max-w-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary flex-shrink-0">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
@@ -379,7 +387,7 @@ export default function InfluencersPage() {
           <div className="hidden lg:flex bg-white/5 rounded-xl p-1 border border-white/10 backdrop-blur-sm">
             <button
               onClick={() => setViewMode('compact')}
-              className={`p-2 lg:p-3 rounded-lg transition-all duration-200 ${
+              className={`p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'compact'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -391,13 +399,13 @@ export default function InfluencersPage() {
               }}
               title="Compact view"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="lg:w-5 lg:h-5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
               </svg>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`p-2 lg:p-3 rounded-lg transition-all duration-200 ${
+              className={`p-3 rounded-lg transition-all duration-200 ${
                 viewMode === 'table'
                   ? 'text-black'
                   : 'text-white/60 hover:text-white/80'
@@ -409,7 +417,7 @@ export default function InfluencersPage() {
               }}
               title="Table view"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="lg:w-5 lg:h-5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm0 2v3h18V5H3zm0 5v3h8v-3H3zm10 0v3h8v-3h-8zm-10 5v3h8v-3H3zm10 0v3h8v-3h-8z"/>
               </svg>
             </button>
@@ -674,7 +682,7 @@ export default function InfluencersPage() {
 
                           {/* View Button */}
                           <button
-                            className="w-10 sm:w-16 px-1 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
+                            className="w-10 sm:w-16 px-1 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
                           >
                             <span className="hidden sm:inline">VIEW</span>
                             <span className="sm:hidden">V</span>
@@ -682,7 +690,7 @@ export default function InfluencersPage() {
 
                           {/* Manage Button */}
                           <button
-                            className="w-12 sm:w-20 px-1 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-primary text-black hover:bg-primary/90 transition-colors flex items-center justify-center"
+                            className="w-12 sm:w-20 px-1 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-bold rounded-lg bg-white text-black hover:bg-white/90 transition-colors flex items-center justify-center"
                           >
                             <span className="hidden sm:inline">MANAGE</span>
                             <span className="sm:hidden">M</span>
